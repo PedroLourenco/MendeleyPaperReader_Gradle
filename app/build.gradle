@@ -15,10 +15,24 @@ android {
         exclude 'META-INF/NOTICE'
     }
 
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
 
 
+        androidTest.setRoot('tests')
+        androidTest {
+            java.srcDirs = ['tests/src']
+            resources.srcDirs = ['tests/src']
+        }
+    }
 
-    sourceSets { main { java.srcDirs = ['src/main/java', 'src/tests/java'] } }
 }
 
 dependencies {
