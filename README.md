@@ -1,7 +1,7 @@
-![Logo](https://github.com/PedroLourenco/MendeleyPaperReader/blob/Release2/MendeleyPaperReader/res/drawable-hdpi/icon_mendeley48_48.png)PaperReade
+![Logo](https://github.com/PedroLourenco/MendeleyPaperReader/blob/Release2/MendeleyPaperReader/res/drawable-hdpi/icon_mendeley48_48.png)PaperReader
 ==================
 
-![Build Status](https://travis-ci.org/PedroLourenco/MendeleyPaperReader_Gradle.svg?branch=master)
+[![Build Status](https://travis-ci.org/PedroLourenco/MendeleyPaperReader_Gradle.svg?branch=master)](https://travis-ci.org/PedroLourenco/MendeleyPaperReader_Gradle)
 
 ## Overview
 Paper Reader is an unofficial Android Client for Mendeley is designed to phones and tablets. This is a beta version of Paper Reader V0.2.0.
