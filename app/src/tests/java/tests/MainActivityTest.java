@@ -11,7 +11,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
     }
 
-
     public void testFail() throws Exception {
             final int expected = 1;
             final int reality = 5;

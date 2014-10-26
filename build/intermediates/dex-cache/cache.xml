@@ -2,34 +2,34 @@
 <pre-dex-items>
 
     <item
-        dex="/Users/pedro/git/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/jackson-core-2.4.1.1-aa28a91150ddf56af73ea00a438ee3b5d236424e.jar"
-        jar="/Users/pedro/git/MendeleyPaperReader/app/libs/jackson-core-2.4.1.1.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="f1b322a9ff873aee0b710af5f33bc10a2eb019ba"/>
-    <item
-        dex="/Users/pedro/git/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/jackson-annotations-2.4.0-84a5122212efaf7e2010ea7806c0f292fa18c68b.jar"
-        jar="/Users/pedro/git/MendeleyPaperReader/app/libs/jackson-annotations-2.4.0.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="d6a66c7a5f01cf500377bd669507a08cfeba882a"/>
-    <item
-        dex="/Users/pedro/git/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/classes-2ed3cb5da12cb32c6c3270cffc4e7bf1c7f0bec6.jar"
-        jar="/Users/pedro/git/MendeleyPaperReader/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/18.0.0/classes.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="8f11f56e350eacabf2273f646d981356eea0ed77"/>
-    <item
-        dex="/Users/pedro/git/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/jackson-databind-2.2.4-c8377dc3add82fb86479e636a8b17fc98ac1f668.jar"
-        jar="/Users/pedro/git/MendeleyPaperReader/app/libs/jackson-databind-2.2.4.jar"
+        dex="/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/jackson-databind-2.2.4-fc6c16facfa00a0fa0e7694687b26467837b024d.jar"
+        jar="/Users/pedro/Downloads/MendeleyPaperReader/app/libs/jackson-databind-2.2.4.jar"
         jumboMode="false"
         revision="20.0.0"
         sha1="906cf5deb56ec1fb3ecbeceb08a1734ce9fed664"/>
     <item
-        dex="/Users/pedro/git/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/support-v4-18.0.0-2b4455d08d192f54174e2adfd72cf111bdec6106.jar"
+        dex="/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/classes-f3de9e2dc66b11fefc6e6a100e73da1f8d675fe7.jar"
+        jar="/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/18.0.0/classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="8f11f56e350eacabf2273f646d981356eea0ed77"/>
+    <item
+        dex="/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/jackson-core-2.4.1.1-b788df8cecf44cc4b1edd0d6ae274aa682532fce.jar"
+        jar="/Users/pedro/Downloads/MendeleyPaperReader/app/libs/jackson-core-2.4.1.1.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="f1b322a9ff873aee0b710af5f33bc10a2eb019ba"/>
+    <item
+        dex="/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/support-v4-18.0.0-2b4455d08d192f54174e2adfd72cf111bdec6106.jar"
         jar="/Users/pedro/Downloads/adt-bundle-mac-x86_64-20140624/sdk/extras/android/m2repository/com/android/support/support-v4/18.0.0/support-v4-18.0.0.jar"
         jumboMode="false"
         revision="20.0.0"
         sha1="44ec51e9d395a47aab135e5e1b556c0007442156"/>
+    <item
+        dex="/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/jackson-annotations-2.4.0-d87718e01c720db7bbff3248fcda22c75f026e4e.jar"
+        jar="/Users/pedro/Downloads/MendeleyPaperReader/app/libs/jackson-annotations-2.4.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="d6a66c7a5f01cf500377bd669507a08cfeba882a"/>
 
 </pre-dex-items>
