@@ -55,7 +55,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         solo.enterTextInWebElement(By.id("password"), "000000");
         solo.clickOnText("Authorize");
 
-        assertTrue(solo.waitForActivity("com.medeleypaperreader.MainMenuActivity", 2000));
+        assertTrue(solo.waitForActivity(MainMenuActivity.class, 2000));
 
 
 
