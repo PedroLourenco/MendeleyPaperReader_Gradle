@@ -15,6 +15,10 @@ android {
         exclude 'META-INF/NOTICE'
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
 
     sourceSets { main { java.srcDirs = ['src/main/java', 'src/tests/java'] } }
 }
