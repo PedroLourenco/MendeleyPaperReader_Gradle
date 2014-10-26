@@ -50,13 +50,14 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 
         solo.waitForView(view, 2000, false);
         //solo.clickOnWebElement(By.id("username"));
-        //solo.enterTextInWebElement(By.id("username"), "pdrolourenco@gmail.com");
-        //solo.clickOnWebElement(By.id("password"));
-        //solo.enterTextInWebElement(By.id("password"), "000000");
+        solo.clickOnText("Email address");
+        solo.enterTextInWebElement(By.id("username"), "pdrolourenco@gmail.com");
+        solo.clickOnWebElement(By.id("password"));
+        solo.enterTextInWebElement(By.id("password"), "000000");
         solo.clickOnText("Authorize");
-        solo.sleep(200);
+        //solo.sleep(200);
 
-        assertTrue(solo.waitForActivity("MainMenuActivity", 2000));
+        assertTrue(solo.waitForActivity("MainMenuActivity", 2000000));
 
 
 
