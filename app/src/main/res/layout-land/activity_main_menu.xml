@@ -1,0 +1,32 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    
+    <RelativeLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+         
+     
+     <fragment
+         android:id="@+id/folders"
+         android:layout_width="210dp"
+         android:layout_height="match_parent"
+         android:layout_alignParentBottom="true"
+         class="com.mendeleypaperreader.MainMenuFragmentList" />
+
+       <FrameLayout
+           android:id="@+id/details"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:layout_alignParentTop="true"
+           android:layout_toRightOf="@+id/folders" >
+
+       </FrameLayout>
+       
+       </RelativeLayout>
+
+</LinearLayout>

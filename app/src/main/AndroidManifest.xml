@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.mendeleypaperreader"
+    android:versionCode="04"
+    android:versionName="0.2.0" >
+
+    <uses-sdk
+        android:minSdkVersion="12"
+        android:targetSdkVersion="15" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/paper_reader_512_512"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:noHistory="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainMenuActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".DetailsActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainMenuActivity" >
+        </activity>
+        <activity
+            android:name=".DocumentsDetailsActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:parentActivityName=".DetailsActivity" >
+        </activity>
+        <activity
+            android:name=".AbstractDescriptionActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".DocumentsDetailsActivity" >
+        </activity>
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".MainMenuActivity" >
+        </activity>
+        <activity
+            android:name=".ReadersActivity"
+            android:label="@string/app_name" 
+            android:parentActivityName=".DocumentsDetailsActivity" >
+        </activity>
+
+        <provider
+            android:name="com.mendeleypaperreader.contentProvider.MyContentProvider"
+            android:authorities="com.android.mendeleypaperreader.utl.MyContentProvider"
+            android:exported="false" />
+
+        
+    </application>
+
+</manifest>

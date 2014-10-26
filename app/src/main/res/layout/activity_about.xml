@@ -1,0 +1,93 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/app_logo"
+            android:src="@drawable/icon_mendeley48_48" />
+
+        <TextView
+            android:id="@+id/msg_about"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView1"
+            android:padding="8dp" 
+            android:gravity="center"
+            android:text="@string/msg_about"
+            android:textStyle="italic" >
+        </TextView>
+
+        <ScrollView
+            android:id="@+id/scrollView1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/current_version"
+            android:layout_below="@+id/msg_about"
+            android:layout_gravity="center"
+            android:background="#e1ddcf"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:padding="8dp" >
+
+           
+                <TextView
+                    android:id="@+id/txt_version3"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="8dp"
+                    android:text="@string/bugfix" />
+             
+        </ScrollView>
+
+            <TextView
+                android:id="@+id/web_link"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="9dp"
+                android:gravity="center"
+                android:text="@string/web_link"
+                android:textColor="#87847c"
+                android:textStyle="italic" />
+
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="40dp"
+                android:gravity="center"
+                android:textStyle="italic"
+                android:layout_above="@+id/web_link" />
+
+            <TextView
+                android:id="@+id/current_version"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"                
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:gravity="center"
+                android:text="@string/msg_current_version"
+                android:layout_marginBottom="60dp"
+                android:textColor="#87847c"
+                android:textStyle="italic"
+                android:layout_above="@+id/email" />
+
+        </RelativeLayout>
+    
+
+</RelativeLayout>

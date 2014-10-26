@@ -1,0 +1,49 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="#A91B26"
+    tools:context=".MainActivity" >
+    
+    
+     <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/title"
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/title_size" />
+    
+
+     <Button
+         android:id="@+id/auth"
+         android:layout_width="match_parent"
+         android:layout_height="@dimen/button_height"
+         android:layout_marginLeft="@dimen/button_margin"
+         android:layout_marginRight="@dimen/button_margin"
+         android:layout_above="@+id/NewAccount"
+         android:layout_alignParentLeft="true"
+         android:layout_marginBottom="@dimen/button_auth_margin_bottom"
+         android:background="@drawable/sigin_button_shape"
+         android:textSize="@dimen/button_text_size"
+         android:text="@string/auth" />
+     
+     <Button
+         android:id="@+id/NewAccount"
+         android:layout_width="match_parent"
+         android:layout_height="@dimen/button_height"
+         android:layout_marginLeft="@dimen/button_margin"
+         android:layout_marginRight="@dimen/button_margin"
+         android:layout_alignParentBottom="true"
+         android:layout_alignParentLeft="true"
+         android:layout_marginBottom="@dimen/button_new_account_margin_bottom"
+         android:background="@drawable/createaccount_button_shape"
+         android:text="@string/createaccount"
+         android:textSize="@dimen/button_text_size"
+         android:textColor="#FFFFFF" />
+
+     </RelativeLayout>

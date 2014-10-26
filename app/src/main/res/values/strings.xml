@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">PaperReader</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title">Paper Reader</string>
+    <string name="auth">Sing in</string>
+    <string name="createaccount">Create account</string>
+    <string name="my_library"><b>My Library</b></string>
+    <string name="my_folders"><b>Folders</b></string>
+    <string name="app_logo">App logo</string>
+
+    <!-- MainActivity -->
+    <string name="contacting_mendeley">"Contacting Mendeley ..."</string>
+    <string name="network_error">Network Error</string>
+    <string name="no_network_connection">No network connection.</string>
+    <string name="check_internet_connection">Please check your internet connection</string>
+    <string name="wifi_settings">WIFI Settings</string>
+    <string name="settings_3G">3G Settings</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- MainMenuActivity -->
+    <string name="sync_data_0">Sync data... ( 0% )</string>
+    <string name="sync_data">Sync data... (</string>
+    <string name="log_out">Log out ?</string>
+    <string name="exit_msg">Press again to exit.</string>
+    <string name="warning">You will delete all your local data!</string>
+    <string name="word_ok">OK</string>
+
+    <!-- DocumentsDetailActivity -->
+
+    <string name="email_subject">" - Shared document by Paper Reader"</string>
+    <string name="email_text">The following document was shared using Android Paper Reader app:</string>
+    <string name="email_publication">"Publication: "</string>
+    <string name="email_authors">"Authors: " </string>
+    <string name="email_mendeley_profile">"Mendeley profile: "</string>
+    <string name="email_play_store">"Play Store: https://play.google.com/store/apps/details?id=com.mendeleypaperreader"</string>
+
+    <!-- About activity -->
+
+    <string name="msg_about">Get access to Mendeley database papers.</string>
+    <string name="bugfix"><b>Version 0.2.0 (October, 2014)</b> \n Bug fix. \n Readers counter by Academic status. \n Download articles. \n\n <b>Version 0.1.1 (September, 2014)</b> \n Bug Fix - In some devices app crashes when trying to open the browser. \n App crashes when trying to download large libraries.\n\n <b>Version 0.0.1 (July, 2014)</b> \n Initial Version.</string>
+    <string name="web_link"></string>
+    <string name="msg_current_version">Version 0.2.0</string>
+    <string name="email">pdrolourenco@gmail.com</string>
+    <string name="msg_email">"Contact: "</string>
+    
+    
+     <!-- Readers activity -->
+    <string name="academicStatus">"Academic Status"</string>
+    <string name="countryStatus">"Country"</string>
+
+    <string-array name="Titles">
+        <item>All Documents</item>
+        <item>Recently Added</item>
+        <item>Favorites</item>
+        <item>My Publications</item>
+        <item>Trash</item>
+    </string-array>
+
+    <string name="catalog_ids">Catalog IDS</string>
+    <string name="doi">DOI:</string>
+    <string name="pmid">PMID:</string>
+    <string name="issn">ISSN:</string>
+    <string name="urls">URL</string>
+    <string name="readers">Readers:</string>
+    <string name="menu_logout">Logout</string>
+    <string name="menu_about">About</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="title_activity_readers">ReadersActivity</string>
+    
+    
+    
+    
+    
+    <string name="progress_dialog_title_downloading">Downloading...</string>
+    <string name="progress_dialog_title_connecting">Connecting...</string>
+    <string name="progress_dialog_message_prefix_downloading">Downloading file</string>
+    <string name="progress_dialog_message_prefix_connecting">Connecting to</string>
+    <string name="user_message_download_complete">Download complete!</string>
+    <string name="user_message_download_canceled">Download canceled!</string>
+    <string name="error_message_bad_url">Error: Invalid URL!</string>
+    <string name="error_message_file_not_found">Error: File not found!</string>
+    <string name="error_message_general">Error downloading file!</string>
+
+</resources>

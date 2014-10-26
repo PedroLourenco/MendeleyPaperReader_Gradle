@@ -1,0 +1,17 @@
+language: android
+jdk: oraclejdk7
+env:
+  matrix:
+    - ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a
+
+android:
+  components:
+    - build-tools-15.0.0
+
+    # Gradle
+    - wget http://services.gradle.org/distributions/gradle-1.6-bin.zip
+    - unzip gradle-1.6-bin.zip
+    - export GRADLE_HOME=$PWD/gradle-1.6
+    - export PATH=$GRADLE_HOME/bin:$PATH
+
+
