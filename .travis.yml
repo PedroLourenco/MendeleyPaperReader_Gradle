@@ -13,38 +13,3 @@ jdk: oraclejdk7
 
 
 
-
-# newest android SDK
-  - wget http://dl.google.com/android/android-sdk_${ANDROID_SDK_VERSION}-linux.tgz
-  - tar -zxf android-sdk_${ANDROID_SDK_VERSION}-linux.tgz
-  - export ANDROID_HOME=`pwd`/android-sdk-linux
-  - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
-
-  # manually set sdk.dir variable, according to local paths
-  - echo "sdk.dir=$ANDROID_HOME" > local.properties
-
-
-  # Install required components.
-    # For a full list, run `android list sdk -a --extended`
-    - echo yes | android update sdk --filter platform-tools --no-ui --force > /dev/null
-    - echo yes | android update sdk --all --filter build-tools-19.0.3 --no-ui --force > /dev/null
-    - echo yes | android update sdk --filter android-19 --no-ui --force > /dev/null
-    - echo yes | android update sdk --filter extra-android-support --no-ui --force > /dev/null
-    - echo yes | android update sdk --filter extra-android-m2repository --no-ui --force > /dev/null
-    - echo yes | android update sdk --filter extra-google-m2repository --no-ui --force > /dev/null
-
-
-    # for gradle output style
-      - export TERM=dumb
-
-      gradle check
-
-      install: gradle clean build
-
-      script: gradle check
-
-      before_install:
-       # Create and start emulator
-       - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
-       - emulator -avd test -no-skin -no-audio -no-window &
-
