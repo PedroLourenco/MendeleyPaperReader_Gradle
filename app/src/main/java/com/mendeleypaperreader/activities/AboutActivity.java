@@ -1,4 +1,4 @@
-package com.mendeleypaperreader;
+package com.mendeleypaperreader.activities;
 
 import com.mendeleypaperreader.R;
 

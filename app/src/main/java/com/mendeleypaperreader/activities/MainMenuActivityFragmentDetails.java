@@ -1,4 +1,4 @@
-package com.mendeleypaperreader;
+package com.mendeleypaperreader.activities;
 
 
 import android.content.Intent;
@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.utl.Globalconstant;

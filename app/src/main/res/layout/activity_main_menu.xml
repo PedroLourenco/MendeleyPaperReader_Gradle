@@ -12,7 +12,7 @@
     
       <fragment
           android:id="@+id/folder"
-          android:name="com.mendeleypaperreader.MainMenuFragmentList"
+          android:name="com.mendeleypaperreader.activities.MainMenuFragmentList"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           android:background="#27a1b4"

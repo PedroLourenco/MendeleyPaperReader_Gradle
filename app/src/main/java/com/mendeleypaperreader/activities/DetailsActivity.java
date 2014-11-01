@@ -1,4 +1,4 @@
-package com.mendeleypaperreader;
+package com.mendeleypaperreader.activities;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.jsonParser.SyncDataAsync;
 import com.mendeleypaperreader.sessionManager.GetAccessToken;

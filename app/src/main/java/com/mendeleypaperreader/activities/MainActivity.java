@@ -1,4 +1,4 @@
-package com.mendeleypaperreader;
+package com.mendeleypaperreader.activities;
 
 import java.util.Calendar;
 
@@ -27,6 +27,7 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.sessionManager.GetAccessToken;
 import com.mendeleypaperreader.sessionManager.SessionManager;
 import com.mendeleypaperreader.utl.ConnectionDetector;

@@ -1,4 +1,4 @@
-package com.mendeleypaperreader;
+package com.mendeleypaperreader.activities;
 
 
 import android.app.ListActivity;
@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+
+import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.adapter.ListTitleAdapter;
 import com.mendeleypaperreader.adapter.MergeAdapter;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;

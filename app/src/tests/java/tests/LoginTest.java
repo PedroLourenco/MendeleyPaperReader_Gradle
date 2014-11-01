@@ -2,12 +2,11 @@ package tests;
 
 import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
-import android.util.Log;
-import com.mendeleypaperreader.MainActivity;
-import com.mendeleypaperreader.MainMenuActivity;
+
+import com.mendeleypaperreader.activities.MainActivity;
 import com.robotium.solo.Solo;
 import com.mendeleypaperreader.R;
-import com.robotium.solo.WebElement;
+
 import android.webkit.WebView;
 import com.robotium.solo.By;
 import android.content.SharedPreferences;

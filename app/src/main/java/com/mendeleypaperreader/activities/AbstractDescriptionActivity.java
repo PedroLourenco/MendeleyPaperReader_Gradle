@@ -1,10 +1,11 @@
-package com.mendeleypaperreader;
+package com.mendeleypaperreader.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.utl.Globalconstant;
 
 /**
