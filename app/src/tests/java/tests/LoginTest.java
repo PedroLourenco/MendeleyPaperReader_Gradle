@@ -56,7 +56,7 @@ public class LoginTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
     }
 
-
+/*
     public void testAllDocs() throws Exception {
 
         solo.clickOnView(solo.getCurrentActivity().findViewById(R.id.auth));
@@ -75,7 +75,7 @@ public class LoginTest extends ActivityInstrumentationTestCase2<MainActivity> {
     }
 
 
-
+*/
 
     // Our tearDown...
     public void tearDown() throws Exception {
