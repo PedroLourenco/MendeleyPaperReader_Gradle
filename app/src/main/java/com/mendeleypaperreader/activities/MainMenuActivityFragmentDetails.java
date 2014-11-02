@@ -45,13 +45,14 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 
 
 
-	public static MainMenuActivityFragmentDetails newInstance(int index , String description) {
+	public static MainMenuActivityFragmentDetails newInstance(int index , String description, int foldersCount) {
 		MainMenuActivityFragmentDetails f = new MainMenuActivityFragmentDetails();
 
 		// Supply index input as an argument.
 		Bundle args = new Bundle();
 		args.putInt("index", index);
 		args.putString("description", description);
+        args.putInt("foldersCount", foldersCount);
 		f.setArguments(args);
 
 		return f;
@@ -69,6 +70,17 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 
 		return position;
 	}
+
+    public int getFoldersCount() {
+
+        int position = getArguments().getInt("foldersCount", 1);
+
+        if(position == 0){
+            position = position+1;
+        }
+
+        return position;
+    }
 
 
 	public String getShownDescription() {
@@ -204,19 +216,23 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 		int index = getShownIndex();
 		if (Globalconstant.LOG){
 			Log.d(Globalconstant.TAG,"Loader  Details");
-			Log.d(Globalconstant.TAG,"index: " + index );			
+			Log.d(Globalconstant.TAG,"index: " + index );
+            Log.d(Globalconstant.TAG,"Folder Count: " + getFoldersCount() );
+
 		}
 
 		Uri uri = null;
 
 		if(getShownIndex() == 1) { //All doc
 
+            Log.d(Globalconstant.TAG,"All doc");
 			title.setText(Globalconstant.MYLIBRARY[0]);
 			projection = new String[] {DatabaseOpenHelper.TITLE + " as _id",  DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"}; 
 			uri = MyContentProvider.CONTENT_URI_DOC_DETAILS;
 		}
 		else if (getShownIndex() == 2){ //added
 
+            Log.d(Globalconstant.TAG,"added");
 			title.setText(Globalconstant.MYLIBRARY[1]);
 			projection = new String[] {DatabaseOpenHelper.TITLE + " as _id",  DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
 			selection = DatabaseOpenHelper.ADDED + " >= datetime('now', 'start of month')";
@@ -224,6 +240,7 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 		}
 		else if (getShownIndex() == 3){ //Starred = true
 
+            Log.d(Globalconstant.TAG,"Starred = true");
 			title.setText(Globalconstant.MYLIBRARY[2]);
 			projection = new String[] {DatabaseOpenHelper.TITLE + " as _id",  DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
 			selection = DatabaseOpenHelper.STARRED + " = 'true'";
@@ -231,6 +248,7 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 		}
 		else if (getShownIndex() == 4){ //Authored = true
 
+            Log.d(Globalconstant.TAG,"Authored = true");
 			title.setText(Globalconstant.MYLIBRARY[3]);
 			projection = new String[] {DatabaseOpenHelper.TITLE + " as _id",  DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
 			selection = DatabaseOpenHelper.AUTHORED + " = 'true'";
@@ -242,8 +260,8 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 			title.setText(Globalconstant.MYLIBRARY[4]);
 		}
 
-		else if (getShownIndex() > 5){
-
+		else if (getShownIndex() > 5 && getShownIndex() <= getFoldersCount()+7){
+            Log.d(Globalconstant.TAG,"folders");
 			String folderName = getShownDescription();			
 			if (folderName.contains("'")) {
 				 folderName = folderName.replaceAll("'", "''");
@@ -255,6 +273,20 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 			
 			uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
 		}
+
+        else if (getShownIndex() > getFoldersCount()){
+            Log.d(Globalconstant.TAG,"groups");
+            String groupName = getShownDescription();
+            if (groupName.contains("'")) {
+                groupName = groupName.replaceAll("'", "''");
+            }
+
+            title.setText(getShownDescription());
+            projection = new String[] {DatabaseOpenHelper.TITLE + " as _id",  DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
+            selection = DatabaseOpenHelper.GROUP_ID + " in (select _id from " + DatabaseOpenHelper.TABLE_GROUPS +  " where " + DatabaseOpenHelper.GROUPS_NAME + " =  '" + groupName + "')";  // + DatabaseOpenHelper.TABLE_FOLDERS + " where " + DatabaseOpenHelper.FOLDER_NAME + " = '" + folderName + "'))";
+
+            uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
+        }
 
 		mcursor = new CursorLoader(getActivity().getApplicationContext(), uri, projection, selection, null, null);
 

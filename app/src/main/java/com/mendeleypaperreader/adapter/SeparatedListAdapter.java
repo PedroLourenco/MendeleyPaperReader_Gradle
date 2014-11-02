@@ -19,7 +19,7 @@ import com.mendeleypaperreader.R;
 	public final static int TYPE_SECTION_HEADER = 0;
 	
 	public SeparatedListAdapter(Context context) {
-		headers = new ArrayAdapter<String>(context, R.layout.listview_section);
+		headers = new ArrayAdapter<String>(context, R.layout.listview_section_header);
 	}
 	
 	public void addSection(String section, Adapter adapter) {

@@ -29,6 +29,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 	public final static String TABLE_CATALOG_DOCS = "catalog_docs";
 	public final static String TABLE_ACADEMIC_STATUS_DOCS = "academic_status_docs";
 	public final static String TABLE_COUNTRY_STATUS_DOCS = "country_status_docs";
+    public final static String TABLE_GROUPS = "groups";
 	
 	public final static String _ID = "_id";
 	public final static String TYPE = "type";
@@ -101,7 +102,9 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 	public final static String STATUS = "status";
 	public final static String COUNT = "count";
 	public final static String COUNTRY = "country";
-	
+    //Table Groups columns
+    public final static String GROUPS_NAME = "group_name";
+
 	
 
 	final static String[] document_details_columns = { _ID, TYPE, MONTH, YEAR, LAST_MODIFIED, DAY, GROUP_ID, SOURCE, TITLE, REVISION, IDENTIFIERS, ABSTRACT, PROFILE_ID, AUTHORS, ADDED, PAGES, VOLUME, ISSUE, WEBSITE, PUBLISHER, CITY, EDITION, INSTITUTION, SERIES, CHAPTER, EDITORS, READ, STARRED, AUTHORED, CONFIRMED, HIDDEN};
@@ -129,9 +132,11 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 	final private static String CREATE_TABLE_ACADEMIC_STATUS_DOCS = "CREATE TABLE academic_status_docs (" + DOC_DETAILS_ID + " TEXT, " + STATUS + " TEXT, " + COUNT + " TEXT) ";
 	
 	//final private static String CREATE_TABLE_COUNTRY_STATUS_DOCS = "CREATE TABLE country_status_docs (" + DOC_DETAILS_ID + " TEXT, " + COUNTRY + " TEXT, " + COUNT + " TEXT) ";
-	
-	
-	final private static String CREATE_TABLE_DOCUMENT_DETAILS =
+
+    final private static String CREATE_TABLE_GROUPS = "CREATE TABLE groups (" + _ID + " TEXT PRIMARY KEY, " + GROUPS_NAME + " TEXT ) ";
+
+
+    final private static String CREATE_TABLE_DOCUMENT_DETAILS =
 
 	"CREATE TABLE document_details (" + _ID + " TEXT PRIMARY KEY, "
 			+ TYPE + " TEXT, "
@@ -176,7 +181,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 			
 			
 	final private static String DATABASE_NAME = "Mendeley_library.db";
-	final private static Integer VERSION = 2;
+	final private static Integer VERSION = 3;
 	final private Context mContext;
 	
 	public DatabaseOpenHelper(Context context, String name, 
@@ -207,6 +212,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 			db.execSQL(CREATE_TABLE_PROFILE);
 			db.execSQL(CREATE_TABLE_FOLDERS_DOCS);
 			db.execSQL(CREATE_TABLE_ACADEMIC_STATUS_DOCS);
+            db.execSQL(CREATE_TABLE_GROUPS);
 			//db.execSQL(CREATE_TABLE_COUNTRY_STATUS_DOCS);
 	}
 
@@ -216,12 +222,12 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 		
 		SessionManager session;
 		session = new SessionManager(this.mContext);
-		session.savePreferences("versioCode", "03");
+		session.savePreferences("versioCode", "04");
 		
 		//Database verson 2
-				db.execSQL("ALTER TABLE document_details ADD COLUMN reader_count TEXT ;");
-				db.execSQL("ALTER TABLE document_details ADD COLUMN is_download TEXT ;");
-				db.execSQL(CREATE_TABLE_ACADEMIC_STATUS_DOCS);
+				//db.execSQL("ALTER TABLE document_details ADD COLUMN reader_count TEXT ;");
+				//db.execSQL("ALTER TABLE document_details ADD COLUMN is_download TEXT ;");
+				//db.execSQL(CREATE_TABLE_ACADEMIC_STATUS_DOCS);
 				//db.execSQL(CREATE_TABLE_COUNTRY_STATUS_DOCS);
 				
 				

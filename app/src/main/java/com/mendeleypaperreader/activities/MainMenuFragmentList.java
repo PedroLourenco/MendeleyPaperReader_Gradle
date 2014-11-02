@@ -7,7 +7,6 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -44,9 +43,13 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 
 	boolean mDualPane;
 	int mCurCheckPosition = 0;
-	SimpleCursorAdapter mAdapter;
-	private String description;  
+	SimpleCursorAdapter foldersAdapter;
+    SimpleCursorAdapter groupsAdapter;
+	private String description;
+    private int foldersCount;
 	CustomAdapterLibrary  lAdapter;
+    private static final int FOLDERS_LOADER = 0;
+    private static final int GROUPS_LOADER = 1;
 
 
 	Integer[] imageId = {R.drawable.alldocuments, R.drawable.clock,	R.drawable.starim, R.drawable.person, R.drawable.empty_trash};
@@ -60,24 +63,31 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 		// Use a custom adapter so we can have something more than the just the text view filled in.
 		lAdapter =  new CustomAdapterLibrary (getActivity (),  R.id.title, Arrays.asList (Globalconstant.MYLIBRARY));
 
-		String[] dataColumns = {"_id"}; //column DatabaseOpenHelper.FOLDER_NAME
-		int[] viewIDs = { R.id.title };
+		String[] foldersDataColumns = {"_id"}; //column DatabaseOpenHelper.FOLDER_NAME
+		int[] folderViewIDs = { R.id.title };
 
+        String[] groupsDataColumns = {"_id"}; //column DatabaseOpenHelper.GROUP_NAME
 
-		mAdapter = new SimpleCursorAdapter(getActivity().getApplicationContext(), R.layout.list_row_with_image, null, dataColumns, viewIDs, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		foldersAdapter = new SimpleCursorAdapter(getActivity().getApplicationContext(), R.layout.list_row_with_image, null, foldersDataColumns, folderViewIDs, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+
+        groupsAdapter = new SimpleCursorAdapter(getActivity().getApplicationContext(), R.layout.list_row_with_image_groups, null, groupsDataColumns, folderViewIDs, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
 		// Add section to list and merge two adatpers
 		MergeAdapter mergeAdapter = new MergeAdapter();
-		mergeAdapter.addAdapter(new ListTitleAdapter(getActivity().getApplicationContext(), getResources().getString(R.string.my_library), lAdapter, R.layout.listview_section));
+		mergeAdapter.addAdapter(new ListTitleAdapter(getActivity().getApplicationContext(), getResources().getString(R.string.my_library), lAdapter, R.layout.listview_section_header));
 		mergeAdapter.addAdapter(lAdapter);
-		mergeAdapter.addAdapter(new ListTitleAdapter(getActivity().getApplicationContext(), getResources().getString(R.string.my_folders), mAdapter, R.layout.listview_section));
-		mergeAdapter.addAdapter(mAdapter);
+		mergeAdapter.addAdapter(new ListTitleAdapter(getActivity().getApplicationContext(), getResources().getString(R.string.my_folders), foldersAdapter, R.layout.listview_section_header));
+		mergeAdapter.addAdapter(foldersAdapter);
+        mergeAdapter.addAdapter(new ListTitleAdapter(getActivity().getApplicationContext(), getResources().getString(R.string.my_groups), groupsAdapter, R.layout.listview_section_header));
+        mergeAdapter.addAdapter(groupsAdapter);
+
 
 		mergeAdapter.setNoItemsText("Nothing to display. This list is empty.");
 
 		setListAdapter(mergeAdapter);
 
-		getActivity().getSupportLoaderManager().initLoader(0, null, this);
+		getActivity().getSupportLoaderManager().initLoader(FOLDERS_LOADER, null, this);
+        getActivity().getSupportLoaderManager().initLoader(GROUPS_LOADER, null, this);
 
 		if (Globalconstant.LOG)
 			LoaderManager.enableDebugLogging(true);     
@@ -99,7 +109,7 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 			// In dual-pane mode, the list view highlights the selected item.
 			getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			// Make sure our UI is in the correct state.
-			showDetails(mCurCheckPosition, description);
+			showDetails(mCurCheckPosition, description, foldersCount);
 		}
 	}
 
@@ -116,27 +126,38 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
 		int aux_position;
+        Cursor c = foldersAdapter.getCursor();
+        foldersCount =  c.getCount();
+
 		if (Globalconstant.LOG){
 			Log.d(Globalconstant.TAG, "mDualPane  FOLDERS:" + mDualPane);  
 			Log.d(Globalconstant.TAG, "mDualPane  position:" + position);
+            Log.d(Globalconstant.TAG, "Folder Count: " + foldersCount);
 		}
+
+
 
 		// position <= 5 - fixed folders
 		if( position > 0 && position < 5){
 			aux_position = position - 1;
 			description = lAdapter.getItem(aux_position);
-			showDetails(position, description);
+			showDetails(position, description, foldersCount);
 
 		}
-		else if(position > 6){
+		else if(position > 6 && position < c.getCount()+7){
 			//get position from folders cursor
 			aux_position = position - 7;
-
-			Cursor c = mAdapter.getCursor();
 			c.moveToPosition(aux_position);
 			description = c.getString(c.getColumnIndex("_id"));
-			showDetails(position, description);
+			showDetails(position, description, foldersCount);
 		}
+        else if(position > foldersCount + 7){  //Group information
+            Cursor groups = groupsAdapter.getCursor();
+            description = groups.getString(c.getColumnIndex("_id"));
+            showDetails(position, description, foldersCount);
+
+
+        }
 	}
 
 	/**
@@ -144,7 +165,7 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 	 * displaying a fragment in-place in the current UI, or starting a
 	 * whole new activity in which it is displayed.
 	 */
-	void showDetails(int index, String description ) {
+	void showDetails(int index, String description, int foldersCount) {
 		mCurCheckPosition = index;
 
 
@@ -167,7 +188,7 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 
 			if (details == null || details.getShownIndex() != index) {
 				// Make new fragment to show this selection.
-				details = MainMenuActivityFragmentDetails.newInstance(index, description);
+				details = MainMenuActivityFragmentDetails.newInstance(index, description, foldersCount);
 
 				// Execute a transaction, replacing any existing fragment
 				// with this one inside the frame.
@@ -185,47 +206,84 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 			intent.setClass(getActivity(), DetailsActivity.class);
 			intent.putExtra("index", index);
 			intent.putExtra("description", description);
+            intent.putExtra("foldersCount", foldersCount);
 			startActivity(intent);
 		}
 	}
 
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-
-		String[] projection = {DatabaseOpenHelper.FOLDER_NAME + " as _id"};
-		if (Globalconstant.LOG)
-			Log.d(Globalconstant.TAG,"onCreateLoader  Folders");
-		Uri uri = MyContentProvider.CONTENT_URI_FOLDERS;
-		return new CursorLoader(getActivity().getApplicationContext(), uri, projection, null, null, null);
-	}
+	public Loader<Cursor> onCreateLoader(int loaderID, Bundle args) {
 
 
+        switch (loaderID) {
+            case FOLDERS_LOADER:
+
+                String[] folderProjection = {DatabaseOpenHelper.FOLDER_NAME + " as _id"};
+                if (Globalconstant.LOG)
+                    Log.d(Globalconstant.TAG, "onCreateLoader  Folders");
+
+                return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_FOLDERS, folderProjection, null, null, null);
+
+
+            case GROUPS_LOADER:
+
+                String[] groupProjection = {DatabaseOpenHelper.GROUPS_NAME + " as _id"};
+                if (Globalconstant.LOG)
+                    Log.d(Globalconstant.TAG, "onCreateLoader  Groups");
+
+                return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_GROUPS, groupProjection, null, null, null);
+
+
+
+            default:
+                // An invalid id was passed in
+                return null;
+        }
+
+    }
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		mAdapter.swapCursor(cursor);
+
+        switch(loader.getId()) {
+            case FOLDERS_LOADER:
+
+                foldersAdapter.swapCursor(cursor);
+            break;
+            case GROUPS_LOADER:
+
+                groupsAdapter.swapCursor(cursor);
+        }
+
 	}
 
 
 
 	@Override
-	public void onLoaderReset(Loader<Cursor> cursor) {
+	public void onLoaderReset(Loader<Cursor> loader) {
 
-		if(isAdded()){
-			getLoaderManager().restartLoader(0, null, this);
-		}
-		else{
-			mAdapter.swapCursor(null);
-		}	
+        switch(loader.getId()) {
+            case FOLDERS_LOADER:
 
-	}
+                if(isAdded()){
+                    getLoaderManager().restartLoader(FOLDERS_LOADER, null, this);
+                }
+                else{
+                    foldersAdapter.swapCursor(null);
+                }
+                break;
+
+            }
+    }
+
+
 
 	public void onResume() {
 		super.onResume();
 		// Restart loader so that it refreshes displayed items according to database
 
-		getLoaderManager().restartLoader(0, null, this);
+		getLoaderManager().restartLoader(FOLDERS_LOADER, null, this);
 	} 
 
 

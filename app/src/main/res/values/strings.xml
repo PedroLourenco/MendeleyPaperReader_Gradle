@@ -9,6 +9,7 @@
     <string name="createaccount">Create account</string>
     <string name="my_library"><b>My Library</b></string>
     <string name="my_folders"><b>Folders</b></string>
+    <string name="my_groups"><b>Groups</b></string>
     <string name="app_logo">App logo</string>
 
     <!-- MainActivity -->
@@ -40,9 +41,9 @@
     <!-- About activity -->
 
     <string name="msg_about">Get access to Mendeley database papers.</string>
-    <string name="bugfix"><b>Version 0.2.0 (October, 2014)</b> \n Bug fix. \n Readers counter by Academic status. \n Download articles. \n\n <b>Version 0.1.1 (September, 2014)</b> \n Bug Fix - In some devices app crashes when trying to open the browser. \n App crashes when trying to download large libraries.\n\n <b>Version 0.0.1 (July, 2014)</b> \n Initial Version.</string>
+    <string name="bugfix"><b>Version 0.3.0 (November, 2014)</b> \n Bug fix. \n Get groups folder and articles. \n\n <b>Version 0.2.0 (October, 2014)</b> \n Bug fix. \n Readers counter by Academic status. \n Download articles. \n\n <b>Version 0.1.1 (September, 2014)</b> \n Bug Fix - In some devices app crashes when trying to open the browser. \n App crashes when trying to download large libraries.\n\n <b>Version 0.0.1 (July, 2014)</b> \n Initial Version.</string>
     <string name="web_link"></string>
-    <string name="msg_current_version">Version 0.2.0</string>
+    <string name="msg_current_version">Version 0.3.0</string>
     <string name="email">pdrolourenco@gmail.com</string>
     <string name="msg_email">"Contact: "</string>
     

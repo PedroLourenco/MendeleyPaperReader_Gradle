@@ -50,7 +50,106 @@ public class LoadData {
 
 
 
-	public void getFiles(String url){
+
+
+    public void getGroupDocs(){
+
+        Cursor groups = getGroups();
+
+        while (groups.moveToNext()) {
+
+
+            Log.d(Globalconstant.TAG, "ID GROUP: " + groups.getString(groups.getColumnIndex(DatabaseOpenHelper._ID)));
+
+            String url = Globalconstant.get_docs_in_groups.replace("#groupId#",groups.getString(groups.getColumnIndex(DatabaseOpenHelper._ID)));
+
+            Log.d(Globalconstant.TAG, "URL GROUP: " + url + access_token);
+
+            getUserLibrary(url + access_token);
+
+        }
+
+
+
+
+    }
+
+
+    private Cursor getGroups(){
+
+        if(Globalconstant.LOG)
+            Log.d(Globalconstant.TAG, "getGROUPS- LOAD DATA");
+
+
+        String[] projection = null;
+        String selection = null;
+
+        projection = new String[] {DatabaseOpenHelper._ID + " as _id"};
+        Uri  uri = MyContentProvider.CONTENT_URI_GROUPS;
+
+
+        return this.context.getContentResolver().query(uri, projection, selection, null, null);
+
+
+
+    }
+
+
+    public void getGroups(String url){
+
+        ContentValues values = new ContentValues();
+
+        JSONParser jParser = new JSONParser();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonFactory factory = mapper.getFactory();
+        List<InputStream> link = new ArrayList<InputStream>();
+        link = jParser.getJACKSONFromUrl(url,true);
+
+        Log.d(Globalconstant.TAG, "url" + url);
+
+
+        try {
+            for( InputStream oneItem : link ) {
+                JsonParser jp = factory.createParser(oneItem);
+                JsonNode rootNode = mapper.readTree(jp);
+
+                Iterator<JsonNode> ite = rootNode.iterator();
+
+                while (ite.hasNext() ) {
+                    JsonNode temp = ite.next();
+
+                    if(temp.has(Globalconstant.GROUP_NAME)){
+                        values.put(DatabaseOpenHelper.GROUPS_NAME,temp.get(Globalconstant.GROUP_NAME).asText());
+
+                        Log.d(Globalconstant.TAG, "GROUP_NAME" + temp.get(Globalconstant.GROUP_NAME).asText());
+                    }
+
+                    if(temp.has(Globalconstant.ID)){
+                        values.put(DatabaseOpenHelper._ID,temp.get(Globalconstant.ID).asText());
+
+                        Log.d(Globalconstant.TAG, "ID: " + temp.get(Globalconstant.ID).asText());
+                    }
+                    Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_GROUPS, values);
+
+                }
+
+                jp.close();
+            }
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+
+
+
+    public void getFiles(String url){
 
 		ContentValues values = new ContentValues();
 
@@ -449,6 +548,7 @@ public class LoadData {
 	public void getCatalogId(){
 
 		ContentValues values = new ContentValues();
+        ContentValues values1 = new ContentValues();
 		ContentValues academic_docs_values = new ContentValues();
 		Cursor cursorDocs;
 		String urlfilter = null;
@@ -475,6 +575,7 @@ public class LoadData {
 			
 			String where = DatabaseOpenHelper._ID + " = '" + docId + "'";
 			String where2 = DatabaseOpenHelper._ID + " = '" + docId + "' and " + DatabaseOpenHelper.READER_COUNT + " IS NULL";
+            String where3 = DatabaseOpenHelper._ID + " = '" + docId + "' and " + DatabaseOpenHelper.WEBSITE + " IS NULL";
 
 
 
@@ -533,6 +634,7 @@ public class LoadData {
 								values.put(DatabaseOpenHelper.WEBSITE, temp.get("link").asText());
 							}
 
+
 							if (temp.has("reader_count")){
 								values.put(DatabaseOpenHelper.READER_COUNT, temp.get("reader_count").asText());
 							}
@@ -563,8 +665,9 @@ public class LoadData {
 				}
 			}
 			values.put(DatabaseOpenHelper.READER_COUNT, "0");
-			values.put(DatabaseOpenHelper.WEBSITE, "");
+			values1.put(DatabaseOpenHelper.WEBSITE, "");
 			this.context.getContentResolver().update(uri_, values, where2, null);
+            this.context.getContentResolver().update(uri_, values1, where3, null);
 
 		}
 	}

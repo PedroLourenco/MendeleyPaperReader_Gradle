@@ -10,7 +10,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
+
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
+import com.mendeleypaperreader.utl.Globalconstant;
 
 public class MyContentProvider extends ContentProvider {
 
@@ -30,9 +33,10 @@ public class MyContentProvider extends ContentProvider {
 	public static final Uri CONTENT_URI_CATALOG_DOCS= Uri.parse("content://" + AUTHORITY + "/" + DatabaseOpenHelper.TABLE_CATALOG_DOCS);
 	public static final Uri CONTENT_URI_ACADEMIC_DOCS= Uri.parse("content://" + AUTHORITY + "/" + DatabaseOpenHelper.TABLE_ACADEMIC_STATUS_DOCS);
 	public static final Uri CONTENT_URI_COUNTRY_DOCS= Uri.parse("content://" + AUTHORITY + "/" + DatabaseOpenHelper.TABLE_COUNTRY_STATUS_DOCS);
-	
-	
-	public static final int ALLDOCS = 1;
+    public static final Uri CONTENT_URI_GROUPS= Uri.parse("content://" + AUTHORITY + "/" + DatabaseOpenHelper.TABLE_GROUPS);
+
+
+    public static final int ALLDOCS = 1;
 	public static final int ALL_DOCS_ID = 2;  
 	public static final int ALL_DOC_AUTHORS = 3;
 	public static final int DOC_AUTHORS_ID = 4;
@@ -49,6 +53,8 @@ public class MyContentProvider extends ContentProvider {
 	public static final int ALL_ACADEMIC_DOCS_ID = 15;
 	public static final int ALL_COUNTRY_DOCS = 16;
 	public static final int ALL_COUNTRY_DOCS_ID = 17;
+    public static final int ALL_GROUPS = 18;
+
 
 	private static final UriMatcher sURIMatcher = 
 			new UriMatcher(UriMatcher.NO_MATCH);
@@ -70,6 +76,7 @@ public class MyContentProvider extends ContentProvider {
 		sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_ACADEMIC_STATUS_DOCS + "/id", ALL_ACADEMIC_DOCS_ID);
 		sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_COUNTRY_STATUS_DOCS, ALL_COUNTRY_DOCS);
 		sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_COUNTRY_STATUS_DOCS + "/id", ALL_COUNTRY_DOCS_ID);
+        sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_GROUPS, ALL_GROUPS);
 	}
 
 
@@ -226,6 +233,18 @@ public class MyContentProvider extends ContentProvider {
 				return newUri;	
 			}
 			break;
+            case ALL_GROUPS:
+
+                long group_row = db.insert(DatabaseOpenHelper.TABLE_GROUPS, null, values);
+
+                // If record is added successfully
+                if(group_row > 0) {
+
+                    Uri newUri = ContentUris.withAppendedId(CONTENT_URI_GROUPS, group_row);
+                    getContext().getContentResolver().notifyChange(newUri, null);
+                    return newUri;
+                }
+                break;
 		default: throw new SQLException("Failed to insert row into " + uri);
 		}
 		return uri;
@@ -278,7 +297,14 @@ public class MyContentProvider extends ContentProvider {
 			queryBuilder.appendWhere(selection);
 			break;
 
-		default:
+        case ALL_GROUPS:
+
+                queryBuilder.setTables(DatabaseOpenHelper.TABLE_GROUPS);
+
+                break;
+
+
+            default:
 			throw new IllegalArgumentException("Unsupported URI: " + uri);
 		}
 
@@ -344,7 +370,10 @@ public class MyContentProvider extends ContentProvider {
 
 	private int deleteDatabase(SQLiteDatabase db, String selection, String[] selectionArgs) {
 
-		int count = 0;
+        if (Globalconstant.LOG)
+            Log.e(Globalconstant.TAG, "DATABASE CREATE!!!!!!!");
+
+        int count = 0;
 
 		count = db.delete(DatabaseOpenHelper.TABLE_DOCUMENT_DETAILS, selection, selectionArgs);
 		count = count + db.delete(DatabaseOpenHelper.TABLE_AUTHORS, selection, selectionArgs);
@@ -352,6 +381,7 @@ public class MyContentProvider extends ContentProvider {
 		count = count + db.delete(DatabaseOpenHelper.TABLE_FILES, selection, selectionArgs);
 		count = count + db.delete(DatabaseOpenHelper.TABLE_PROFILE, selection, selectionArgs);
 		count = count + db.delete(DatabaseOpenHelper.TABLE_ACADEMIC_STATUS_DOCS, selection, selectionArgs);
+        count = count + db.delete(DatabaseOpenHelper.TABLE_GROUPS, selection, selectionArgs);
 		return count;
 	}
 

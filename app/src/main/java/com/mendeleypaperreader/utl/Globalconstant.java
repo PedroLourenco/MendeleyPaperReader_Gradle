@@ -12,7 +12,7 @@ package com.mendeleypaperreader.utl;
 public class Globalconstant {
 
     public static String TAG = "PaperReader";
-    public static final boolean LOG = false;
+    public static final boolean LOG = true;
 
      public static String shared_file_name = "share_pref";
     
@@ -26,11 +26,14 @@ public class Globalconstant {
      public static String GRANT_TYPE = "refresh_token";
      public static String TOKEN_URL = "https://api-oauth2.mendeley.com/oauth/token";
     
-    //API URLs  
-    public static String get_catalog_url = "https://mix.mendeley.com/catalog?";			 
+    //API URLs
+
+    public static String get_docs_in_groups = "https://mix.mendeley.com/documents?group_id=#groupId#&view=all&limit=400&access_token=";
+    public static String get_groups_url = "https://mix.mendeley.com/groups?access_token=";
+    public static String get_catalog_url = "https://mix.mendeley.com/catalog?";
     public static String get_metadata_url = "https://mix.mendeley.com/metadata";	
     public static String get_catalod_id_url = "https://mix.mendeley.com/catalog/doc_id?view=all&access_token=";
-    public static String get_user_library_url = "https://mix.mendeley.com/documents?view=all&limit=200&access_token=";
+    public static String get_user_library_url = "https://mix.mendeley.com/documents?view=all&limit=400&access_token=";
     public static String get_docs_in_folders = "https://mix.mendeley.com/folders/id/documents?access_token=";
     public static String get_docs_ann = "https://mix.mendeley.com/annotations/?document_id=doc_id&access_token=";
     public static String get_user_folders_url = "https://mix.mendeley.com/folders?access_token=";
@@ -102,6 +105,7 @@ public class Globalconstant {
     public static String PROFILE_LINK = "link";
     public static String FOLDERS_DOCS_ID = "doc_id";
     public static String CATALOG_ID = "catalog_id";
+    public static String GROUP_NAME = "name";
 
     public static final String[] MYLIBRARY = 
 	{

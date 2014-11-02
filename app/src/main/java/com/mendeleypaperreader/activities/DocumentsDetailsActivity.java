@@ -59,7 +59,7 @@ import com.mendeleypaperreader.utl.Globalconstant;
 
 public class DocumentsDetailsActivity extends Activity  {
 
-	// private Cursor mAdapter;
+	// private Cursor foldersAdapter;
 	private TextView doc_abstract, doc_url, doc_pmid, doc_issn, doc_catalog, readerCounterValue;
 	private String docId, mAbstract, t_doc_url, issn, doi, pmid, doc_title, doc_authors_text, doc_source_text, readerValue, isDownloaded;
 	private static SessionManager session;
@@ -748,8 +748,11 @@ public class DocumentsDetailsActivity extends Activity  {
 		RelativeLayout.LayoutParams layout_doc_url_title;
 		RelativeLayout.LayoutParams layout_doc_url;
 		RelativeLayout.LayoutParams layout_reader_count;
-		
-		if(!t_doc_url.isEmpty()){
+
+
+
+
+        if(!t_doc_url.isEmpty()){
 
 			//Document URL Title
 			doc_url_title.setId(22);

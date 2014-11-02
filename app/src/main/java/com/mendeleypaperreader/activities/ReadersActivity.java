@@ -50,9 +50,9 @@ public class ReadersActivity extends ListActivity {
 		// Add section to list and merge two adatpers
 		MergeAdapter mergeAdapter = new MergeAdapter();
 
-		//mergeAdapter.addAdapter(new ListTitleAdapter(getApplicationContext(), getResources().getString(R.string.countryStatus), mAdapterCountryStatus, R.layout.listview_section));
+		//mergeAdapter.addAdapter(new ListTitleAdapter(getApplicationContext(), getResources().getString(R.string.countryStatus), mAdapterCountryStatus, R.layout.listview_section_header));
 		//mergeAdapter.addAdapter(mAdapterCountryStatus);
-		mergeAdapter.addAdapter(new ListTitleAdapter(getApplicationContext(), getResources().getString(R.string.academicStatus), mAdapterAcademicStatus, R.layout.listview_section));
+		mergeAdapter.addAdapter(new ListTitleAdapter(getApplicationContext(), getResources().getString(R.string.academicStatus), mAdapterAcademicStatus, R.layout.listview_section_header));
 		mergeAdapter.addAdapter(mAdapterAcademicStatus);
 
 		mergeAdapter.setNoItemsText("Nothing to display. This list is empty.");
