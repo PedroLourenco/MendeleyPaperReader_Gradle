@@ -273,6 +273,15 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
                     foldersAdapter.swapCursor(null);
                 }
                 break;
+            case GROUPS_LOADER:
+
+                if(isAdded()){
+                    getLoaderManager().restartLoader(GROUPS_LOADER, null, this);
+                }
+                else{
+                    groupsAdapter.swapCursor(null);
+                }
+                break;
 
             }
     }
@@ -284,6 +293,7 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 		// Restart loader so that it refreshes displayed items according to database
 
 		getLoaderManager().restartLoader(FOLDERS_LOADER, null, this);
+        getLoaderManager().restartLoader(GROUPS_LOADER, null, this);
 	} 
 
 

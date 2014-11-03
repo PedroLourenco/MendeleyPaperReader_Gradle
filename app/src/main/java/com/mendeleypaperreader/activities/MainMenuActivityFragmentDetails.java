@@ -37,11 +37,11 @@ import com.mendeleypaperreader.utl.Globalconstant;
 public class MainMenuActivityFragmentDetails  extends ListFragment  implements LoaderCallbacks<Cursor> {
 
 	boolean mDualPane;
-	ListView mListView;
 	SimpleCursorAdapter mAdapter;
 	private CursorLoader mcursor;
 	private String description = null;
 	TextView title;
+    private static final int DETAILS_LOADER = 2;
 
 
 
@@ -128,7 +128,7 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 		if (Globalconstant.LOG)
 			Log.d(Globalconstant.TAG,"onCreateView  Details");
 
-		getActivity().getSupportLoaderManager().initLoader(1, null, this);
+		getActivity().getSupportLoaderManager().initLoader(DETAILS_LOADER, null, this);
 
 		if (Globalconstant.LOG)
 			LoaderManager.enableDebugLogging(true);     
@@ -201,7 +201,7 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 		if (mDualPane) {
 			if (Globalconstant.LOG)
 				Log.d(Globalconstant.TAG,"mDualPane");
-			getLoaderManager().restartLoader(1, null, this);
+			getLoaderManager().restartLoader(DETAILS_LOADER, null, this);
 		}
 	}
 
@@ -317,19 +317,12 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 		if (Globalconstant.LOG)
 			Log.d(Globalconstant.TAG,"onLoaderReset  Details");
 		if(isAdded()){
-			getLoaderManager().restartLoader(1, null, this);
+			getLoaderManager().restartLoader(DETAILS_LOADER, null, this);
 		}
 		else{
 			mAdapter.swapCursor(null);
 		}
 	}
-
-
-	public void restarLoader(){
-
-		getLoaderManager().restartLoader(1, null, this);
-	}
-
 
 
 }

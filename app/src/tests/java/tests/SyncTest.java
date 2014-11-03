@@ -1,25 +1,26 @@
 package tests;
 
 import android.app.Activity;
-import android.test.ActivityInstrumentationTestCase2;
-
-import com.mendeleypaperreader.activities.MainActivity;
-import com.robotium.solo.Solo;
-import com.mendeleypaperreader.R;
-
-import android.webkit.WebView;
-import com.robotium.solo.By;
-import android.content.SharedPreferences;
 import android.app.Instrumentation;
+import android.content.SharedPreferences;
+import android.test.ActivityInstrumentationTestCase2;
+import android.webkit.WebView;
 
+import com.mendeleypaperreader.R;
+import com.mendeleypaperreader.activities.MainActivity;
+import com.robotium.solo.By;
+import com.robotium.solo.Solo;
 
-public class LoginTest extends ActivityInstrumentationTestCase2<MainActivity> {
+/**
+ * Created by pedro on 03/11/14.
+ */
+public class SyncTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
     private Solo solo;
     private Activity activity;
 
 
-    public LoginTest() {
+    public SyncTest() {
         super(MainActivity.class);
 
     }
@@ -40,21 +41,6 @@ public class LoginTest extends ActivityInstrumentationTestCase2<MainActivity> {
     }
 
 
-    public void testLogin() throws Exception {
-
-        solo.clickOnView(solo.getCurrentActivity().findViewById(R.id.auth));
-
-        WebView view = (WebView) solo.getView(R.id.webview);
-
-        solo.waitForView(view, 2000, false);
-        solo.enterTextInWebElement(By.id("username"), "pdrolourenco@gmail.com");
-        solo.enterTextInWebElement(By.id("password"), "000000");
-        solo.clickOnText("Authorize");
-
-        assertTrue(solo.waitForActivity("MainMenuActivity", 20000));
-
-
-    }
 
 
     public void testAllDocs() throws Exception {
