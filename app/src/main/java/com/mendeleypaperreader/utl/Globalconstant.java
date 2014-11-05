@@ -1,7 +1,7 @@
 package com.mendeleypaperreader.utl;
 
 /**
- * Classname: Globalconstant 
+ * Classname: Globalconstant
  * 	 
  * 
  * @date July 8, 2014
@@ -12,7 +12,7 @@ package com.mendeleypaperreader.utl;
 public class Globalconstant {
 
     public static String TAG = "PaperReader";
-    public static final boolean LOG = true;
+    public static final boolean LOG = false;
 
      public static String shared_file_name = "share_pref";
     

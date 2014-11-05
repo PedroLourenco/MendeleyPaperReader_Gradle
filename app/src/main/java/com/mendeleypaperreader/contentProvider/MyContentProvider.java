@@ -13,7 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
-import com.mendeleypaperreader.utl.GlobalConstant;
+import com.mendeleypaperreader.utl.Globalconstant;
 
 public class MyContentProvider extends ContentProvider {
 
@@ -370,8 +370,8 @@ public class MyContentProvider extends ContentProvider {
 
 	private int deleteDatabase(SQLiteDatabase db, String selection, String[] selectionArgs) {
 
-        if (GlobalConstant.LOG)
-            Log.e(GlobalConstant.TAG, "DATABASE CREATE!!!!!!!");
+        if (Globalconstant.LOG)
+            Log.e(Globalconstant.TAG, "DATABASE CREATE!!!!!!!");
 
         int count = 0;
 

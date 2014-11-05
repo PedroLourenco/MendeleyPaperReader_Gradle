@@ -23,7 +23,7 @@ import android.widget.TextView;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
-import com.mendeleypaperreader.utl.GlobalConstant;
+import com.mendeleypaperreader.utl.Globalconstant;
 
 /**
  * Classname: MainMenuActivityFragmentDetails 
@@ -107,9 +107,9 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 
 		description = getShownDescription();
 
-		if (GlobalConstant.LOG){
-			Log.d(GlobalConstant.TAG,"Description Details: " + description );
-			Log.d(GlobalConstant.TAG,"index Details: " + index );
+		if (Globalconstant.LOG){
+			Log.d(Globalconstant.TAG,"Description Details: " + description );
+			Log.d(Globalconstant.TAG,"index Details: " + index );
 		}
 
 
@@ -119,18 +119,18 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 		title = (TextView) view.findViewById(R.id.detailTitle);
 		title.setTypeface(null, Typeface.BOLD);
 		title.setText(description);
-		String[] dataColumns = {"_id", GlobalConstant.AUTHORS, "data"};
+		String[] dataColumns = {"_id", Globalconstant.AUTHORS, "data"};
 		int[] viewIDs = { R.id.Doctitle ,R.id.authors, R.id.data };
 		mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.list_row_all_doc, null, dataColumns, viewIDs, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
 		lv.setAdapter(mAdapter);
 
-		if (GlobalConstant.LOG)
-			Log.d(GlobalConstant.TAG,"onCreateView  Details");
+		if (Globalconstant.LOG)
+			Log.d(Globalconstant.TAG,"onCreateView  Details");
 
 		getActivity().getSupportLoaderManager().initLoader(DETAILS_LOADER, null, this);
 
-		if (GlobalConstant.LOG)
+		if (Globalconstant.LOG)
 			LoaderManager.enableDebugLogging(true);     
 
 		return view;
@@ -139,12 +139,11 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 
 
 
-
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
-		if (GlobalConstant.LOG)
-			Log.d(GlobalConstant.TAG, "position: " + position);
+		if (Globalconstant.LOG)
+			Log.d(Globalconstant.TAG, "position: " + position);
 
 		//cursor with My Library information
 		Cursor c = mAdapter.getCursor();
@@ -156,9 +155,9 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 		c1.moveToPosition(0);
 		String doc_id = c1.getString(c1.getColumnIndex(DatabaseOpenHelper._ID));
 
-		if (GlobalConstant.LOG) {
-			Log.d(GlobalConstant.TAG, "doc_id: " + doc_id);
-			Log.d(GlobalConstant.TAG, "title_description: " + title);
+		if (Globalconstant.LOG) {
+			Log.d(Globalconstant.TAG, "doc_id: " + doc_id);
+			Log.d(Globalconstant.TAG, "title_description: " + title);
 		}
 
 		Intent doc_details = new Intent(getActivity().getApplicationContext(), DocumentsDetailsActivity.class);
@@ -193,14 +192,14 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 		super.onResume();
 		
 		// Restart loader so that it refreshes displayed items according to database
-		if (GlobalConstant.LOG)
-			Log.d(GlobalConstant.TAG,"onResume");
+		if (Globalconstant.LOG)
+			Log.d(Globalconstant.TAG,"onResume");
 
 		View detailsFrame = getActivity().findViewById(R.id.details);
 		mDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
 		if (mDualPane) {
-			if (GlobalConstant.LOG)
-				Log.d(GlobalConstant.TAG,"mDualPane");
+			if (Globalconstant.LOG)
+				Log.d(Globalconstant.TAG,"mDualPane");
 			getLoaderManager().restartLoader(DETAILS_LOADER, null, this);
 		}
 	}
@@ -214,10 +213,10 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 		String[] projection = null;
 		String selection = null;
 		int index = getShownIndex();
-		if (GlobalConstant.LOG){
-			Log.d(GlobalConstant.TAG,"Loader  Details");
-			Log.d(GlobalConstant.TAG,"index: " + index );
-            Log.d(GlobalConstant.TAG,"Folder Count: " + getFoldersCount() );
+		if (Globalconstant.LOG){
+			Log.d(Globalconstant.TAG,"Loader  Details");
+			Log.d(Globalconstant.TAG,"index: " + index );
+            Log.d(Globalconstant.TAG,"Folder Count: " + getFoldersCount() );
 
 		}
 
@@ -225,31 +224,31 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 
 		if(getShownIndex() == 1) { //All doc
 
-            Log.d(GlobalConstant.TAG,"All doc");
-			title.setText(GlobalConstant.MYLIBRARY[0]);
+            Log.d(Globalconstant.TAG,"All doc");
+			title.setText(Globalconstant.MYLIBRARY[0]);
 			projection = new String[] {DatabaseOpenHelper.TITLE + " as _id",  DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"}; 
 			uri = MyContentProvider.CONTENT_URI_DOC_DETAILS;
 		}
 		else if (getShownIndex() == 2){ //added
 
-            Log.d(GlobalConstant.TAG,"added");
-			title.setText(GlobalConstant.MYLIBRARY[1]);
+            Log.d(Globalconstant.TAG,"added");
+			title.setText(Globalconstant.MYLIBRARY[1]);
 			projection = new String[] {DatabaseOpenHelper.TITLE + " as _id",  DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
 			selection = DatabaseOpenHelper.ADDED + " >= datetime('now', 'start of month')";
 			uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
 		}
 		else if (getShownIndex() == 3){ //Starred = true
 
-            Log.d(GlobalConstant.TAG,"Starred = true");
-			title.setText(GlobalConstant.MYLIBRARY[2]);
+            Log.d(Globalconstant.TAG,"Starred = true");
+			title.setText(Globalconstant.MYLIBRARY[2]);
 			projection = new String[] {DatabaseOpenHelper.TITLE + " as _id",  DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
 			selection = DatabaseOpenHelper.STARRED + " = 'true'";
 			uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
 		}
 		else if (getShownIndex() == 4){ //Authored = true
 
-            Log.d(GlobalConstant.TAG,"Authored = true");
-			title.setText(GlobalConstant.MYLIBRARY[3]);
+            Log.d(Globalconstant.TAG,"Authored = true");
+			title.setText(Globalconstant.MYLIBRARY[3]);
 			projection = new String[] {DatabaseOpenHelper.TITLE + " as _id",  DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
 			selection = DatabaseOpenHelper.AUTHORED + " = 'true'";
 			uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
@@ -257,11 +256,11 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 
 		else if (getShownIndex() == 5){ //Trash
 
-			title.setText(GlobalConstant.MYLIBRARY[4]);
+			title.setText(Globalconstant.MYLIBRARY[4]);
 		}
 
 		else if (getShownIndex() > 5 && getShownIndex() <= getFoldersCount()+7){
-            Log.d(GlobalConstant.TAG,"folders");
+            Log.d(Globalconstant.TAG,"folders");
 			String folderName = getShownDescription();			
 			if (folderName.contains("'")) {
 				 folderName = folderName.replaceAll("'", "''");
@@ -275,7 +274,7 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 		}
 
         else if (getShownIndex() > getFoldersCount()){
-            Log.d(GlobalConstant.TAG,"groups");
+            Log.d(Globalconstant.TAG,"groups");
             String groupName = getShownDescription();
             if (groupName.contains("'")) {
                 groupName = groupName.replaceAll("'", "''");
@@ -301,8 +300,8 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
 
 
-		if (GlobalConstant.LOG)
-			Log.d(GlobalConstant.TAG,"onLoadFinished  Details - count: " + cursor.getCount() +" - " + isAdded());
+		if (Globalconstant.LOG)
+			Log.d(Globalconstant.TAG,"onLoadFinished  Details - count: " + cursor.getCount() +" - " + isAdded());
 		if(isAdded() && !cursor.isClosed()){
 			mAdapter.changeCursor(cursor);
 		}
@@ -314,8 +313,8 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> arg0) {
-		if (GlobalConstant.LOG)
-			Log.d(GlobalConstant.TAG,"onLoaderReset  Details");
+		if (Globalconstant.LOG)
+			Log.d(Globalconstant.TAG,"onLoaderReset  Details");
 		if(isAdded()){
 			getLoaderManager().restartLoader(DETAILS_LOADER, null, this);
 		}

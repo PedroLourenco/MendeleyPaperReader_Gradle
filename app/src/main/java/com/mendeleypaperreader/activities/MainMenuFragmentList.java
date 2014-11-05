@@ -29,7 +29,7 @@ import com.mendeleypaperreader.adapter.ListTitleAdapter;
 import com.mendeleypaperreader.adapter.MergeAdapter;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
-import com.mendeleypaperreader.utl.GlobalConstant;
+import com.mendeleypaperreader.utl.Globalconstant;
 
 /**
  * Classname MainMenuFragmentList 
@@ -61,7 +61,7 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 
 
 		// Use a custom adapter so we can have something more than the just the text view filled in.
-		lAdapter =  new CustomAdapterLibrary (getActivity (),  R.id.title, Arrays.asList (GlobalConstant.MYLIBRARY));
+		lAdapter =  new CustomAdapterLibrary (getActivity (),  R.id.title, Arrays.asList (Globalconstant.MYLIBRARY));
 
 		String[] foldersDataColumns = {"_id"}; //column DatabaseOpenHelper.FOLDER_NAME
 		int[] folderViewIDs = { R.id.title };
@@ -89,7 +89,7 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 		getActivity().getSupportLoaderManager().initLoader(FOLDERS_LOADER, null, this);
         getActivity().getSupportLoaderManager().initLoader(GROUPS_LOADER, null, this);
 
-		if (GlobalConstant.LOG)
+		if (Globalconstant.LOG)
 			LoaderManager.enableDebugLogging(true);     
 
 
@@ -129,10 +129,10 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
         Cursor c = foldersAdapter.getCursor();
         foldersCount =  c.getCount();
 
-		if (GlobalConstant.LOG){
-			Log.d(GlobalConstant.TAG, "mDualPane  FOLDERS:" + mDualPane);
-			Log.d(GlobalConstant.TAG, "mDualPane  position:" + position);
-            Log.d(GlobalConstant.TAG, "Folder Count: " + foldersCount);
+		if (Globalconstant.LOG){
+			Log.d(Globalconstant.TAG, "mDualPane  FOLDERS:" + mDualPane);
+			Log.d(Globalconstant.TAG, "mDualPane  position:" + position);
+            Log.d(Globalconstant.TAG, "Folder Count: " + foldersCount);
 		}
 
 
@@ -169,14 +169,14 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 		mCurCheckPosition = index;
 
 
-		if (GlobalConstant.LOG)
-			Log.d(GlobalConstant.TAG, "ITEM SELECTED: " + description);
+		if (Globalconstant.LOG)
+			Log.d(Globalconstant.TAG, "ITEM SELECTED: " + description);
 
 
 		if (mDualPane) {
 
-			if (GlobalConstant.LOG)
-				Log.d(GlobalConstant.TAG, "mDualPane: " + mDualPane);
+			if (Globalconstant.LOG)
+				Log.d(Globalconstant.TAG, "mDualPane: " + mDualPane);
 
 			// We can display everything in-place with fragments, so update
 			// the list to highlight the selected item and show the data.
@@ -220,8 +220,8 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
             case FOLDERS_LOADER:
 
                 String[] folderProjection = {DatabaseOpenHelper.FOLDER_NAME + " as _id"};
-                if (GlobalConstant.LOG)
-                    Log.d(GlobalConstant.TAG, "onCreateLoader  Folders");
+                if (Globalconstant.LOG)
+                    Log.d(Globalconstant.TAG, "onCreateLoader  Folders");
 
                 return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_FOLDERS, folderProjection, null, null, null);
 
@@ -229,8 +229,8 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
             case GROUPS_LOADER:
 
                 String[] groupProjection = {DatabaseOpenHelper.GROUPS_NAME + " as _id"};
-                if (GlobalConstant.LOG)
-                    Log.d(GlobalConstant.TAG, "onCreateLoader  Groups");
+                if (Globalconstant.LOG)
+                    Log.d(Globalconstant.TAG, "onCreateLoader  Groups");
 
                 return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_GROUPS, groupProjection, null, null, null);
 
@@ -335,7 +335,7 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 
 			TextView txtTitle = (TextView) itemView.findViewById(R.id.title);
 			ImageView imageView = (ImageView) itemView.findViewById(R.id.list_image);
-			txtTitle.setText(GlobalConstant.MYLIBRARY[position]);
+			txtTitle.setText(Globalconstant.MYLIBRARY[position]);
 
 			imageView.setImageResource(imageId[position]);
 

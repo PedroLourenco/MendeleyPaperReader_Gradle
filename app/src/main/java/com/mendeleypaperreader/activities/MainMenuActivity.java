@@ -25,7 +25,7 @@ import com.mendeleypaperreader.jsonParser.SyncDataAsync;
 import com.mendeleypaperreader.sessionManager.GetAccessToken;
 import com.mendeleypaperreader.sessionManager.SessionManager;
 import com.mendeleypaperreader.utl.ConnectionDetector;
-import com.mendeleypaperreader.utl.GlobalConstant;
+import com.mendeleypaperreader.utl.Globalconstant;
 
 /**
  * Classname: MainMenuActivity 
@@ -212,7 +212,7 @@ public class MainMenuActivity extends FragmentActivity
 					//Get data from server
 					syncData();
 
-					if (GlobalConstant.LOG) {
+					if (Globalconstant.LOG) {
 						Log.d("refresh_token - Token Access", token);
 						Log.d("refresh_token - Expire", expire);
 						Log.d("refresh_token - Refresh", refresh);	
@@ -231,7 +231,7 @@ public class MainMenuActivity extends FragmentActivity
 
 			GetAccessToken jParser = new GetAccessToken();
 
-			JSONObject json = jParser.refresh_token(GlobalConstant.TOKEN_URL, code, GlobalConstant.CLIENT_ID, GlobalConstant.CLIENT_SECRET, GlobalConstant.REDIRECT_URI, GlobalConstant.GRANT_TYPE, refresh_token);
+			JSONObject json = jParser.refresh_token(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, Globalconstant.GRANT_TYPE, refresh_token);
 
 			return json;
 		} 

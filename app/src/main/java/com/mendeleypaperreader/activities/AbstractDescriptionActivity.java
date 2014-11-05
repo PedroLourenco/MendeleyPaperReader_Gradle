@@ -6,7 +6,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.mendeleypaperreader.R;
-import com.mendeleypaperreader.utl.GlobalConstant;
+import com.mendeleypaperreader.utl.Globalconstant;
 
 /**
  * classname: AbstractDescriptionActivity 
@@ -25,8 +25,8 @@ public class AbstractDescriptionActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_abstract_description);
 
-		if(GlobalConstant.LOG)
-			Log.d(GlobalConstant.TAG, "DOC_DETAILS - Abstract: " + getAbstract());
+		if(Globalconstant.LOG)
+			Log.d(Globalconstant.TAG, "DOC_DETAILS - Abstract: " + getAbstract());
 
 		TextView v_abstract = (TextView) findViewById(R.id.abstractDescription);
 		v_abstract.setText(getAbstract());

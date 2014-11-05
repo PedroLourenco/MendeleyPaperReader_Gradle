@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.mendeleypaperreader.sessionManager.SessionManager;
-import com.mendeleypaperreader.utl.GlobalConstant;
+import com.mendeleypaperreader.utl.Globalconstant;
 
 /**
  * Classname: DatabaseOpenHelper 
@@ -186,8 +186,8 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		
 			
-			if (GlobalConstant.LOG)
-				Log.e(GlobalConstant.TAG, "DATABASE CREATE!!!!!!!");
+			if (Globalconstant.LOG)
+				Log.e(Globalconstant.TAG, "DATABASE CREATE!!!!!!!");
 			
 			db.execSQL(CREATE_TABLE_DOCUMENT_DETAILS);
 			db.execSQL(CREATE_TABLE_AUTHORS);
