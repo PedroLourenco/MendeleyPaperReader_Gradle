@@ -95,8 +95,8 @@ public class JSONParser {
 				}
 
 			} else {
-				if (Globalconstant.LOG)
-					Log.e(Globalconstant.TAG, "Failed to download file");
+				if (GlobalConstant.LOG)
+					Log.e(GlobalConstant.TAG, "Failed to download file");
 			}
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
@@ -104,8 +104,8 @@ public class JSONParser {
 			e.printStackTrace();
 		}
 
-		if (Globalconstant.LOG)
-			Log.e(Globalconstant.TAG, "builder.toString(): " +builder.toString());
+		if (GlobalConstant.LOG)
+			Log.e(GlobalConstant.TAG, "builder.toString(): " +builder.toString());
 		
 		return jacksonArray;
 	}

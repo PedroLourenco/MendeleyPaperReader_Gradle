@@ -19,7 +19,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.mendeleypaperreader.utl.Globalconstant;
+import com.mendeleypaperreader.utl.GlobalConstant;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -81,19 +81,19 @@ public class GetAccessToken {
 	    }
 	    is.close();
 	    json = sb.toString();
-	    if (Globalconstant.LOG)
-		Log.e(Globalconstant.TAG, json);
+	    if (GlobalConstant.LOG)
+		Log.e(GlobalConstant.TAG, json);
 	} catch (Exception e) {
 	    e.getMessage();
-	    if (Globalconstant.LOG)
-	    	Log.e(Globalconstant.TAG, "Error converting result " + e.toString());
+	    if (GlobalConstant.LOG)
+	    	Log.e(GlobalConstant.TAG, "Error converting result " + e.toString());
 	}
 	// Parse the String to a JSON Object
 	try {
 	    jObj = new JSONObject(json);
 	} catch (JSONException e) {
-	    if (Globalconstant.LOG)
-	    	Log.e(Globalconstant.TAG, "Error parsing data " + e.toString());
+	    if (GlobalConstant.LOG)
+	    	Log.e(GlobalConstant.TAG, "Error parsing data " + e.toString());
 	}
 	// Return JSON String
 	return jObj;
@@ -136,19 +136,19 @@ public class GetAccessToken {
 	    }
 	    is.close();
 	    json = sb.toString();
-	    if (Globalconstant.LOG)
-		Log.e(Globalconstant.TAG, json);
+	    if (GlobalConstant.LOG)
+		Log.e(GlobalConstant.TAG, json);
 	} catch (Exception e) {
 	    e.getMessage();
-	    if (Globalconstant.LOG)
-		Log.e(Globalconstant.TAG, "Error converting result " + e.toString());
+	    if (GlobalConstant.LOG)
+		Log.e(GlobalConstant.TAG, "Error converting result " + e.toString());
 	}
 	// Parse the String to a JSON Object
 	try {
 	    jObj = new JSONObject(json);
 	} catch (JSONException e) {
-	    if (Globalconstant.LOG)
-		Log.e(Globalconstant.TAG, "Error parsing data " + e.toString());
+	    if (GlobalConstant.LOG)
+		Log.e(GlobalConstant.TAG, "Error parsing data " + e.toString());
 	}
 	// Return JSON String
 	return jObj;
@@ -161,7 +161,7 @@ public class GetAccessToken {
 	SharedPreferences sharedPreferences = context.getSharedPreferences(file_name, Context.MODE_PRIVATE);
 	Editor editor = sharedPreferences.edit();
 	editor.putString(key, value);
-	editor.commit();
+	editor.apply();
 
     }
 

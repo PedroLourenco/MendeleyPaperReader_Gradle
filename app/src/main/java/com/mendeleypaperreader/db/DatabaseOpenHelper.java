@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.mendeleypaperreader.sessionManager.SessionManager;
-import com.mendeleypaperreader.utl.Globalconstant;
+import com.mendeleypaperreader.utl.GlobalConstant;
 
 /**
  * Classname: DatabaseOpenHelper 
@@ -78,14 +78,6 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 	public final static String FOLDER_ADDED = "folder_added";
 	public final static String FOLDER_PARENT = "folder_parent";
 	public final static String FOLDER_GROUP = "folder_group";
-	public final static String ANNOTATION_COLOR = "color";
-	public final static String ANNOTATION_POSITIONS = "positions";
-	public final static String ANNOTATION_PRIVACY_LEVEL = "privacy_level";
-	public final static String ANNOTATION_FILEHASH = "filehash";
-	
-	public final static String ANNOTATION_LAST_MODIFIED = "last_modified";
-	public final static String ANNOTATION_CREATED = "created";
-	public final static String ANNOTATION_TEXT = "text";
 	public final static String FILE_ID = "file_id";
 	public final static String FILE_NAME = "file_name";
 	public final static String FILE_MIME_TYPE = "mime_type";
@@ -118,23 +110,15 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 	
 	final private static String CREATE_TABLE_PROFILE = "CREATE TABLE profile (" + PROFILE_ID + " TEXT, "
 			+ PROFILE_FIRST_NAME + " TEXT, " + PROFILE_LAST_NAME + " TEXT, " + PROFILE_DISPLAY_NAME + " TEXT, " + PROFILE_LINK + " TEXT, PRIMARY KEY (" + PROFILE_ID +") ) ";
-	
-	
+
 	final private static String CREATE_TABLE_FOLDERS = "CREATE TABLE folders (" + FOLDER_ID + " TEXT, " + FOLDER_ADDED + " TEXT, " + FOLDER_PARENT + " TEXT, " + FOLDER_GROUP + " TEXT, "
 			+ FOLDER_NAME + " TEXT, PRIMARY KEY (" + FOLDER_ID + ") ) ";
 	
 	final private static String CREATE_TABLE_FOLDERS_DOCS = "CREATE TABLE folders_docs (" + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + FOLDER_ID + " TEXT, " + DOC_DETAILS_ID + " TEXT) ";
-	
-
-	final private static String CREATE_TABLE_CATALOG_DOCS = "CREATE TABLE catalog_docs (" + DOC_DETAILS_ID + " TEXT PRIMARY KEY, " + CATALOG_ID + " TEXT, " + SCORE + " TEXT) ";
-	
 
 	final private static String CREATE_TABLE_ACADEMIC_STATUS_DOCS = "CREATE TABLE academic_status_docs (" + DOC_DETAILS_ID + " TEXT, " + STATUS + " TEXT, " + COUNT + " TEXT) ";
-	
-	//final private static String CREATE_TABLE_COUNTRY_STATUS_DOCS = "CREATE TABLE country_status_docs (" + DOC_DETAILS_ID + " TEXT, " + COUNTRY + " TEXT, " + COUNT + " TEXT) ";
 
     final private static String CREATE_TABLE_GROUPS = "CREATE TABLE groups (" + _ID + " TEXT PRIMARY KEY, " + GROUPS_NAME + " TEXT ) ";
-
 
     final private static String CREATE_TABLE_DOCUMENT_DETAILS =
 
@@ -202,8 +186,8 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		
 			
-			if (Globalconstant.LOG)
-				Log.e(Globalconstant.TAG, "DATABASE CREATE!!!!!!!");
+			if (GlobalConstant.LOG)
+				Log.e(GlobalConstant.TAG, "DATABASE CREATE!!!!!!!");
 			
 			db.execSQL(CREATE_TABLE_DOCUMENT_DETAILS);
 			db.execSQL(CREATE_TABLE_AUTHORS);
@@ -213,17 +197,20 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 			db.execSQL(CREATE_TABLE_FOLDERS_DOCS);
 			db.execSQL(CREATE_TABLE_ACADEMIC_STATUS_DOCS);
             db.execSQL(CREATE_TABLE_GROUPS);
-			//db.execSQL(CREATE_TABLE_COUNTRY_STATUS_DOCS);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		//Release_2 version 0.2.0 - Add column reader_count to table documents_details 
+
 		
 		SessionManager session;
 		session = new SessionManager(this.mContext);
-		session.savePreferences("versioCode", "04");
-		
+		session.savePreferences("versionCode", "04");
+
+
+        db.execSQL(CREATE_TABLE_GROUPS);
+
+        //Release_2 version 0.2.0 - Add column reader_count to table documents_details
 		//Database verson 2
 				//db.execSQL("ALTER TABLE document_details ADD COLUMN reader_count TEXT ;");
 				//db.execSQL("ALTER TABLE document_details ADD COLUMN is_download TEXT ;");

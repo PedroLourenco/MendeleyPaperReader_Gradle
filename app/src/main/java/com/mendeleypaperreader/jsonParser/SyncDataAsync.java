@@ -13,7 +13,7 @@ import android.util.Log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.sessionManager.SessionManager;
-import com.mendeleypaperreader.utl.Globalconstant;
+import com.mendeleypaperreader.utl.GlobalConstant;
 
 
 public class SyncDataAsync extends AsyncTask<String,Integer,String> {
@@ -73,8 +73,8 @@ public class SyncDataAsync extends AsyncTask<String,Integer,String> {
 		e.printStackTrace();
 	}
 
-	if (Globalconstant.LOG)
-	    Log.d(Globalconstant.TAG, "Fim do Load Data");
+	if (GlobalConstant.LOG)
+	    Log.d(GlobalConstant.TAG, "Fim do Load Data");
 
 
 	return null;
@@ -97,18 +97,18 @@ public class SyncDataAsync extends AsyncTask<String,Integer,String> {
     private void syncronizeData() throws JsonProcessingException, IOException{
 
     publishProgress((int) (1 / ((float) 6) * 100));
-    load.getProfileInfo(Globalconstant.get_profile + access_token);
+    load.getProfileInfo(GlobalConstant.get_profile + access_token);
 	publishProgress((int) (2 / ((float) 6) * 100));
-    load.getGroups(Globalconstant.get_groups_url + access_token);
+    load.getGroups(GlobalConstant.get_groups_url + access_token);
 	publishProgress((int) (3 / ((float) 6) * 100));
      load.getGroupDocs();
-	load.getUserLibrary(Globalconstant.get_user_library_url + access_token);
+	load.getUserLibrary(GlobalConstant.get_user_library_url + access_token);
 	publishProgress((int) (4 / ((float) 6) * 100));
-	load.getFolders(Globalconstant.get_user_folders_url + access_token);
+	load.getFolders(GlobalConstant.get_user_folders_url + access_token);
 	publishProgress((int) (5 / ((float) 6) * 100));
 	load.getCatalogId();
 	publishProgress((int) (6 / ((float) 6) * 100));
-	load.getFiles(Globalconstant.get_files + access_token);
+	load.getFiles(GlobalConstant.get_files + access_token);
 	publishProgress((int) (7 / ((float) 6.6) * 100));
 	
 	

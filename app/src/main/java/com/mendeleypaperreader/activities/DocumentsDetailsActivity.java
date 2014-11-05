@@ -47,7 +47,7 @@ import com.mendeleypaperreader.sessionManager.GetAccessToken;
 import com.mendeleypaperreader.sessionManager.SessionManager;
 import com.mendeleypaperreader.utl.ConnectionDetector;
 import com.mendeleypaperreader.utl.DownloaderThread;
-import com.mendeleypaperreader.utl.Globalconstant;
+import com.mendeleypaperreader.utl.GlobalConstant;
 
 /**
  * Classname: DocumentsDetailsActivity 
@@ -105,8 +105,8 @@ public class DocumentsDetailsActivity extends Activity  {
 		doc_catalog = new TextView(this);
 		readerCounterValue = new TextView(this);
 
-		if(Globalconstant.LOG)
-			Log.d(Globalconstant.TAG, "DOC_DETAILS - doc_id: " + getDocId());
+		if(GlobalConstant.LOG)
+			Log.d(GlobalConstant.TAG, "DOC_DETAILS - doc_id: " + getDocId());
 
 		//Get to populate activity
 		fillData(getdocDetails());
@@ -160,7 +160,7 @@ public class DocumentsDetailsActivity extends Activity  {
 
 			public void onClick(View v) {
 				
-				String url = Globalconstant.PMID_URL+pmid;
+				String url = GlobalConstant.PMID_URL+pmid;
 				openBrowser(url);
 				
 			}
@@ -173,7 +173,7 @@ public class DocumentsDetailsActivity extends Activity  {
 		OnClickListener click_on_issn = new OnClickListener() {
 
 			public void onClick(View v) {
-				String url = Globalconstant.ISSN_URL+issn;
+				String url = GlobalConstant.ISSN_URL+issn;
 				openBrowser(url);
 			}
 		};
@@ -185,7 +185,7 @@ public class DocumentsDetailsActivity extends Activity  {
 		OnClickListener click_on_doi = new OnClickListener() {
 
 			public void onClick(View v) {
-				String url = Globalconstant.DOI_URL+doi; 
+				String url = GlobalConstant.DOI_URL+doi;
 				openBrowser(url);
 			}
 		};
@@ -248,7 +248,7 @@ public class DocumentsDetailsActivity extends Activity  {
 						refreshToken();
 						SessionManager session = new SessionManager(thisActivity); 
 						String access_token = session.LoadPreference("access_token");
-						String url = Globalconstant.get_files_by_doc_id.replace("file_id", flileId) + access_token;
+						String url = GlobalConstant.get_files_by_doc_id.replace("file_id", flileId) + access_token;
 						downloaderThread = new DownloaderThread(thisActivity, url, flileId) ;		
 						downloaderThread.start();
 					}else{
@@ -345,8 +345,8 @@ public class DocumentsDetailsActivity extends Activity  {
 
 	private Cursor getdocDetails(){
 
-		if(Globalconstant.LOG)
-			Log.d(Globalconstant.TAG, "getdocDetails - DOC_DETAILS");
+		if(GlobalConstant.LOG)
+			Log.d(GlobalConstant.TAG, "getdocDetails - DOC_DETAILS");
 
 		docId = getDocId();
 		String[] projection = null;
@@ -363,8 +363,8 @@ public class DocumentsDetailsActivity extends Activity  {
 	}
 	
 	private Cursor getFile(){
-		if(Globalconstant.LOG)
-			Log.d(Globalconstant.TAG, "getFile - DOC_DETAILS");
+		if(GlobalConstant.LOG)
+			Log.d(GlobalConstant.TAG, "getFile - DOC_DETAILS");
 
 		
 		String[] projection = null;
@@ -862,11 +862,11 @@ public class DocumentsDetailsActivity extends Activity  {
 
 		}else if(!issn.isEmpty() ){
 
-			url  = Globalconstant.ISSN_URL+issn;	    
+			url  = GlobalConstant.ISSN_URL+issn;
 		}else if(!pmid.isEmpty()){
-			url  = Globalconstant.PMID_URL+pmid;
+			url  = GlobalConstant.PMID_URL+pmid;
 		}else if(!doi.isEmpty()){
-			url  = Globalconstant.DOI_URL+doi;
+			url  = GlobalConstant.DOI_URL+doi;
 
 		}
 
@@ -1022,7 +1022,7 @@ public class DocumentsDetailsActivity extends Activity  {
 
 			GetAccessToken jParser = new GetAccessToken();
 
-			JSONObject json = jParser.refresh_token(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, Globalconstant.GRANT_TYPE, refresh_token);
+			JSONObject json = jParser.refresh_token(GlobalConstant.TOKEN_URL, code, GlobalConstant.CLIENT_ID, GlobalConstant.CLIENT_SECRET, GlobalConstant.REDIRECT_URI, GlobalConstant.GRANT_TYPE, refresh_token);
 
 			return json;
 		} 

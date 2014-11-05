@@ -31,7 +31,7 @@ import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.sessionManager.GetAccessToken;
 import com.mendeleypaperreader.sessionManager.SessionManager;
 import com.mendeleypaperreader.utl.ConnectionDetector;
-import com.mendeleypaperreader.utl.Globalconstant;
+import com.mendeleypaperreader.utl.GlobalConstant;
 
 /**
  * Classname: MainActivity 
@@ -81,7 +81,8 @@ public class MainActivity extends Activity {
 		try
 		{
 		    version = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
-		    Log.d(Globalconstant.TAG, "version: " + version);
+		    if(GlobalConstant.LOG)
+                Log.d(GlobalConstant.TAG, "version: " + version);
 		} 
 		catch (NameNotFoundException e)
 		{
@@ -121,7 +122,7 @@ public class MainActivity extends Activity {
 					auth_dialog.setContentView(R.layout.webviewoauth);
 					web = (WebView) auth_dialog.findViewById(R.id.webview);
 					web.getSettings().setJavaScriptEnabled(true);
-					web.loadUrl(OAUTH_URL + "client_id=" + CLIENT_ID + "&redirect_uri=" + Globalconstant.REDIRECT_URI + "&response_type=code&scope=" + OAUTH_SCOPE);
+					web.loadUrl(OAUTH_URL + "client_id=" + CLIENT_ID + "&redirect_uri=" + GlobalConstant.REDIRECT_URI + "&response_type=code&scope=" + OAUTH_SCOPE);
 					web.setWebViewClient(new WebViewClient() {
 						boolean authComplete = false;
 						Intent resultIntent = new Intent();
@@ -137,12 +138,12 @@ public class MainActivity extends Activity {
 						@Override
 						public void onPageFinished(WebView view, String url) {
 							super.onPageFinished(view, url);
-							if (url.contains("?code=") && authComplete != true) {
+							if (url.contains("?code=") && !authComplete) {
 								Uri uri = Uri.parse(url);
 								authCode = uri.getQueryParameter("code");
 
-								if (Globalconstant.LOG)
-									Log.i(Globalconstant.TAG, "CODE : " + authCode);
+								if (GlobalConstant.LOG)
+									Log.i(GlobalConstant.TAG, "CODE : " + authCode);
 								authComplete = true;
 								resultIntent.putExtra("code", authCode);
 								MainActivity.this.setResult(Activity.RESULT_OK,	resultIntent);
@@ -157,8 +158,8 @@ public class MainActivity extends Activity {
 								//Toast.makeText(getApplicationContext(), "Authorization Code is: " + authCode, Toast.LENGTH_SHORT).show();
 							} else if (url.contains("error=access_denied")) {
 
-								if (Globalconstant.LOG)
-									Log.i(Globalconstant.TAG, "ACCESS_DENIED_HERE");
+								if (GlobalConstant.LOG)
+									Log.i(GlobalConstant.TAG, "ACCESS_DENIED_HERE");
 								resultIntent.putExtra("code", authCode);
 								authComplete = true;
 								setResult(Activity.RESULT_CANCELED, resultIntent);
@@ -170,8 +171,8 @@ public class MainActivity extends Activity {
 					auth_dialog.setCancelable(true);
 				} else {
 
-					if (Globalconstant.LOG)
-						Log.w(Globalconstant.TAG, "NO INTERNET");
+					if (GlobalConstant.LOG)
+						Log.w(GlobalConstant.TAG, "NO INTERNET");
 					showDialog();
 				}
 			}
@@ -219,7 +220,7 @@ public class MainActivity extends Activity {
 		@Override
 		protected JSONObject doInBackground(String... args) {
 			GetAccessToken jParser = new GetAccessToken();
-			JSONObject json = jParser.getToken(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, "authorization_code");
+			JSONObject json = jParser.getToken(GlobalConstant.TOKEN_URL, code, GlobalConstant.CLIENT_ID, GlobalConstant.CLIENT_SECRET, GlobalConstant.REDIRECT_URI, "authorization_code");
 
 			return json;
 		}
@@ -239,9 +240,9 @@ public class MainActivity extends Activity {
 					calendar.add(Calendar.SECOND, 3600);
 					session.savePreferences("expires_on", calendar.getTime().toString());
 
-					if (Globalconstant.LOG) {
-						Log.d(Globalconstant.TAG, "NOW: " + calendar.getTime().toString());
-						Log.d(Globalconstant.TAG, "Expires on: " + calendar.getTime());
+					if (GlobalConstant.LOG) {
+						Log.d(GlobalConstant.TAG, "NOW: " + calendar.getTime().toString());
+						Log.d(GlobalConstant.TAG, "Expires on: " + calendar.getTime());
 						Log.d("Token Access", json.getString("access_token"));
 						Log.d("Expire", json.getString("expires_in"));
 						Log.d("Refresh", json.getString("refresh_token"));

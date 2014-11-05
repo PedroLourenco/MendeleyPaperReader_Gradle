@@ -33,7 +33,7 @@ public class SyncTest extends ActivityInstrumentationTestCase2<MainActivity> {
         super.setUp();
         Instrumentation instrumentation = getInstrumentation();
         SharedPreferences preferences = instrumentation.getTargetContext().getSharedPreferences("MendeleyPaperReaderPREF", 0);
-        preferences.edit().clear().commit();
+        preferences.edit().clear().apply();
 
 
         activity = this.getActivity();
@@ -55,7 +55,6 @@ public class SyncTest extends ActivityInstrumentationTestCase2<MainActivity> {
         solo.clickOnText("Authorize");
         solo.waitForActivity("MainMenuActivity", 2000000);
         solo.getActivityMonitor();
-        //solo.waitForText("Sync data... (100%)", 1, 999999);
         solo.waitForDialogToClose();
 
 
