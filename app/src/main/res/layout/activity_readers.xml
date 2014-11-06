@@ -41,7 +41,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" 
         android:layout_below="@+id/readersTotal"
-        android:layout_above="@+id/footer"
         android:listSelector="@android:color/transparent" 
 		android:cacheColorHint="@android:color/transparent">
 

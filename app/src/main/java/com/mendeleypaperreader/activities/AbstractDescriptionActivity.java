@@ -9,10 +9,8 @@ import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.utl.Globalconstant;
 
 /**
- * classname: AbstractDescriptionActivity 
  * 	Class to display full abstract of pdf articles.  
- * 
- * @date July 8, 2014
+ *
  * @author PedroLourenco (pdrolourenco@gmail.com)
  */
 
@@ -36,9 +34,8 @@ public class AbstractDescriptionActivity extends Activity{
 
 	private String getAbstract(){		
 
-		Bundle bundle = getIntent().getExtras();		
-		String v_abstract = bundle.getString("abstract");
+		Bundle bundle = getIntent().getExtras();
 
-		return v_abstract;
+		return bundle.getString("abstract");
 	}
 }

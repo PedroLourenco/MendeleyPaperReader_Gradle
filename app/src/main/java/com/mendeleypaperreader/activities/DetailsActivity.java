@@ -19,12 +19,10 @@ import com.mendeleypaperreader.utl.ConnectionDetector;
 import com.mendeleypaperreader.utl.Globalconstant;
 
 /**
- * Classname: DetailsActivity 
  * 	This activity displays the details using a MainMenuActivityFragmentDetails. This activity is started
  * 	by a MainMenuActivityFragmentList when a title in the list is selected.
  * 	The activity is used only if a MainMenuActivityFragmentDetails is not on the screen.  
- * 
- * @date July 8, 2014
+ *
  * @author PedroLourenco (pdrolourenco@gmail.com)
  */
 
@@ -35,7 +33,6 @@ public class DetailsActivity extends FragmentActivity {
 	private static SessionManager session;
 	private static String code;
 	private static String refresh_token;
-	private Boolean isInternetPresent = false;
 
 
 	@Override
@@ -96,7 +93,8 @@ public class DetailsActivity extends FragmentActivity {
 		//delete data from data base and get new access token to start sync
 
 		// check internet connection
-		ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
+        Boolean isInternetPresent;
+        ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
 
 		isInternetPresent = connectionDetector.isConnectingToInternet();
 
@@ -148,9 +146,8 @@ public class DetailsActivity extends FragmentActivity {
 
 			GetAccessToken jParser = new GetAccessToken();
 
-			JSONObject json = jParser.refresh_token(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, Globalconstant.GRANT_TYPE, refresh_token);
+			return jParser.refresh_token(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, Globalconstant.GRANT_TYPE, refresh_token);
 
-			return json;
 
 
 		} 

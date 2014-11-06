@@ -28,10 +28,6 @@ import com.mendeleypaperreader.utl.ConnectionDetector;
 import com.mendeleypaperreader.utl.Globalconstant;
 
 /**
- * Classname: MainMenuActivity 
- * 	 
- * 
- * @date July 8, 2014
  * @author PedroLourenco (pdrolourenco@gmail.com)
  */
 
@@ -42,8 +38,6 @@ public class MainMenuActivity extends FragmentActivity
 	private static final int PERIOD = 2000;
 	// Session Manager Class
 	private static SessionManager session;
-	private Boolean isInternetPresent = false;
-	private String db_uploded_flag ;
 	private static String refresh_token;
 	private static String code;
 
@@ -57,7 +51,7 @@ public class MainMenuActivity extends FragmentActivity
 		session = new SessionManager(getApplicationContext()); 
 
 		//Start upload data from server	       
-		db_uploded_flag = session.LoadPreference("IS_DB_CREATED");
+        String db_uploded_flag = session.LoadPreference("IS_DB_CREATED");
 		if(!db_uploded_flag.equals("YES")){
 
 			refreshToken();
@@ -165,7 +159,9 @@ public class MainMenuActivity extends FragmentActivity
 	private void refreshToken(){
 
 		// check internet connection
-		ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
+
+        Boolean isInternetPresent;
+        ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
 
 		isInternetPresent = connectionDetector.isConnectingToInternet();
 
@@ -231,9 +227,8 @@ public class MainMenuActivity extends FragmentActivity
 
 			GetAccessToken jParser = new GetAccessToken();
 
-			JSONObject json = jParser.refresh_token(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, Globalconstant.GRANT_TYPE, refresh_token);
+			return jParser.refresh_token(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, Globalconstant.GRANT_TYPE, refresh_token);
 
-			return json;
 		} 
 	}
 

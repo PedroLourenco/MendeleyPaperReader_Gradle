@@ -28,7 +28,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:lines="1"
                 android:maxLines="3"
                 android:text=""
                 android:textSize="@dimen/doc_title_size"

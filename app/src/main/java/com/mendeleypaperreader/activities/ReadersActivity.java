@@ -18,9 +18,7 @@ import com.mendeleypaperreader.db.DatabaseOpenHelper;
 public class ReadersActivity extends ListActivity {
 
 	private Cursor cursorAcademicStatus;
-	//private Cursor cursorCountryStatus;
 	SimpleCursorAdapter mAdapterAcademicStatus;
-	//SimpleCursorAdapter mAdapterCountryStatus;
 
 
 	@Override
@@ -34,24 +32,14 @@ public class ReadersActivity extends ListActivity {
 		redersValue.setText(getCounterValue());
 
 		cursorAcademicStatus = getAcademicStatus();
-		//cursorCountryStatus = getCountryStatus();
 
 		String[] dataColumnsAcademic = {"_id", DatabaseOpenHelper.COUNT}; 
 		int[] viewIDsAcademic = { R.id.readersStatus, R.id.readersCount };
-
-		//String[] dataColumnsCountry = {"_id", DatabaseOpenHelper.COUNT};
-		//int[] viewIDsCountry = { R.id.readersStatus, R.id.readersCount };
-
 		mAdapterAcademicStatus = new SimpleCursorAdapter(getApplicationContext(), R.layout.readers_list, cursorAcademicStatus, dataColumnsAcademic, viewIDsAcademic, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-
-		//mAdapterCountryStatus = new SimpleCursorAdapter(getApplicationContext(), R.layout.readers_list, cursorCountryStatus, dataColumnsCountry, viewIDsCountry, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-
 
 		// Add section to list and merge two adatpers
 		MergeAdapter mergeAdapter = new MergeAdapter();
 
-		//mergeAdapter.addAdapter(new ListTitleAdapter(getApplicationContext(), getResources().getString(R.string.countryStatus), mAdapterCountryStatus, R.layout.listview_section_header));
-		//mergeAdapter.addAdapter(mAdapterCountryStatus);
 		mergeAdapter.addAdapter(new ListTitleAdapter(getApplicationContext(), getResources().getString(R.string.academicStatus), mAdapterAcademicStatus, R.layout.listview_section_header));
 		mergeAdapter.addAdapter(mAdapterAcademicStatus);
 
@@ -81,41 +69,21 @@ public class ReadersActivity extends ListActivity {
 	private Cursor getAcademicStatus(){
 
 		String docId = getDocId();
-		String[] projection = null;
-		String selection = null;
-		String orderBy = null;
 
-		projection = new String[] {DatabaseOpenHelper.STATUS + " as _id",  DatabaseOpenHelper.COUNT};
-		selection = DatabaseOpenHelper.DOC_DETAILS_ID + " = '" + docId +"'";
-		orderBy =  DatabaseOpenHelper.STATUS + " ASC";
+        String[] projection = new String[] {DatabaseOpenHelper.STATUS + " as _id",  DatabaseOpenHelper.COUNT};
+        String selection = DatabaseOpenHelper.DOC_DETAILS_ID + " = '" + docId +"'";
+        String orderBy =  DatabaseOpenHelper.STATUS + " ASC";
 		Uri  uri = Uri.parse(MyContentProvider.CONTENT_URI_ACADEMIC_DOCS + "/id");
 
 		return getApplicationContext().getContentResolver().query(uri, projection, selection, null, orderBy);
 
 	}
 
-	/*private Cursor getCountryStatus(){
-
-		String docId = getDocId();
-		String[] projection = null;
-		String selection = null;
-		String orderBy = null;
-		
-		projection = new String[] {DatabaseOpenHelper.COUNTRY + " as _id",  DatabaseOpenHelper.COUNT};
-		selection = DatabaseOpenHelper.DOC_DETAILS_ID + " = '" + docId +"'";
-		orderBy =  DatabaseOpenHelper.COUNTRY + " ASC";
-		Uri  uri = Uri.parse(MyContentProvider.CONTENT_URI_COUNTRY_DOCS + "/id");
-
-		return getApplicationContext().getContentResolver().query(uri, projection, selection, null, orderBy);
-
-	}
-*/
 	
 	@Override
 	protected void onDestroy() {
 	    super.onDestroy();
 	    cursorAcademicStatus.close();
-	    //cursorCountryStatus.close();
 	}
 	
 }

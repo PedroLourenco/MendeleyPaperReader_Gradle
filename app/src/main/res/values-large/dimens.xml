@@ -24,8 +24,7 @@
   	<dimen name="image_size">30dp</dimen>
   	<dimen name="pading">8dp</dimen>
   	
-  	
-  	
+
   	<!-- list_row_all_doc.xml -->
   	<dimen name="doc_title_size">17sp</dimen>
   	<dimen name="authors_size">15sp</dimen>

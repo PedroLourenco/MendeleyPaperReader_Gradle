@@ -888,20 +888,21 @@ containing a value of this type.
         public static final int folder_my_publications=0x7f02005e;
         public static final int folder_recentl_added=0x7f02005f;
         public static final int gradient_bg_list=0x7f020060;
-        public static final int ic_action_download=0x7f020061;
-        public static final int ic_action_important=0x7f020062;
-        public static final int ic_action_not_important=0x7f020063;
-        public static final int ic_action_overflow=0x7f020064;
-        public static final int ic_action_read=0x7f020065;
-        public static final int ic_action_refresh=0x7f020066;
-        public static final int ic_action_share=0x7f020067;
-        public static final int icon_mendeley48_48=0x7f020068;
-        public static final int paper_reader_512_512=0x7f020069;
-        public static final int person=0x7f02006a;
-        public static final int sigin_button_shape=0x7f02006b;
-        public static final int starim=0x7f02006c;
-        public static final int texttopline=0x7f02006d;
-        public static final int trash=0x7f02006e;
+        public static final int group_folder=0x7f020061;
+        public static final int ic_action_download=0x7f020062;
+        public static final int ic_action_important=0x7f020063;
+        public static final int ic_action_not_important=0x7f020064;
+        public static final int ic_action_overflow=0x7f020065;
+        public static final int ic_action_read=0x7f020066;
+        public static final int ic_action_refresh=0x7f020067;
+        public static final int ic_action_share=0x7f020068;
+        public static final int icon_mendeley48_48=0x7f020069;
+        public static final int paper_reader_512_512=0x7f02006a;
+        public static final int person=0x7f02006b;
+        public static final int sigin_button_shape=0x7f02006c;
+        public static final int starim=0x7f02006d;
+        public static final int texttopline=0x7f02006e;
+        public static final int trash=0x7f02006f;
     }
     public static final class id {
         public static final int Doctitle=0x7f08005c;
@@ -1047,11 +1048,12 @@ containing a value of this type.
         public static final int activity_readers=0x7f03001f;
         public static final int list_row_all_doc=0x7f030020;
         public static final int list_row_with_image=0x7f030021;
-        public static final int list_view_readers_section=0x7f030022;
-        public static final int listview_section=0x7f030023;
-        public static final int readers_list=0x7f030024;
-        public static final int support_simple_spinner_dropdown_item=0x7f030025;
-        public static final int webviewoauth=0x7f030026;
+        public static final int list_row_with_image_groups=0x7f030022;
+        public static final int list_view_readers_section=0x7f030023;
+        public static final int listview_section_header=0x7f030024;
+        public static final int readers_list=0x7f030025;
+        public static final int support_simple_spinner_dropdown_item=0x7f030026;
+        public static final int webviewoauth=0x7f030027;
     }
     public static final class menu {
         public static final int action_bar_refresh=0x7f0d0000;
@@ -1106,27 +1108,28 @@ containing a value of this type.
         public static final int msg_current_version=0x7f0b002c;
         public static final int msg_email=0x7f0b002d;
         public static final int my_folders=0x7f0b002e;
-        public static final int my_library=0x7f0b002f;
-        public static final int network_error=0x7f0b0030;
-        public static final int no_network_connection=0x7f0b0031;
-        public static final int pmid=0x7f0b0032;
-        public static final int progress_dialog_message_prefix_connecting=0x7f0b0033;
-        public static final int progress_dialog_message_prefix_downloading=0x7f0b0034;
-        public static final int progress_dialog_title_connecting=0x7f0b0035;
-        public static final int progress_dialog_title_downloading=0x7f0b0036;
-        public static final int readers=0x7f0b0037;
-        public static final int settings_3G=0x7f0b0038;
-        public static final int sync_data=0x7f0b0039;
-        public static final int sync_data_0=0x7f0b003a;
-        public static final int title=0x7f0b003b;
-        public static final int title_activity_readers=0x7f0b003c;
-        public static final int urls=0x7f0b003d;
-        public static final int user_message_download_canceled=0x7f0b003e;
-        public static final int user_message_download_complete=0x7f0b003f;
-        public static final int warning=0x7f0b0040;
-        public static final int web_link=0x7f0b0041;
-        public static final int wifi_settings=0x7f0b0042;
-        public static final int word_ok=0x7f0b0043;
+        public static final int my_groups=0x7f0b002f;
+        public static final int my_library=0x7f0b0030;
+        public static final int network_error=0x7f0b0031;
+        public static final int no_network_connection=0x7f0b0032;
+        public static final int pmid=0x7f0b0033;
+        public static final int progress_dialog_message_prefix_connecting=0x7f0b0034;
+        public static final int progress_dialog_message_prefix_downloading=0x7f0b0035;
+        public static final int progress_dialog_title_connecting=0x7f0b0036;
+        public static final int progress_dialog_title_downloading=0x7f0b0037;
+        public static final int readers=0x7f0b0038;
+        public static final int settings_3G=0x7f0b0039;
+        public static final int sync_data=0x7f0b003a;
+        public static final int sync_data_0=0x7f0b003b;
+        public static final int title=0x7f0b003c;
+        public static final int title_activity_readers=0x7f0b003d;
+        public static final int urls=0x7f0b003e;
+        public static final int user_message_download_canceled=0x7f0b003f;
+        public static final int user_message_download_complete=0x7f0b0040;
+        public static final int warning=0x7f0b0041;
+        public static final int web_link=0x7f0b0042;
+        public static final int wifi_settings=0x7f0b0043;
+        public static final int word_ok=0x7f0b0044;
     }
     public static final class style {
         /** 
@@ -2362,7 +2365,7 @@ containing a value of this type.
          */
         public static final int[] MenuView = {
             0x010100ae, 0x0101012c, 0x0101012d, 0x0101012e,
-            0x0101012f, 0x01010130, 0x01010131, 0x0101040c
+            0x0101012f, 0x01010130, 0x01010131, 0x0101052f
         };
         /**
           <p>

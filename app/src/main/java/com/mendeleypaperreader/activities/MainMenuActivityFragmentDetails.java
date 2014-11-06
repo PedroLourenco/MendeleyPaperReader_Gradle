@@ -26,10 +26,6 @@ import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.utl.Globalconstant;
 
 /**
- * Classname: MainMenuActivityFragmentDetails 
- * 	
- * 
- * @date July 8, 2014
  * @author PedroLourenco (pdrolourenco@gmail.com)
  *
  */
@@ -38,8 +34,6 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 
 	boolean mDualPane;
 	SimpleCursorAdapter mAdapter;
-	private CursorLoader mcursor;
-	private String description = null;
 	TextView title;
     private static final int DETAILS_LOADER = 2;
 
@@ -105,7 +99,7 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 		int index = getShownIndex();
 
 
-		description = getShownDescription();
+        String description = getShownDescription();
 
 		if (Globalconstant.LOG){
 			Log.d(Globalconstant.TAG,"Description Details: " + description );
@@ -171,16 +165,13 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 
 	private Cursor getDocId (String doc_title){
 
-		String[] projection = null;
-		String selection = null;
-
-		projection = new String[] {DatabaseOpenHelper._ID };
+        String[] projection = new String[] {DatabaseOpenHelper._ID };
 		
 		if (doc_title.contains("'")) {
 			doc_title = doc_title.replaceAll("'", "''");
 		}
-		
-		selection = DatabaseOpenHelper.TITLE + " = '" + doc_title +"'";
+
+        String selection = DatabaseOpenHelper.TITLE + " = '" + doc_title +"'";
 		Uri uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
 
 		return getActivity().getApplicationContext().getContentResolver().query(uri, projection, selection, null, null);
@@ -287,10 +278,9 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
             uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
         }
 
-		mcursor = new CursorLoader(getActivity().getApplicationContext(), uri, projection, selection, null, null);
+		return new CursorLoader(getActivity().getApplicationContext(), uri, projection, selection, null, null);
 
-		return mcursor;
-	}
+    }
 
 
 
@@ -322,6 +312,5 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 			mAdapter.swapCursor(null);
 		}
 	}
-
 
 }

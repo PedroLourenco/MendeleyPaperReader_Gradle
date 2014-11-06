@@ -16,10 +16,8 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
 /**
- * classname AboutActivity 
  * 	This class display actual version, developer contact and version history.  
- * 
- * @date July 8, 2014
+ *
  * @author PedroLourenco (pdrolourenco@gmail.com)
  */
 

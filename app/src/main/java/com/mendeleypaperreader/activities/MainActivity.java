@@ -34,10 +34,8 @@ import com.mendeleypaperreader.utl.ConnectionDetector;
 import com.mendeleypaperreader.utl.Globalconstant;
 
 /**
- * Classname: MainActivity 
- * 	 
- * 
- * @date July 8, 2014
+ *
+ *
  * @author PedroLourenco (pdrolourenco@gmail.com)
  */
 
@@ -220,9 +218,9 @@ public class MainActivity extends Activity {
 		@Override
 		protected JSONObject doInBackground(String... args) {
 			GetAccessToken jParser = new GetAccessToken();
-			JSONObject json = jParser.getToken(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, "authorization_code");
 
-			return json;
+			return jParser.getToken(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, "authorization_code");
+
 		}
 
 		@Override

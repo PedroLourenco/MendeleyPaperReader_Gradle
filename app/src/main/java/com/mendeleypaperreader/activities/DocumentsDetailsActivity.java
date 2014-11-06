@@ -51,9 +51,7 @@ import com.mendeleypaperreader.utl.Globalconstant;
 
 /**
  * Classname: DocumentsDetailsActivity 
- * 	 
- * 
- * @date July 8, 2014
+ *
  * @author PedroLourenco (pdrolourenco@gmail.com)
  */
 
@@ -349,11 +347,9 @@ public class DocumentsDetailsActivity extends Activity  {
 			Log.d(Globalconstant.TAG, "getdocDetails - DOC_DETAILS");
 
 		docId = getDocId();
-		String[] projection = null;
-		String selection = null;
 
-		projection = new String[] {DatabaseOpenHelper.TYPE + " as _id",  DatabaseOpenHelper.TITLE, DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE , DatabaseOpenHelper.YEAR, DatabaseOpenHelper.VOLUME, DatabaseOpenHelper.PAGES,DatabaseOpenHelper.ISSUE,  DatabaseOpenHelper.ABSTRACT, DatabaseOpenHelper.WEBSITE, DatabaseOpenHelper.DOI, DatabaseOpenHelper.PMID, DatabaseOpenHelper.ISSN, DatabaseOpenHelper.STARRED , DatabaseOpenHelper.READER_COUNT, DatabaseOpenHelper.IS_DOWNLOAD};
-		selection = DatabaseOpenHelper._ID + " = '" + docId +"'";
+        String[] projection = new String[] {DatabaseOpenHelper.TYPE + " as _id",  DatabaseOpenHelper.TITLE, DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE , DatabaseOpenHelper.YEAR, DatabaseOpenHelper.VOLUME, DatabaseOpenHelper.PAGES,DatabaseOpenHelper.ISSUE,  DatabaseOpenHelper.ABSTRACT, DatabaseOpenHelper.WEBSITE, DatabaseOpenHelper.DOI, DatabaseOpenHelper.PMID, DatabaseOpenHelper.ISSN, DatabaseOpenHelper.STARRED , DatabaseOpenHelper.READER_COUNT, DatabaseOpenHelper.IS_DOWNLOAD};
+        String selection = DatabaseOpenHelper._ID + " = '" + docId +"'";
 		Uri  uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
 
 		cursorDetails = getApplicationContext().getContentResolver().query(uri, projection, selection, null, null);
@@ -366,12 +362,9 @@ public class DocumentsDetailsActivity extends Activity  {
 		if(Globalconstant.LOG)
 			Log.d(Globalconstant.TAG, "getFile - DOC_DETAILS");
 
-		
-		String[] projection = null;
-		String selection = null;
 
-		projection = new String[] {DatabaseOpenHelper.FILE_ID + " as _id", DatabaseOpenHelper.FILE_NAME, DatabaseOpenHelper.FILE_MIME_TYPE};
-		selection = DatabaseOpenHelper.FILE_DOC_ID + " = '" + docId +"'";
+        String[] projection = new String[] {DatabaseOpenHelper.FILE_ID + " as _id", DatabaseOpenHelper.FILE_NAME, DatabaseOpenHelper.FILE_MIME_TYPE};
+        String selection = DatabaseOpenHelper.FILE_DOC_ID + " = '" + docId +"'";
 		Uri  uri = Uri.parse(MyContentProvider.CONTENT_URI_FILES + "/id");
 
 		cursorFile = getApplicationContext().getContentResolver().query(uri, projection, selection, null, null);
@@ -956,7 +949,7 @@ public class DocumentsDetailsActivity extends Activity  {
 		isInternetPresent = connectionDetector.isConnectingToInternet();
 
 		if(isInternetPresent){
-			if(isToSync == true){
+			if(isToSync){
 				getContentResolver().delete(MyContentProvider.CONTENT_URI_DELETE_DATA_BASE,null, null);			
 			}
 			new ProgressTask().execute();	
@@ -1003,7 +996,7 @@ public class DocumentsDetailsActivity extends Activity  {
 					session.savePreferences("expires_in", json.getString("expires_in"));
 					session.savePreferences("refresh_token", json.getString("refresh_token"));
 			
-					if(isToSync == true){
+					if(isToSync){
 						//Get data from server
 						syncData();
 						isToSync = false;
@@ -1022,9 +1015,8 @@ public class DocumentsDetailsActivity extends Activity  {
 
 			GetAccessToken jParser = new GetAccessToken();
 
-			JSONObject json = jParser.refresh_token(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, Globalconstant.GRANT_TYPE, refresh_token);
+			return jParser.refresh_token(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, Globalconstant.GRANT_TYPE, refresh_token);
 
-			return json;
 		} 
 	}
 	
