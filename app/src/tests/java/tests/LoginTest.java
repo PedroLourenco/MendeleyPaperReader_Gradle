@@ -57,24 +57,6 @@ public class LoginTest extends ActivityInstrumentationTestCase2<MainActivity> {
     }
 
 
-    public void testAllDocs() throws Exception {
-
-        solo.clickOnView(solo.getCurrentActivity().findViewById(R.id.auth));
-
-        WebView view = (WebView) solo.getView(R.id.webview);
-
-        solo.waitForView(view, 2000, false);
-        solo.enterTextInWebElement(By.id("username"), "pdrolourenco@gmail.com");
-        solo.enterTextInWebElement(By.id("password"), "000000");
-        solo.clickOnText("Authorize");
-        solo.waitForActivity("MainMenuActivity", 2000000);
-        solo.getActivityMonitor();
-        //solo.waitForText("Sync data... (100%)", 1, 999999);
-        solo.waitForDialogToClose();
-
-
-
-    }
 
 
 
