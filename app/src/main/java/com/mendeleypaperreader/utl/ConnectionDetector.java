@@ -12,10 +12,6 @@ import android.provider.Settings;
 import com.mendeleypaperreader.R;
 
 /**
- * Classname: ConnectionDetector 
- * 	 
- * 
- * @date July 8, 2014
  * @author PedroLourenco (pdrolourenco@gmail.com)
  */
 

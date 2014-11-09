@@ -30,17 +30,12 @@ public class SessionManager {
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
     }
-    
-    
-   
-    
+
+
     /**
-     * Save login session
-     * 
-     * @param context
+     *
      * @param key
      * @param value
-     * @param file_name
      */
     
     public void savePreferences( String key, String value) {
@@ -49,16 +44,14 @@ public class SessionManager {
 		editor.commit();
 
 	}
-    
-    
+
+
     /**
-     * Get shared preferences
-     * 
-     * @param context
+     *
      * @param Key
-     * @param file_name
      * @return
      */
+
     public String LoadPreference(String Key) {
 
 		return pref.getString(Key, "");

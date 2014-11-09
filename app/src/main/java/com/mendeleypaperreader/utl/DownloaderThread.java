@@ -36,7 +36,7 @@ public class DownloaderThread extends Thread
 
 	/**
 	 * Instantiates a new DownloaderThread object.
-	 * @param parentActivity Reference to DocumentsDetailsActivity activity.
+	 * @param inParentActivity Reference to DocumentsDetailsActivity activity.
 	 * @param inUrl String representing the URL of the file to be downloaded.
 	 */
 	public DownloaderThread(DocumentsDetailsActivity inParentActivity, String inUrl, String fileId)

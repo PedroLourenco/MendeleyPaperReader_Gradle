@@ -24,10 +24,7 @@ import com.mendeleypaperreader.utl.Globalconstant;
 import com.mendeleypaperreader.utl.JSONParser;
 
 /**
- * Classname: LoadData 
- * 	 
- * 
- * @date July 8, 2014
+ *
  * @author PedroLourenco (pdrolourenco@gmail.com)
  */
 
@@ -36,12 +33,11 @@ import com.mendeleypaperreader.utl.JSONParser;
 public class LoadData {
 
 	private Context context;
-	private static SessionManager session;
 	private static String access_token;
 	public LoadData(Context context) {
 		this.context = context;
 
-		session = new SessionManager(this.context);  
+        SessionManager session = new SessionManager(this.context);
 		access_token = session.LoadPreference("access_token");
 
 
@@ -57,12 +53,7 @@ public class LoadData {
 
         while (groups.moveToNext()) {
 
-
-            Log.d(Globalconstant.TAG, "ID GROUP: " + groups.getString(groups.getColumnIndex(DatabaseOpenHelper._ID)));
-
             String url = Globalconstant.get_docs_in_groups.replace("#groupId#",groups.getString(groups.getColumnIndex(DatabaseOpenHelper._ID)));
-
-            Log.d(Globalconstant.TAG, "URL GROUP: " + url + access_token);
 
             getUserLibrary(url + access_token);
 
@@ -79,15 +70,11 @@ public class LoadData {
         if(Globalconstant.LOG)
             Log.d(Globalconstant.TAG, "getGROUPS- LOAD DATA");
 
-
-        String[] projection = null;
-        String selection = null;
-
-        projection = new String[] {DatabaseOpenHelper._ID + " as _id"};
+        String[] projection = new String[] {DatabaseOpenHelper._ID + " as _id"};
         Uri  uri = MyContentProvider.CONTENT_URI_GROUPS;
 
 
-        return this.context.getContentResolver().query(uri, projection, selection, null, null);
+        return this.context.getContentResolver().query(uri, projection, null, null, null);
 
 
 
@@ -104,9 +91,6 @@ public class LoadData {
         List<InputStream> link = new ArrayList<InputStream>();
         link = jParser.getJACKSONFromUrl(url,true);
 
-        Log.d(Globalconstant.TAG, "url" + url);
-
-
         try {
             for( InputStream oneItem : link ) {
                 JsonParser jp = factory.createParser(oneItem);
@@ -119,14 +103,10 @@ public class LoadData {
 
                     if(temp.has(Globalconstant.GROUP_NAME)){
                         values.put(DatabaseOpenHelper.GROUPS_NAME,temp.get(Globalconstant.GROUP_NAME).asText());
-
-                        Log.d(Globalconstant.TAG, "GROUP_NAME" + temp.get(Globalconstant.GROUP_NAME).asText());
                     }
 
                     if(temp.has(Globalconstant.ID)){
                         values.put(DatabaseOpenHelper._ID,temp.get(Globalconstant.ID).asText());
-
-                        Log.d(Globalconstant.TAG, "ID: " + temp.get(Globalconstant.ID).asText());
                     }
                     Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_GROUPS, values);
 
@@ -282,8 +262,7 @@ public class LoadData {
 		ContentValues values = new ContentValues();
 		ContentValues authors_values = new ContentValues();
 		JSONParser jParser = new JSONParser();
-		String docTitle ;
-		String docId = null ;
+		String docTitle, docId;
 
 		List<InputStream> link = new ArrayList<InputStream>();
 
@@ -396,7 +375,7 @@ public class LoadData {
 					if(temp.has(Globalconstant.AUTHORS)){
 						Iterator<JsonNode> authorsIterator = temp.get(Globalconstant.AUTHORS).elements();
 						String authors = "";
-						String aux_surname = null, aux_forenamed = null;
+						String aux_surname, aux_forenamed;
 						
 						while (authorsIterator.hasNext() ){
 

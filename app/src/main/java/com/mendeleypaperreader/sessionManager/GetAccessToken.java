@@ -27,10 +27,6 @@ import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
 /**
- * Classname: GetAccessToken 
- * 	 
- * 
- * @date July 8, 2014
  * @author PedroLourenco (pdrolourenco@gmail.com)
  */
 

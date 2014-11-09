@@ -20,23 +20,12 @@ import org.json.JSONObject;
 import android.util.Log;
 
 /**
- * Classname: JSONParser 
- * 	 
- * 
- * @date July 8, 2014
  * @author PedroLourenco (pdrolourenco@gmail.com)
  */
 
 public class JSONParser {
 
-
-	static InputStream is = null;
-	static JSONObject jObj = null;
-	static String json = "";
-
-	List<String> jsonArray = new ArrayList<String>();
 	List<InputStream> jacksonArray = new ArrayList<InputStream>();
-	Map<InputStream, String> myMap = new HashMap<InputStream, String>();
 
 	
 	public String header(org.apache.http.Header[] header){

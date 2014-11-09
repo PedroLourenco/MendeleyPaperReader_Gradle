@@ -5,10 +5,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
- * Classname: DatabaseOpenHelper 
- * 	 
- * 
- * @date July 8, 2014
  * @author PedroLourenco (pdrolourenco@gmail.com)
  */
 

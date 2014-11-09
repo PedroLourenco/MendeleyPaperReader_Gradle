@@ -1,10 +1,6 @@
 package com.mendeleypaperreader.utl;
 
 /**
- * Classname: Globalconstant
- * 	 
- * 
- * @date July 8, 2014
  * @author PedroLourenco (pdrolourenco@gmail.com)
  */
 

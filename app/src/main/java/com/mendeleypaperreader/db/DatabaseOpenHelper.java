@@ -11,10 +11,6 @@ import com.mendeleypaperreader.sessionManager.SessionManager;
 import com.mendeleypaperreader.utl.Globalconstant;
 
 /**
- * Classname: DatabaseOpenHelper 
- * 	 
- * 
- * @date July 8, 2014
  * @author PedroLourenco (pdrolourenco@gmail.com)
  */
 

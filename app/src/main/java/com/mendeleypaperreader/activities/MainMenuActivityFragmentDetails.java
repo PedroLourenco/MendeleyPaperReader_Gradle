@@ -215,14 +215,12 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 
 		if(getShownIndex() == 1) { //All doc
 
-            Log.d(Globalconstant.TAG,"All doc");
 			title.setText(Globalconstant.MYLIBRARY[0]);
 			projection = new String[] {DatabaseOpenHelper.TITLE + " as _id",  DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"}; 
 			uri = MyContentProvider.CONTENT_URI_DOC_DETAILS;
 		}
 		else if (getShownIndex() == 2){ //added
 
-            Log.d(Globalconstant.TAG,"added");
 			title.setText(Globalconstant.MYLIBRARY[1]);
 			projection = new String[] {DatabaseOpenHelper.TITLE + " as _id",  DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
 			selection = DatabaseOpenHelper.ADDED + " >= datetime('now', 'start of month')";
@@ -230,7 +228,6 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 		}
 		else if (getShownIndex() == 3){ //Starred = true
 
-            Log.d(Globalconstant.TAG,"Starred = true");
 			title.setText(Globalconstant.MYLIBRARY[2]);
 			projection = new String[] {DatabaseOpenHelper.TITLE + " as _id",  DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
 			selection = DatabaseOpenHelper.STARRED + " = 'true'";
@@ -238,7 +235,6 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 		}
 		else if (getShownIndex() == 4){ //Authored = true
 
-            Log.d(Globalconstant.TAG,"Authored = true");
 			title.setText(Globalconstant.MYLIBRARY[3]);
 			projection = new String[] {DatabaseOpenHelper.TITLE + " as _id",  DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
 			selection = DatabaseOpenHelper.AUTHORED + " = 'true'";
@@ -251,7 +247,7 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 		}
 
 		else if (getShownIndex() > 5 && getShownIndex() <= getFoldersCount()+7){
-            Log.d(Globalconstant.TAG,"folders");
+
 			String folderName = getShownDescription();			
 			if (folderName.contains("'")) {
 				 folderName = folderName.replaceAll("'", "''");
@@ -265,7 +261,7 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 		}
 
         else if (getShownIndex() > getFoldersCount()){
-            Log.d(Globalconstant.TAG,"groups");
+
             String groupName = getShownDescription();
             if (groupName.contains("'")) {
                 groupName = groupName.replaceAll("'", "''");
