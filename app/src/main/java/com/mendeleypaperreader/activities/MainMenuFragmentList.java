@@ -15,14 +15,19 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.adapter.ListTitleAdapter;
@@ -58,7 +63,7 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-
+        setHasOptionsMenu(true);
 
 		// Use a custom adapter so we can have something more than the just the text view filled in.
 		lAdapter =  new CustomAdapterLibrary (getActivity (),  R.id.title, Arrays.asList (Globalconstant.MYLIBRARY));
@@ -116,7 +121,44 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 
 
 
-	@Override 
+    private String grid_currentQuery = null; // holds the current query...
+
+    final private SearchView.OnQueryTextListener queryListener = new SearchView.OnQueryTextListener() {
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            if (TextUtils.isEmpty(newText)) {
+                Log.d(Globalconstant.TAG, "TextUtils.isEmpty(newText)" );
+                getActivity().getActionBar().setSubtitle("List");
+                grid_currentQuery = null;
+            } else {
+                Log.d(Globalconstant.TAG, "not empty" );
+                getActivity().getActionBar().setSubtitle("List - Searching for: " + newText);
+                Log.d(Globalconstant.TAG, "newText: " + newText);
+                grid_currentQuery = newText;
+
+            }
+            getLoaderManager().restartLoader(FOLDERS_LOADER, null, MainMenuFragmentList.this);
+            getLoaderManager().restartLoader(GROUPS_LOADER, null, MainMenuFragmentList.this);
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            Toast.makeText(getActivity(), "Searching for: " + query + "...", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    };
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main_menu_activity_actions, menu);
+        SearchView searchView = (SearchView)menu.findItem(R.id.grid_default_search).getActionView();
+        searchView.setOnQueryTextListener(queryListener);
+    }
+
+
+
+    @Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 
@@ -219,21 +261,51 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
         switch (loaderID) {
             case FOLDERS_LOADER:
 
-                String[] folderProjection = {DatabaseOpenHelper.FOLDER_NAME + " as _id"};
-                if (Globalconstant.LOG)
-                    Log.d(Globalconstant.TAG, "onCreateLoader  Folders");
 
-                return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_FOLDERS, folderProjection, null, null, null);
+                if (!TextUtils.isEmpty(grid_currentQuery)) {
+                    Log.d(Globalconstant.TAG, "DEFAULT");
+                    String sort = DatabaseOpenHelper.FOLDER_NAME + " ASC";
+                    String[] grid_columns = {DatabaseOpenHelper.FOLDER_NAME + " as _id"};
 
+                    String grid_whereClause = DatabaseOpenHelper.FOLDER_NAME + " LIKE ?";
+
+
+                    Log.d(Globalconstant.TAG, "DEFAULT" + !TextUtils.isEmpty(grid_currentQuery));
+                    return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_FOLDERS, grid_columns, grid_whereClause, new String[] { grid_currentQuery + "%" }, sort);
+                }
+
+                else {
+
+
+                    String[] folderProjection = {DatabaseOpenHelper.FOLDER_NAME + " as _id"};
+                    if (Globalconstant.LOG)
+                        Log.d(Globalconstant.TAG, "onCreateLoader  Folders");
+
+                    return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_FOLDERS, folderProjection, null, null, null);
+                }
 
             case GROUPS_LOADER:
 
-                String[] groupProjection = {DatabaseOpenHelper.GROUPS_NAME + " as _id"};
-                if (Globalconstant.LOG)
-                    Log.d(Globalconstant.TAG, "onCreateLoader  Groups");
 
-                return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_GROUPS, groupProjection, null, null, null);
+                if (!TextUtils.isEmpty(grid_currentQuery)) {
+                    Log.d(Globalconstant.TAG, "DEFAULT");
+                    String sort = DatabaseOpenHelper.GROUPS_NAME + " ASC";
+                    String[] grid_columns = {DatabaseOpenHelper.GROUPS_NAME + " as _id"};
 
+                    String grid_whereClause = DatabaseOpenHelper.GROUPS_NAME + " LIKE ?";
+
+
+                    Log.d(Globalconstant.TAG, "DEFAULT" + !TextUtils.isEmpty(grid_currentQuery));
+                    return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_GROUPS, grid_columns, grid_whereClause, new String[] { grid_currentQuery + "%" }, sort);
+                }
+                else {
+
+                    String[] groupProjection = {DatabaseOpenHelper.GROUPS_NAME + " as _id"};
+                    if (Globalconstant.LOG)
+                        Log.d(Globalconstant.TAG, "onCreateLoader  Groups");
+
+                    return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_GROUPS, groupProjection, null, null, null);
+                }
 
 
             default:

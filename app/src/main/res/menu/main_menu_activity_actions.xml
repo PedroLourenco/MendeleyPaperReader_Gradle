@@ -1,7 +1,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-      
-       
-   <item android:id="@+id/menu_refresh"
+
+
+    <item
+        android:id="@+id/grid_default_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="search"
+        android:showAsAction="always"
+        android:actionViewClass="android.widget.SearchView">
+
+    </item>
+
+
+    <item android:id="@+id/menu_refresh"
         android:icon="@drawable/ic_action_refresh"
         android:showAsAction="always"
         android:title="@string/menu_refresh"  />     

@@ -928,7 +928,7 @@ containing a value of this type.
         public static final int beginning=0x7f08000a;
         public static final int checkbox=0x7f08002b;
         public static final int collapseActionView=0x7f080011;
-        public static final int copyLink=0x7f080067;
+        public static final int copyLink=0x7f080068;
         public static final int current_version=0x7f080045;
         public static final int data=0x7f08005e;
         public static final int default_activity_button=0x7f080026;
@@ -948,6 +948,7 @@ containing a value of this type.
         public static final int folder=0x7f080053;
         public static final int folders=0x7f080054;
         public static final int footer=0x7f08004a;
+        public static final int grid_default_search=0x7f080064;
         public static final int home=0x7f080017;
         public static final int homeAsUp=0x7f080005;
         public static final int icon=0x7f080028;
@@ -959,8 +960,8 @@ containing a value of this type.
         public static final int list_header_title=0x7f08005f;
         public static final int list_image=0x7f08005b;
         public static final int list_item=0x7f080027;
-        public static final int menu_About=0x7f080065;
-        public static final int menu_logout=0x7f080064;
+        public static final int menu_About=0x7f080066;
+        public static final int menu_logout=0x7f080065;
         public static final int menu_refresh=0x7f080063;
         public static final int middle=0x7f08000b;
         public static final int msg_about=0x7f080043;
@@ -975,7 +976,7 @@ containing a value of this type.
         public static final int readersStatus=0x7f080060;
         public static final int readersTotal=0x7f080058;
         public static final int readersValue=0x7f080059;
-        public static final int refresh=0x7f080066;
+        public static final int refresh=0x7f080067;
         public static final int relativedoc=0x7f08004f;
         public static final int right_container=0x7f080032;
         public static final int right_icon=0x7f080033;
