@@ -34,16 +34,63 @@ public class LoadData {
 
 	private Context context;
 	private static String access_token;
-	public LoadData(Context context) {
+
+    public LoadData(Context context) {
 		this.context = context;
 
         SessionManager session = new SessionManager(this.context);
 		access_token = session.LoadPreference("access_token");
-
-
 	}
 
 
+
+/*
+    public void getTags(String url) {
+
+        ContentValues tagsValues = new ContentValues();
+        JSONParser jParser = new JSONParser();
+
+        List<InputStream> link = new ArrayList<InputStream>();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        JsonFactory factory = mapper.getFactory();
+        link = jParser.getJACKSONFromUrl(url,true);
+
+        try {
+
+            for( InputStream oneItem : link ) {
+
+                JsonParser jp = factory.createParser(oneItem);
+                JsonNode rootNode = mapper.readTree(jp);
+
+                Iterator<JsonNode> ite = rootNode.iterator();
+                while (ite.hasNext() ) {
+
+                    JsonNode temp = ite.next();
+
+                    if(temp.has(Globalconstant.ID)){
+
+                        tagsValues.put(DatabaseOpenHelper._ID,temp.get(Globalconstant.TYPE).asText());
+                    }
+                    if(temp.has(Globalconstant.tags)){
+
+                        tagsValues.put(DatabaseOpenHelper._ID,temp.get(Globalconstant.TYPE).asText());
+                    }
+
+                    Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_DOC_DETAILS, tagsValues);
+
+                }
+                jp.close();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+*/
 
 
 
@@ -58,11 +105,9 @@ public class LoadData {
             getUserLibrary(url + access_token);
 
         }
-
-
-
-
     }
+
+
 
 
     private Cursor getGroups(){
@@ -73,11 +118,7 @@ public class LoadData {
         String[] projection = new String[] {DatabaseOpenHelper._ID + " as _id"};
         Uri  uri = MyContentProvider.CONTENT_URI_GROUPS;
 
-
         return this.context.getContentResolver().query(uri, projection, null, null, null);
-
-
-
     }
 
 
@@ -109,19 +150,12 @@ public class LoadData {
                         values.put(DatabaseOpenHelper._ID,temp.get(Globalconstant.ID).asText());
                     }
                     Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_GROUPS, values);
-
                 }
-
                 jp.close();
             }
-
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
 
