@@ -928,7 +928,6 @@ containing a value of this type.
         public static final int beginning=0x7f08000a;
         public static final int checkbox=0x7f08002b;
         public static final int collapseActionView=0x7f080011;
-        public static final int copyLink=0x7f080068;
         public static final int current_version=0x7f080045;
         public static final int data=0x7f08005e;
         public static final int default_activity_button=0x7f080026;
@@ -976,7 +975,6 @@ containing a value of this type.
         public static final int readersStatus=0x7f080060;
         public static final int readersTotal=0x7f080058;
         public static final int readersValue=0x7f080059;
-        public static final int refresh=0x7f080067;
         public static final int relativedoc=0x7f08004f;
         public static final int right_container=0x7f080032;
         public static final int right_icon=0x7f080033;
@@ -1058,8 +1056,8 @@ containing a value of this type.
     }
     public static final class menu {
         public static final int action_bar_refresh=0x7f0d0000;
-        public static final int main_menu_activity_actions=0x7f0d0001;
-        public static final int teste=0x7f0d0002;
+        public static final int action_bar_search=0x7f0d0001;
+        public static final int main_menu_activity_actions=0x7f0d0002;
     }
     public static final class string {
         public static final int abc_action_bar_home_description=0x7f0b0000;

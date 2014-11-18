@@ -1,11 +1,15 @@
 package com.mendeleypaperreader.activities;
 
 
+import android.app.ActionBar;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -13,12 +17,19 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
@@ -35,12 +46,21 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 	boolean mDualPane;
 	SimpleCursorAdapter mAdapter;
 	TextView title;
+    SearchView searchView;
     private static final int DETAILS_LOADER = 2;
 
 
 
-	public static MainMenuActivityFragmentDetails newInstance(int index , String description, int foldersCount) {
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        setHasOptionsMenu(true);
+    }
+
+
+    public static MainMenuActivityFragmentDetails newInstance(int index , String description, int foldersCount) {
 		MainMenuActivityFragmentDetails f = new MainMenuActivityFragmentDetails();
+
 
 		// Supply index input as an argument.
 		Bundle args = new Bundle();
@@ -53,8 +73,122 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 	}
 
 
+    private String grid_currentQuery = null; // holds the current query...
 
-	public int getShownIndex() {
+    final private SearchView.OnQueryTextListener queryListener = new SearchView.OnQueryTextListener() {
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+
+
+
+
+            View detailsFrame = getActivity().findViewById(R.id.details);
+            mDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
+
+            Log.d(Globalconstant.TAG,"onLoadFinished  Details - isAdded:  - " + isAdded());
+
+            Log.d(Globalconstant.TAG, "MainMenuActivityFragmentDetails" );
+
+            //Log.d(Globalconstant.TAG, "MainMenuActivityFragmentDetails - detailsFrame: " +detailsFrame.getVisibility());
+            Log.d(Globalconstant.TAG, "MainMenuActivityFragmentDetails - View.VISIBLE: " +View.VISIBLE);
+            Log.d(Globalconstant.TAG, "MainMenuActivityFragmentDetails - detailsFrame: " + detailsFrame );
+            Log.d(Globalconstant.TAG, "MainMenuActivityFragmentDetails - grid_currentQuery: " + grid_currentQuery );
+
+
+                Log.d(Globalconstant.TAG, "not empty" );
+                getActivity().getActionBar().setSubtitle("List - Searching for: " + newText);
+                Log.d(Globalconstant.TAG, "newText: " + newText);
+                grid_currentQuery = newText;
+
+
+            if (grid_currentQuery != null){
+                Log.d(Globalconstant.TAG, "MainMenuActivityFragmentDetails - restartLoader: ffff" + grid_currentQuery );
+                getLoaderManager().restartLoader(DETAILS_LOADER, null, MainMenuActivityFragmentDetails.this);
+
+
+            }
+
+
+
+            return false;
+        }
+
+
+
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            Toast.makeText(getActivity(), "Searching for: " + query + "...", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    };
+
+
+
+    public boolean isFragmentUIActive() {
+        return isAdded() && !isDetached() && !isRemoving();
+    }
+
+
+
+    public void showResults(String search){
+
+        Log.d(Globalconstant.TAG,"showResults()");
+
+        grid_currentQuery = search;
+
+
+
+        Log.d(Globalconstant.TAG,"showResults()  -- Restart loader");
+        getLoaderManager().restartLoader(DETAILS_LOADER, null, MainMenuActivityFragmentDetails.this);
+
+    }
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+
+        Log.d(Globalconstant.TAG,"onCreateOptionsMenu - mDualPane: " + mDualPane);
+
+        String query = getQuery();
+
+        View detailsFrame = getActivity().findViewById(R.id.details);
+        mDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
+
+
+            ActionBar actionBar = getActivity().getActionBar();
+            searchView = (SearchView)menu.findItem(R.id.grid_default_search).getActionView();
+        //searchView = new MySearchView(getActivity());
+             //chamado quando a action search vem da activity principal
+            if(!mDualPane && getSearchActivity().equals("true")) {
+
+                Log.d(Globalconstant.TAG,"getQuery: " + query);
+                actionBar.setCustomView(searchView);
+
+                searchView.setFocusable(true);
+                searchView.setIconified(false);
+                searchView.requestFocus();
+                searchView.requestFocusFromTouch();
+                searchView.setQuery(query, false);
+                grid_currentQuery = query;
+
+
+                getLoaderManager().restartLoader(DETAILS_LOADER, null, MainMenuActivityFragmentDetails.this);
+                searchView.setOnQueryTextListener(queryListener);
+
+
+            }
+
+        
+        }
+
+
+
+
+
+
+
+
+    public int getShownIndex() {
 
 		int position = getArguments().getInt("index", 1);
 
@@ -80,6 +214,14 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 	public String getShownDescription() {
 		return getArguments().getString("description", "All Documents");
 	}
+
+    public String getQuery() {
+        return getArguments().getString("searchQuery", "null");
+    }
+
+    public String getSearchActivity() {
+        return getArguments().getString("searchActivity", "null");
+    }
 
 
 	@Override
@@ -198,8 +340,9 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 
 
 
+
 	@Override
-	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
 		String[] projection = null;
 		String selection = null;
@@ -213,7 +356,27 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 
 		Uri uri = null;
 
-		if(getShownIndex() == 1) { //All doc
+        Log.d(Globalconstant.TAG, "onCreateLoader  - grid_currentQuery: " + grid_currentQuery);
+        Log.d(Globalconstant.TAG, "isFragmentUIActive(): "  + isFragmentUIActive());
+
+
+        if (!TextUtils.isEmpty(grid_currentQuery)) {
+            Log.d(Globalconstant.TAG, "DEFAULT");
+            String sort = DatabaseOpenHelper.TITLE + " ASC";
+            String[] grid_columns = {DatabaseOpenHelper.TITLE + " as _id",  DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
+
+            String grid_whereClause = DatabaseOpenHelper.TITLE + " LIKE ?";
+
+
+            Log.d(Globalconstant.TAG, "DEFAULT" + !TextUtils.isEmpty(grid_currentQuery));
+            return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_DOC_DETAILS, grid_columns, grid_whereClause, new String[] { grid_currentQuery + "%" }, sort);
+        }
+
+
+
+
+
+             else if(getShownIndex() == 1) { //All doc
 
 			title.setText(Globalconstant.MYLIBRARY[0]);
 			projection = new String[] {DatabaseOpenHelper.TITLE + " as _id",  DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"}; 
@@ -288,7 +451,7 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 
 		if (Globalconstant.LOG)
 			Log.d(Globalconstant.TAG,"onLoadFinished  Details - count: " + cursor.getCount() +" - " + isAdded());
-		if(isAdded() && !cursor.isClosed()){
+		if(isAdded() && !cursor.isClosed() && grid_currentQuery != null){
 			mAdapter.changeCursor(cursor);
 		}
 		else{
@@ -308,5 +471,9 @@ public class MainMenuActivityFragmentDetails  extends ListFragment  implements L
 			mAdapter.swapCursor(null);
 		}
 	}
+
+
+
+
 
 }

@@ -82,40 +82,33 @@ public class MainMenuActivity extends FragmentActivity
 		return false;
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu items for use in the action bar
-		//MenuInflater inflater = getMenuInflater();
-		//inflater.inflate(R.menu.main_menu_activity_actions, menu);
-
-		return super.onCreateOptionsMenu(menu);
-	}
-
-	//ActionBar Menu Options 
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
-
-		switch (item.getItemId()) {
-		case R.id.menu_About:
-			Intent i_about = new Intent(getApplicationContext(), AboutActivity.class);
-			startActivity(i_about);
-			return true;
-
-		case R.id.menu_logout:
-			showDialog();
-			return true;		
-		case R.id.menu_refresh :
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu_activity_actions, menu);
 
 
-			refreshToken();
-			return true;	
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    //ActionBar Menu Options
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+
+        switch (item.getItemId()) {
+            case R.id.menu_About:
 
 
+            case R.id.menu_logout:
+                showDialog();
+            case R.id.menu_refresh :
+                refreshToken();
 
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 
 	/*

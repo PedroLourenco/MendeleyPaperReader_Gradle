@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -63,9 +64,11 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
+        Log.d(Globalconstant.TAG, "MainMenuFragmentList . ... onActivityCreated" );
         setHasOptionsMenu(true);
 
-		// Use a custom adapter so we can have something more than the just the text view filled in.
+
+        // Use a custom adapter so we can have something more than the just the text view filled in.
 		lAdapter =  new CustomAdapterLibrary (getActivity (),  R.id.title, Arrays.asList (Globalconstant.MYLIBRARY));
 
 		String[] foldersDataColumns = {"_id"}; //column DatabaseOpenHelper.FOLDER_NAME
@@ -121,16 +124,34 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 
 
 
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.d(Globalconstant.TAG, "MainMenuFragmentList  - - - - onCreateOptionsMenu" );
+
+
+            Log.d(Globalconstant.TAG, "MainMenuFragmentList  - - - - onCreateOptionsMenu   if" );
+            SearchView searchView = (SearchView)menu.findItem(R.id.grid_default_search).getActionView();
+            searchView.setOnQueryTextListener(queryListener);
+
+    }
+
+
+
+
     private String grid_currentQuery = null; // holds the current query...
 
     final private SearchView.OnQueryTextListener queryListener = new SearchView.OnQueryTextListener() {
 
         @Override
         public boolean onQueryTextChange(String newText) {
+
+            Log.d(Globalconstant.TAG, "MainMenuFragmentList  - - - - onQueryTextChange" );
+
+
             if (TextUtils.isEmpty(newText)) {
                 Log.d(Globalconstant.TAG, "TextUtils.isEmpty(newText)" );
                 getActivity().getActionBar().setSubtitle("List");
                 grid_currentQuery = null;
+
             } else {
                 Log.d(Globalconstant.TAG, "not empty" );
                 getActivity().getActionBar().setSubtitle("List - Searching for: " + newText);
@@ -138,8 +159,33 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
                 grid_currentQuery = newText;
 
             }
-            getLoaderManager().restartLoader(FOLDERS_LOADER, null, MainMenuFragmentList.this);
-            getLoaderManager().restartLoader(GROUPS_LOADER, null, MainMenuFragmentList.this);
+
+
+            MainMenuActivityFragmentDetails mDetails = (MainMenuActivityFragmentDetails)
+                    getFragmentManager().findFragmentById(R.id.details);
+
+
+            Log.d(Globalconstant.TAG, "mDualPane: " + mDualPane);
+            Log.d(Globalconstant.TAG, "TextUtils.isEmpty(newText) : " + TextUtils.isEmpty(newText));
+
+            if(mDualPane){
+
+
+                mDetails.showResults(grid_currentQuery);
+        } else if(!mDualPane && !TextUtils.isEmpty(newText)){
+            // Otherwise we need to launch a new activity to display
+            // the dialog fragment with selected text.
+                Log.d(Globalconstant.TAG, "open intent: ");
+            Intent intent = new Intent();
+            intent.setClass(getActivity(), DetailsActivity.class);
+            intent.putExtra("index", 1);
+            intent.putExtra("description", "All Documents");
+            intent.putExtra("foldersCount", foldersCount);
+            intent.putExtra("searchQuery", grid_currentQuery);
+            intent.putExtra("searchActivity", "true");
+            startActivity(intent);
+        }
+
             return false;
         }
 
@@ -150,11 +196,8 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
         }
     };
 
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main_menu_activity_actions, menu);
-        SearchView searchView = (SearchView)menu.findItem(R.id.grid_default_search).getActionView();
-        searchView.setOnQueryTextListener(queryListener);
-    }
+
+
 
 
 
@@ -213,6 +256,10 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 
 		if (Globalconstant.LOG)
 			Log.d(Globalconstant.TAG, "ITEM SELECTED: " + description);
+            Log.d(Globalconstant.TAG, "ITEM index: " + index);
+            Log.d(Globalconstant.TAG, "ITEM foldersCount: " + foldersCount);
+
+
 
 
 		if (mDualPane) {
@@ -244,7 +291,9 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 			// Otherwise we need to launch a new activity to display
 			// the dialog fragment with selected text.
 
-			Intent intent = new Intent();
+
+
+            Intent intent = new Intent();
 			intent.setClass(getActivity(), DetailsActivity.class);
 			intent.putExtra("index", index);
 			intent.putExtra("description", description);
@@ -261,59 +310,28 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
         switch (loaderID) {
             case FOLDERS_LOADER:
 
+                String[] folderProjection = {DatabaseOpenHelper.FOLDER_NAME + " as _id"};
+                if (Globalconstant.LOG)
+                    Log.d(Globalconstant.TAG, "onCreateLoader  Folders");
 
-                if (!TextUtils.isEmpty(grid_currentQuery)) {
-                    Log.d(Globalconstant.TAG, "DEFAULT");
-                    String sort = DatabaseOpenHelper.FOLDER_NAME + " ASC";
-                    String[] grid_columns = {DatabaseOpenHelper.FOLDER_NAME + " as _id"};
+                return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_FOLDERS, folderProjection, null, null, null);
 
-                    String grid_whereClause = DatabaseOpenHelper.FOLDER_NAME + " LIKE ?";
-
-
-                    Log.d(Globalconstant.TAG, "DEFAULT" + !TextUtils.isEmpty(grid_currentQuery));
-                    return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_FOLDERS, grid_columns, grid_whereClause, new String[] { grid_currentQuery + "%" }, sort);
-                }
-
-                else {
-
-
-                    String[] folderProjection = {DatabaseOpenHelper.FOLDER_NAME + " as _id"};
-                    if (Globalconstant.LOG)
-                        Log.d(Globalconstant.TAG, "onCreateLoader  Folders");
-
-                    return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_FOLDERS, folderProjection, null, null, null);
-                }
 
             case GROUPS_LOADER:
 
+                String[] groupProjection = {DatabaseOpenHelper.GROUPS_NAME + " as _id"};
+                if (Globalconstant.LOG)
+                    Log.d(Globalconstant.TAG, "onCreateLoader  Groups");
 
-                if (!TextUtils.isEmpty(grid_currentQuery)) {
-                    Log.d(Globalconstant.TAG, "DEFAULT");
-                    String sort = DatabaseOpenHelper.GROUPS_NAME + " ASC";
-                    String[] grid_columns = {DatabaseOpenHelper.GROUPS_NAME + " as _id"};
-
-                    String grid_whereClause = DatabaseOpenHelper.GROUPS_NAME + " LIKE ?";
-
-
-                    Log.d(Globalconstant.TAG, "DEFAULT" + !TextUtils.isEmpty(grid_currentQuery));
-                    return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_GROUPS, grid_columns, grid_whereClause, new String[] { grid_currentQuery + "%" }, sort);
-                }
-                else {
-
-                    String[] groupProjection = {DatabaseOpenHelper.GROUPS_NAME + " as _id"};
-                    if (Globalconstant.LOG)
-                        Log.d(Globalconstant.TAG, "onCreateLoader  Groups");
-
-                    return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_GROUPS, groupProjection, null, null, null);
-                }
+                return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_GROUPS, groupProjection, null, null, null);
 
 
             default:
                 // An invalid id was passed in
                 return null;
         }
-
     }
+
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {

@@ -1,8 +1,8 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:yourapp="http://schemas.android.com/apk/res-auto" > 
-       
-   <item
-    	android:title="@string/app_name"
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+
+    <item
+    	android:title="@string/menu_refresh"
     	android:id="@+id/menu_refresh"
     	android:icon="@drawable/ic_action_refresh"
     	android:showAsAction="ifRoom|never">

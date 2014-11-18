@@ -1,6 +1,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-
     <item
         android:id="@+id/grid_default_search"
         android:icon="@android:drawable/ic_menu_search"
@@ -14,23 +13,19 @@
     <item android:id="@+id/menu_refresh"
         android:icon="@drawable/ic_action_refresh"
         android:showAsAction="always"
-        android:title="@string/menu_refresh"  />     
+        android:title="@string/menu_refresh"  />
 
-      
-       
-         <item
-            android:id="@+id/menu_logout"
-            android:title="@string/menu_logout" 
-            android:orderInCategory="100"
-            android:icon="@drawable/ic_action_refresh"
-            android:showAsAction="never"/>
-         <item
-            android:id="@+id/menu_About"
-            android:title="@string/menu_about" 
-            android:orderInCategory="100"
-            android:icon="@drawable/ic_action_refresh"
-            android:showAsAction="never"/>          
-
-
+    <item
+        android:id="@+id/menu_logout"
+        android:title="@string/menu_logout"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_refresh"
+        android:showAsAction="never"/>
+    <item
+        android:id="@+id/menu_About"
+        android:title="@string/menu_about"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_refresh"
+        android:showAsAction="never"/>
 
 </menu>

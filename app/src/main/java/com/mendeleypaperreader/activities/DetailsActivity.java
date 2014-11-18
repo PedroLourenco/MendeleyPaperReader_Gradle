@@ -2,13 +2,20 @@ package com.mendeleypaperreader.activities;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
@@ -58,16 +65,23 @@ public class DetailsActivity extends FragmentActivity {
 	}
 
 
+
+
+
+
+
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu items for use in the action bar
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.action_bar_refresh, menu);
+		inflater.inflate(R.menu.action_bar_search, menu);
+
 		return super.onCreateOptionsMenu(menu);
 	}
 
 
-	//ActionBar Menu Options 
+
+            //ActionBar Menu Options
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
