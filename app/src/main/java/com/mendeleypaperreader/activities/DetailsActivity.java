@@ -2,6 +2,7 @@ package com.mendeleypaperreader.activities;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.SearchView;
+
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.jsonParser.SyncDataAsync;
@@ -20,13 +22,12 @@ import com.mendeleypaperreader.utl.ConnectionDetector;
 import com.mendeleypaperreader.utl.Globalconstant;
 
 /**
- * 	This activity displays the details using a MainMenuActivityFragmentDetails. This activity is started
- * 	by a MainMenuActivityFragmentList when a title in the list is selected.
- * 	The activity is used only if a MainMenuActivityFragmentDetails is not on the screen.
+ * This activity displays the details using a MainMenuActivityFragmentDetails. This activity is started
+ * by a MainMenuActivityFragmentList when a title in the list is selected.
+ * The activity is used only if a MainMenuActivityFragmentDetails is not on the screen.
  *
  * @author PedroLourenco (pdrolourenco@gmail.com)
  */
-
 
 
 public class DetailsActivity extends FragmentActivity {
@@ -46,7 +47,7 @@ public class DetailsActivity extends FragmentActivity {
 
 
         //verify orientation permissions
-        if(getResources().getBoolean(R.bool.portrait_only)){
+        if (getResources().getBoolean(R.bool.portrait_only)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
@@ -59,8 +60,6 @@ public class DetailsActivity extends FragmentActivity {
     }
 
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
@@ -69,8 +68,6 @@ public class DetailsActivity extends FragmentActivity {
 
         return super.onCreateOptionsMenu(menu);
     }
-
-
 
 
     //ActionBar Menu Options
@@ -89,17 +86,15 @@ public class DetailsActivity extends FragmentActivity {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         SearchView searchView = (SearchView) menu.findItem(R.id.grid_default_search).getActionView();
-        Log.d(Globalconstant.TAG,"onCreateOptionsMenu - DetailsActivity: ");
-
     }
 
-    private void syncData(){
+    private void syncData() {
 
         new SyncDataAsync(DetailsActivity.this, DetailsActivity.this).execute();
     }
 
 
-    private void refreshToken(){
+    private void refreshToken() {
 
         //delete data from data base and get new access token to start sync
 
@@ -109,15 +104,13 @@ public class DetailsActivity extends FragmentActivity {
 
         isInternetPresent = connectionDetector.isConnectingToInternet();
 
-        if(isInternetPresent){
-            getContentResolver().delete(MyContentProvider.CONTENT_URI_DELETE_DATA_BASE,null, null);
+        if (isInternetPresent) {
+            getContentResolver().delete(MyContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
             new ProgressTask().execute();
-        }
-        else{
+        } else {
             connectionDetector.showDialog(DetailsActivity.this, ConnectionDetector.DEFAULT_DIALOG);
         }
     }
-
 
 
     //AsyncTask to download DATA from server
@@ -152,13 +145,11 @@ public class DetailsActivity extends FragmentActivity {
         }
 
 
-
         protected JSONObject doInBackground(final String... args) {
 
             GetAccessToken jParser = new GetAccessToken();
 
             return jParser.refresh_token(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, Globalconstant.GRANT_TYPE, refresh_token);
-
 
 
         }

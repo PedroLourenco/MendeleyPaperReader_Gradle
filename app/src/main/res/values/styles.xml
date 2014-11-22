@@ -16,11 +16,17 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-    
-    
+
+
     <!-- Authorization Dialog. -->
     <style name="FullHeightDialog" parent="android:style/Theme.Dialog">
-   		<item name="android:windowNoTitle">true</item>
-  	</style>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">?android:attr/listDivider</item>
+    </style>
 
 </resources>

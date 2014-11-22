@@ -15,30 +15,28 @@ public class MergeAdapter extends BaseAdapter implements SectionIndexer {
     protected String noItemsText;
 
     /**
-    * Stock constructor, simply chaining to the superclass.
-    */
+     * Stock constructor, simply chaining to the superclass.
+     */
     public MergeAdapter() {
         super();
     }
 
     /**
-    * Adds a new adapter to the roster of things to appear in the aggregate
-    * list.
-    * 
-    * @param adapter
-    *            Source for row views for this section
-    */
+     * Adds a new adapter to the roster of things to appear in the aggregate
+     * list.
+     *
+     * @param adapter Source for row views for this section
+     */
     public void addAdapter(ListAdapter adapter) {
         pieces.add(adapter);
         adapter.registerDataSetObserver(new CascadeDataSetObserver());
     }
 
     /**
-    * Get the data item associated with the specified position in the data set.
-    * 
-    * @param position
-    *            Position of the item whose data we want
-    */
+     * Get the data item associated with the specified position in the data set.
+     *
+     * @param position Position of the item whose data we want
+     */
     public Object getItem(int position) {
         for (ListAdapter piece : pieces) {
             int size = piece.getCount();
@@ -53,16 +51,15 @@ public class MergeAdapter extends BaseAdapter implements SectionIndexer {
         return (null);
     }
 
-    public void setNoItemsText(String text){
+    public void setNoItemsText(String text) {
         noItemsText = text;
     }
 
     /**
-    * Get the adapter associated with the specified position in the data set.
-    * 
-    * @param position
-    *            Position of the item whose adapter we want
-    */
+     * Get the adapter associated with the specified position in the data set.
+     *
+     * @param position Position of the item whose adapter we want
+     */
     public ListAdapter getAdapter(int position) {
         for (ListAdapter piece : pieces) {
             int size = piece.getCount();
@@ -78,8 +75,8 @@ public class MergeAdapter extends BaseAdapter implements SectionIndexer {
     }
 
     /**
-    * How many items are in the data set represented by this Adapter.
-    */
+     * How many items are in the data set represented by this Adapter.
+     */
     public int getCount() {
         int total = 0;
 
@@ -87,7 +84,7 @@ public class MergeAdapter extends BaseAdapter implements SectionIndexer {
             total += piece.getCount();
         }
 
-        if(total == 0 && noItemsText != null){
+        if (total == 0 && noItemsText != null) {
             total = 1;
         }
 
@@ -95,8 +92,8 @@ public class MergeAdapter extends BaseAdapter implements SectionIndexer {
     }
 
     /**
-    * Returns the number of types of Views that will be created by getView().
-    */
+     * Returns the number of types of Views that will be created by getView().
+     */
     @Override
     public int getViewTypeCount() {
         int total = 0;
@@ -106,16 +103,15 @@ public class MergeAdapter extends BaseAdapter implements SectionIndexer {
         }
 
         return (Math.max(total, 1)); // needed for setListAdapter() before
-                                        // content add'
+        // content add'
     }
 
     /**
-    * Get the type of View that will be created by getView() for the specified
-    * item.
-    * 
-    * @param position
-    *            Position of the item whose data we want
-    */
+     * Get the type of View that will be created by getView() for the specified
+     * item.
+     *
+     * @param position Position of the item whose data we want
+     */
     @Override
     public int getItemViewType(int position) {
         int typeOffset = 0;
@@ -137,20 +133,19 @@ public class MergeAdapter extends BaseAdapter implements SectionIndexer {
     }
 
     /**
-    * Are all items in this ListAdapter enabled? If yes it means all items are
-    * selectable and clickable.
-    */
+     * Are all items in this ListAdapter enabled? If yes it means all items are
+     * selectable and clickable.
+     */
     @Override
     public boolean areAllItemsEnabled() {
         return (false);
     }
 
     /**
-    * Returns true if the item at the specified position is not a separator.
-    * 
-    * @param position
-    *            Position of the item whose data we want
-    */
+     * Returns true if the item at the specified position is not a separator.
+     *
+     * @param position Position of the item whose data we want
+     */
     @Override
     public boolean isEnabled(int position) {
         for (ListAdapter piece : pieces) {
@@ -167,16 +162,13 @@ public class MergeAdapter extends BaseAdapter implements SectionIndexer {
     }
 
     /**
-    * Get a View that displays the data at the specified position in the data
-    * set.
-    * 
-    * @param position
-    *            Position of the item whose data we want
-    * @param convertView
-    *            View to recycle, if not null
-    * @param parent
-    *            ViewGroup containing the returned View
-    */
+     * Get a View that displays the data at the specified position in the data
+     * set.
+     *
+     * @param position    Position of the item whose data we want
+     * @param convertView View to recycle, if not null
+     * @param parent      ViewGroup containing the returned View
+     */
     public View getView(int position, View convertView, ViewGroup parent) {
         for (ListAdapter piece : pieces) {
             int size = piece.getCount();
@@ -189,7 +181,7 @@ public class MergeAdapter extends BaseAdapter implements SectionIndexer {
             position -= size;
         }
 
-        if(noItemsText != null){
+        if (noItemsText != null) {
             TextView text = new TextView(parent.getContext());
             text.setText(noItemsText);
             return text;
@@ -199,11 +191,10 @@ public class MergeAdapter extends BaseAdapter implements SectionIndexer {
     }
 
     /**
-    * Get the row id associated with the specified position in the list.
-    * 
-    * @param position
-    *            Position of the item whose data we want
-    */
+     * Get the row id associated with the specified position in the list.
+     *
+     * @param position Position of the item whose data we want
+     */
     public long getItemId(int position) {
         for (ListAdapter piece : pieces) {
             int size = piece.getCount();

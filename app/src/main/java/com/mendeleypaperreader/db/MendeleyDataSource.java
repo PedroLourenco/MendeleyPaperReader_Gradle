@@ -16,18 +16,18 @@ public class MendeleyDataSource {
 
 
     public MendeleyDataSource(Context context) {
-	mendeley_library = new DatabaseOpenHelper(context);	
+        mendeley_library = new DatabaseOpenHelper(context);
     }
 
 
     public void open() throws SQLException {
-	
-	db = mendeley_library.getWritableDatabase();
+
+        db = mendeley_library.getWritableDatabase();
     }
 
     public void close() {
 
-	
-	mendeley_library.close();
+
+        mendeley_library.close();
     }
 }

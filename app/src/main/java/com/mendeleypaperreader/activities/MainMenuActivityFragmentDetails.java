@@ -1,7 +1,6 @@
 package com.mendeleypaperreader.activities;
 
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
@@ -24,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
@@ -215,7 +215,6 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
     public String getSearchActivity() {
         return getArguments().getString("searchActivity", "null");
     }
-
 
 
     @Override

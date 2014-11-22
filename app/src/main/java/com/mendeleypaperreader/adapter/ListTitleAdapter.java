@@ -19,51 +19,51 @@ public class ListTitleAdapter extends BaseAdapter {
     int listView;
 
     public ListTitleAdapter(Context c, String textToShow, int listLayout) {
-        this(c, textToShow, null,listLayout);
-}
+        this(c, textToShow, null, listLayout);
+    }
 
     public ListTitleAdapter(Context c, String textToShow, BaseAdapter dependentAdapter, int listLayout) {
-    super();
-    context = c;
-    text = textToShow;
-    listView = listLayout;
-    
-    if(dependentAdapter != null){
-        parentAdapter = dependentAdapter;
-    }
-}
+        super();
+        context = c;
+        text = textToShow;
+        listView = listLayout;
 
-    public int getCount() {
-    if(parentAdapter != null){
-        if(parentAdapter.getCount() == 0){
-            return 0;
+        if (dependentAdapter != null) {
+            parentAdapter = dependentAdapter;
         }
     }
-    return 1;
-}
+
+    public int getCount() {
+        if (parentAdapter != null) {
+            if (parentAdapter.getCount() == 0) {
+                return 0;
+            }
+        }
+        return 1;
+    }
 
     public Object getItem(int position) {
-    return position;
-}
+        return position;
+    }
 
     public long getItemId(int position) {
-    return position;
-}
+        return position;
+    }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-    	LinearLayout layout = new LinearLayout(context);
+        LinearLayout layout = new LinearLayout(context);
 
-    	View v = convertView;
+        View v = convertView;
 
-    	LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    	v = vi.inflate(listView, null);
-    	TextView section = (TextView) v.findViewById(R.id.list_header_title);
-    	section.setText(text);	
-    	LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1f);
-    	section.setLayoutParams(params);
-    	layout.addView(section);
+        LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        v = vi.inflate(listView, null);
+        TextView section = (TextView) v.findViewById(R.id.list_header_title);
+        section.setText(text);
+        LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1f);
+        section.setLayoutParams(params);
+        layout.addView(section);
 
 
-    	return layout;
+        return layout;
     }
 }

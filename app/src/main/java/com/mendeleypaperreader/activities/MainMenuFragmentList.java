@@ -2,6 +2,7 @@ package com.mendeleypaperreader.activities;
 
 import java.util.Arrays;
 import java.util.List;
+
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.adapter.ListTitleAdapter;
 import com.mendeleypaperreader.adapter.MergeAdapter;
@@ -220,8 +222,8 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 
         if (Globalconstant.LOG)
             Log.d(Globalconstant.TAG, "ITEM SELECTED: " + description);
-            Log.d(Globalconstant.TAG, "ITEM index: " + index);
-            Log.d(Globalconstant.TAG, "ITEM foldersCount: " + foldersCount);
+        Log.d(Globalconstant.TAG, "ITEM index: " + index);
+        Log.d(Globalconstant.TAG, "ITEM foldersCount: " + foldersCount);
 
 
         if (mDualPane) {

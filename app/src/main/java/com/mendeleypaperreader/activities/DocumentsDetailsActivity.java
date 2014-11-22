@@ -3,8 +3,10 @@ package com.mendeleypaperreader.activities;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -38,6 +40,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
@@ -49,7 +52,6 @@ import com.mendeleypaperreader.utl.DownloaderThread;
 import com.mendeleypaperreader.utl.Globalconstant;
 
 /**
- *
  * @author PedroLourenco (pdrolourenco@gmail.com)
  */
 
@@ -57,7 +59,7 @@ public class DocumentsDetailsActivity extends Activity {
 
     // private Cursor foldersAdapter;
     private TextView doc_abstract, doc_url, doc_pmid, doc_issn, doc_catalog, readerCounterValue, doc_tags;
-    private String docId, mAbstract, t_doc_url, issn, doi, pmid, doc_title, doc_authors_text, doc_source_text, readerValue, isDownloaded;
+    private String docId, mAbstract, t_doc_url, issn, doi, pmid, doc_title, doc_authors_text, doc_source_text, readerValue, isDownloaded, tags;
     private static SessionManager session;
     private static String code;
     private static String refresh_token;
@@ -119,18 +121,22 @@ public class DocumentsDetailsActivity extends Activity {
 
         doc_abstract.setOnClickListener(click_on_abstract);
 
-        //Onlcick on abstract
+        //Onlcick on tag
         OnClickListener click_on_tag = new OnClickListener() {
 
             public void onClick(View v) {
-                Intent abstract_intent = new Intent(getApplicationContext(), AbstractDescriptionActivity.class);
-                abstract_intent.putExtra("abstract", mAbstract);
-                startActivity(abstract_intent);
+                Log.d(Globalconstant.TAG, "CLICKED!!");
+
+                Intent tag_intent = new Intent(getApplicationContext(), DocTagsActivity.class);
+                tag_intent.putExtra("DOC_TITLE", doc_title);
+                tag_intent.putExtra("DOC_ID", docId);
+                startActivity(tag_intent);
             }
         };
 
-        doc_tags.setOnClickListener(click_on_tag);
-
+        if (!tags.isEmpty()) {
+            doc_tags.setOnClickListener(click_on_tag);
+        }
 
         //Onlcick on readersCounter
         OnClickListener click_on_readers = new OnClickListener() {
@@ -348,7 +354,7 @@ public class DocumentsDetailsActivity extends Activity {
 
         docId = getDocId();
 
-        String[] projection = new String[]{DatabaseOpenHelper.TYPE + " as _id", DatabaseOpenHelper.TITLE, DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE, DatabaseOpenHelper.YEAR, DatabaseOpenHelper.VOLUME, DatabaseOpenHelper.PAGES, DatabaseOpenHelper.ISSUE, DatabaseOpenHelper.ABSTRACT, DatabaseOpenHelper.WEBSITE, DatabaseOpenHelper.DOI, DatabaseOpenHelper.PMID, DatabaseOpenHelper.ISSN, DatabaseOpenHelper.STARRED, DatabaseOpenHelper.READER_COUNT, DatabaseOpenHelper.IS_DOWNLOAD};
+        String[] projection = new String[]{DatabaseOpenHelper.TYPE + " as _id", DatabaseOpenHelper.TITLE, DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE, DatabaseOpenHelper.YEAR, DatabaseOpenHelper.VOLUME, DatabaseOpenHelper.PAGES, DatabaseOpenHelper.ISSUE, DatabaseOpenHelper.ABSTRACT, DatabaseOpenHelper.WEBSITE, DatabaseOpenHelper.DOI, DatabaseOpenHelper.PMID, DatabaseOpenHelper.ISSN, DatabaseOpenHelper.STARRED, DatabaseOpenHelper.READER_COUNT, DatabaseOpenHelper.IS_DOWNLOAD, DatabaseOpenHelper.TAGS};
         String selection = DatabaseOpenHelper._ID + " = '" + docId + "'";
         Uri uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
 
@@ -378,7 +384,7 @@ public class DocumentsDetailsActivity extends Activity {
 
     private String getProfileSettings(String setting_name) {
 
-        String[] projection = null;
+        String[] projection;
         String selection = null;
 
         projection = new String[]{setting_name + " as _id"};
@@ -463,7 +469,6 @@ public class DocumentsDetailsActivity extends Activity {
         String aux_pages = cursor.getString(cursor.getColumnIndex(DatabaseOpenHelper.PAGES));
         String aux_issue = cursor.getString(cursor.getColumnIndex(DatabaseOpenHelper.ISSUE));
         String aux_line;
-
 
 
         if (!aux_year.isEmpty() && !aux_volume.isEmpty() && aux_pages.isEmpty() && !aux_issue.isEmpty()) {
@@ -553,6 +558,7 @@ public class DocumentsDetailsActivity extends Activity {
         doc_tag_title.setTypeface(null, Typeface.BOLD);
         doc_tag_title.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.source_size));
         doc_tag_title.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
+
         RelativeLayout.LayoutParams layout_doc_tag_title = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         layout_doc_tag_title.addRule(RelativeLayout.BELOW, relativeLayout_line_f.getId());
         layout_doc_tag_title.setMargins(0, getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingTop), 0, getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingBottom));
@@ -560,17 +566,16 @@ public class DocumentsDetailsActivity extends Activity {
         relativeLayout.addView(doc_tag_title);
 
 
-        TextView doc_tags = new TextView(this);
+        tags = cursor.getString(cursor.getColumnIndex(DatabaseOpenHelper.TAGS));
         doc_tags.setId(12);
         doc_tags.setBackgroundColor(Color.WHITE);
-        doc_tags.setClickable(true);
-        doc_tags.setEnabled(false);
         doc_tags.setMinLines(1);
         doc_tags.setMaxLines(2);
         doc_tags.setEllipsize(TruncateAt.END);
-        doc_tags.setCompoundDrawables(null, null, image, null);
-        doc_tags.setText("Tag for test ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
-        doc_tags.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.source_size));
+        if (!tags.isEmpty())
+            doc_tags.setCompoundDrawables(null, null, image, null);
+        doc_tags.setText(tags);
+        doc_tags.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.authors_size));
         doc_tags.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
         RelativeLayout.LayoutParams layout_doc_tags = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         layout_doc_tags.addRule(RelativeLayout.BELOW, doc_tag_title.getId());
@@ -602,7 +607,7 @@ public class DocumentsDetailsActivity extends Activity {
         doc_notes.setEllipsize(TruncateAt.END);
         doc_notes.setCompoundDrawables(null, null, image, null);
         doc_notes.setText("Note for test ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
-        doc_notes.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.source_size));
+        doc_notes.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.authors_size));
         doc_notes.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
         RelativeLayout.LayoutParams layout_doc_notes = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         layout_doc_notes.addRule(RelativeLayout.BELOW, doc_note_title.getId());
