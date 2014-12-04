@@ -50,8 +50,9 @@ public class LoginTest extends ActivityInstrumentationTestCase2<MainActivity> {
         solo.enterTextInWebElement(By.id("username"), "pdrolourenco@gmail.com");
         solo.enterTextInWebElement(By.id("password"), "000000");
         solo.clickOnText("Authorize");
+        solo.waitForActivity("MainMenuActivity");
 
-        //assertTrue(solo.waitForActivity("MainMenuActivity", 20000));
+        assertTrue(solo.waitForText("Sync data..."));
 
 
     }

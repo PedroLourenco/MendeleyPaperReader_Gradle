@@ -124,17 +124,13 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
     final private static String CREATE_TABLE_DOCUMENT_DETAILS =
 
-
             "CREATE TABLE document_details (" + _ID + " TEXT PRIMARY KEY, "
                     + TYPE + " TEXT, "
-                    //+ MONTH + " TEXT, "           //not used
                     + YEAR + " TEXT, "
                     + LAST_MODIFIED + " TEXT, "
-                    //+ DAY + " TEXT, "             //not used
                     + GROUP_ID + " TEXT, "
                     + SOURCE + " TEXT, "
                     + TITLE + " TEXT, "
-                    //+ REVISION + " TEXT, "        //not used
                     + PMID + " TEXT, "
                     + DOI + " TEXT, "
                     + ISSN + " TEXT, "
@@ -143,25 +139,16 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                     + SCOPUS + " TEXT, "
                     + SSN + " TEXT, "
                     + ABSTRACT + " TEXT, "
-                    //+ PROFILE_ID + " TEXT, "      //not used
                     + AUTHORS + " TEXT, "
                     + ADDED + " TEXT, "
                     + PAGES + " TEXT, "
                     + VOLUME + " TEXT, "
                     + ISSUE + " TEXT, "
                     + WEBSITE + " TEXT, "
-                    //+ PUBLISHER + " TEXT, "       //not used
-                    //+ CITY + " TEXT, "            //not used
                     + EDITION + " TEXT, "           //not used
-                    //+ INSTITUTION + " TEXT, "     //not used
-                    //+ SERIES + " TEXT, "          //not used
-                    //+ EDITORS + " TEXT, "         //not used
-                    //+ READ + " TEXT, "            //not used
                     + STARRED + " TEXT, "
                     + AUTHORED + " TEXT, "
                     + CONFIRMED + " TEXT, "
-                    //+ FOLDER_ID + " TEXT, "       //not used
-                    //+ HIDDEN + " TEXT, "          //not used
                     + IS_DOWNLOAD + " TEXT, "
                     + READER_COUNT + " TEXT, "
                     + TAGS + " Text )";
@@ -208,7 +195,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
         SessionManager session;
         session = new SessionManager(this.mContext);
-        session.savePreferences("versionCode", "06");
+        session.savePreferences("versionCode", "05");
 
 
         //db.execSQL(CREATE_TABLE_GROUPS);

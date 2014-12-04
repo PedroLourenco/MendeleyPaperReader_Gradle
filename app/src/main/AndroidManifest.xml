@@ -66,6 +66,12 @@
             android:label="@string/app_name"
             android:parentActivityName="com.mendeleypaperreader.activities.DocumentsDetailsActivity" >
         </activity>
+        <activity
+            android:name="com.mendeleypaperreader.activities.ListDocTagsActivity"
+            android:label="@string/app_name"
+            android:parentActivityName="com.mendeleypaperreader.activities.DocumentsDetailsActivity" >
+        </activity>
+
         <provider
             android:name="com.mendeleypaperreader.contentProvider.MyContentProvider"
             android:authorities="com.android.mendeleypaperreader.utl.MyContentProvider"

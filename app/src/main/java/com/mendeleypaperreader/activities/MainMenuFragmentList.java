@@ -54,6 +54,7 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
     CustomAdapterLibrary lAdapter;
     private static final int FOLDERS_LOADER = 0;
     private static final int GROUPS_LOADER = 1;
+    SearchView searchView;
 
 
     Integer[] imageId = {R.drawable.alldocuments, R.drawable.clock, R.drawable.starim, R.drawable.person, R.drawable.empty_trash};
@@ -118,7 +119,7 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        SearchView searchView = (SearchView) menu.findItem(R.id.grid_default_search).getActionView();
+       searchView = (SearchView) menu.findItem(R.id.grid_default_search).getActionView();
         searchView.setOnQueryTextListener(queryListener);
     }
 
@@ -183,6 +184,9 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
         int aux_position;
         Cursor c = foldersAdapter.getCursor();
         foldersCount = c.getCount();
+
+        searchView.setQuery("", false);
+
 
         if (Globalconstant.LOG) {
             Log.d(Globalconstant.TAG, "mDualPane  FOLDERS:" + mDualPane);

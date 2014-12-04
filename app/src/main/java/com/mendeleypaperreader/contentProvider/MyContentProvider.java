@@ -9,6 +9,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -35,6 +36,7 @@ public class MyContentProvider extends ContentProvider {
     public static final Uri CONTENT_URI_COUNTRY_DOCS = Uri.parse("content://" + AUTHORITY + "/" + DatabaseOpenHelper.TABLE_COUNTRY_STATUS_DOCS);
     public static final Uri CONTENT_URI_GROUPS = Uri.parse("content://" + AUTHORITY + "/" + DatabaseOpenHelper.TABLE_GROUPS);
     public static final Uri CONTENT_URI_DOC_TAGS = Uri.parse("content://" + AUTHORITY + "/" + DatabaseOpenHelper.TABLE_DOC_TAGS);
+    public static final Uri CONTENT_URI_UNION_SEARCH = Uri.parse("content://" + AUTHORITY + "/" + "DUMMY");
 
 
     public static final int ALLDOCS = 1;
@@ -57,6 +59,8 @@ public class MyContentProvider extends ContentProvider {
     public static final int ALL_GROUPS = 18;
     public static final int ALL_DOC_TAGS = 19;
     public static final int DOC_TAGS_ID = 20;
+    public static final int SEARCH_DOCS = 21;
+
 
 
     private static final UriMatcher sURIMatcher =
@@ -82,6 +86,7 @@ public class MyContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_GROUPS, ALL_GROUPS);
         sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_DOC_TAGS, ALL_DOC_TAGS);
         sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_DOC_TAGS + "/id", DOC_TAGS_ID);
+        sURIMatcher.addURI(AUTHORITY, "DUMMY/" +DatabaseOpenHelper.TITLE + "/" + DatabaseOpenHelper.AUTHORS , SEARCH_DOCS);
     }
 
 
@@ -323,6 +328,29 @@ public class MyContentProvider extends ContentProvider {
                 queryBuilder.appendWhere(selection);
                 break;
 
+            case SEARCH_DOCS:
+
+                //First query
+                SQLiteQueryBuilder queryBuilder1 = new SQLiteQueryBuilder();
+                queryBuilder1.setTables(DatabaseOpenHelper.TABLE_DOCUMENT_DETAILS);
+
+                final String selectionClauseQ1 = uri.getPathSegments().get(1) + " LIKE " + selectionArgs[0];
+                final String query1 = queryBuilder1.buildUnionSubQuery(DatabaseOpenHelper.TITLE, projection, null, 2, null, selectionClauseQ1, null, null);
+
+                //Second query
+                SQLiteQueryBuilder queryBuilder2 = new SQLiteQueryBuilder();
+                queryBuilder2.setTables(DatabaseOpenHelper.TABLE_DOCUMENT_DETAILS);
+                final String selectionClauseQ2 = uri.getPathSegments().get(2) + " LIKE " + selectionArgs[0];
+                final String query2 = queryBuilder2.buildUnionSubQuery(DatabaseOpenHelper.TITLE, projection, null, 2, null, selectionClauseQ2, null, null);
+
+                //Put them together
+                queryBuilder.setDistinct(true);
+                String query = queryBuilder.buildUnionQuery(new String[] { query1, query2 }, sortOrder, null);
+                db_helper.getWritableDatabase();
+
+               Cursor c = db.rawQueryWithFactory(null, query, null, DatabaseOpenHelper.TABLE_DOCUMENT_DETAILS);
+
+                return c;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }

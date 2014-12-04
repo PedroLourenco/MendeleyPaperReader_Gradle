@@ -53,10 +53,18 @@ public class SyncTest extends ActivityInstrumentationTestCase2<MainActivity> {
         solo.enterTextInWebElement(By.id("username"), "pdrolourenco@gmail.com");
         solo.enterTextInWebElement(By.id("password"), "000000");
         solo.clickOnText("Authorize");
-        solo.waitForActivity("MainMenuActivity", 20000);
-        solo.getActivityMonitor();
-        solo.waitForText("Sync data... (100%)", 1, 9999);
-        solo.waitForDialogToClose();
+        solo.waitForActivity("MainMenuActivity");
+
+
+        solo.waitForDialogToOpen();
+        assertTrue(solo.waitForText("Sync data... (100%)", 1, 999999999));
+
+
+
+        //solo.waitForActivity("MainMenuActivity");
+        //solo.waitForText("Sync data... (100%)", 1, 9999);
+        //assertTrue(solo.waitForText("Sync data... (100%)"));
+        //solo.waitForDialogToClose();
 
 
 

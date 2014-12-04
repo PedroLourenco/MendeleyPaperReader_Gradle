@@ -41,9 +41,9 @@
     <!-- About activity -->
 
     <string name="msg_about">Get access to Mendeley database papers.</string>
-    <string name="bugfix"><b>Version 0.3.0 (November, 2014)</b> \n Bug fix. \n Get groups folder and articles. \n\n <b>Version 0.2.0 (October, 2014)</b> \n Bug fix. \n Readers counter by Academic status. \n Download articles. \n\n <b>Version 0.1.1 (September, 2014)</b> \n Bug Fix - In some devices app crashes when trying to open the browser. \n App crashes when trying to download large libraries.\n\n <b>Version 0.0.1 (July, 2014)</b> \n Initial Version.</string>
+    <string name="bugfix"><b>Version 0.4.0 (October, 2014)</b> \n Bug fix. \n Get Tags and Notes. \n Add Search functionality. \n\n <b>Version 0.3.0 (November, 2014)</b> \n Bug fix. \n Get groups folder and articles. \n\n <b>Version 0.2.0 (October, 2014)</b> \n Bug fix. \n Readers counter by Academic status. \n Download articles. \n\n <b>Version 0.1.1 (September, 2014)</b> \n Bug Fix - In some devices app crashes when trying to open the browser. \n App crashes when trying to download large libraries.\n\n <b>Version 0.0.1 (July, 2014)</b> \n Initial Version.</string>
     <string name="web_link"></string>
-    <string name="msg_current_version">Version 0.3.0</string>
+    <string name="msg_current_version">Version 0.4.0</string>
     <string name="email">pdrolourenco@gmail.com</string>
     <string name="msg_email">"Contact: "</string>
 
@@ -79,5 +79,11 @@
     <string name="error_message_file_not_found">Error: File not found!</string>
     <string name="error_message_general">Error downloading file!</string>
     <string name="title_activity_doc_tags">DocTagsActivity</string>
+
+    <!-- ListDocTagsActivity activity -->
+    <string name="documents">Documents</string>
+    <string name="list_title">TITLE:</string>
+    <string name="list_tag">TAG:</string>
+
 
 </resources>

@@ -37,6 +37,8 @@
   	<dimen name="doc_type_paddingBottom">2dp</dimen>
   	<dimen name="doc_type_paddingTop">2dp</dimen>
   	<dimen name="doc_title_paddingRight">5dp</dimen>
+    <dimen name="marginTop">10dp</dimen>
+    <dimen name="padingRight">10dp</dimen>
   	
   	<dimen name="line_height">2dp</dimen>
   <dimen name="image_size2">20dip</dimen>

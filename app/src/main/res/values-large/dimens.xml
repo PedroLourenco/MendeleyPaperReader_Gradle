@@ -30,4 +30,7 @@
   	<dimen name="authors_size">15sp</dimen>
   	<dimen name="source_size">14sp</dimen>
   	<dimen name="doc_details">16sp</dimen>
+
+    <dimen name="marginTop">15dp</dimen>
+    <dimen name="padingRight">17dp</dimen>
 </resources>

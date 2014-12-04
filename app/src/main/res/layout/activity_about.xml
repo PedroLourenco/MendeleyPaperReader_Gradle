@@ -13,7 +13,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="@dimen/marginTop"
             android:contentDescription="@string/app_logo"
             android:src="@drawable/icon_mendeley48_48" />
 
@@ -22,7 +22,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/imageView1"
-            android:padding="8dp" 
+            android:padding="@dimen/pading"
             android:gravity="center"
             android:text="@string/msg_about"
             android:textStyle="italic" >
@@ -36,9 +36,9 @@
             android:layout_below="@+id/msg_about"
             android:layout_gravity="center"
             android:background="#e1ddcf"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:padding="8dp" >
+            android:layout_marginLeft="@dimen/padingRight"
+            android:layout_marginRight="@dimen/padingRight"
+            android:padding="@dimen/pading" >
 
            
                 <TextView
@@ -46,7 +46,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:paddingTop="8dp"
+                    android:paddingTop="@dimen/pading"
                     android:text="@string/bugfix" />
              
         </ScrollView>

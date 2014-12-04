@@ -306,22 +306,15 @@ public class LoadData {
                     if (temp.has(Globalconstant.TAGS)) {
 
                         Iterator<JsonNode> tagIterator = temp.get(Globalconstant.TAGS).elements();
-                        //values.put(DatabaseOpenHelper.TAGS, tagIterator);
-                        Log.d(Globalconstant.TAG, "TAGS: " + temp.get(Globalconstant.TAGS));
                         String tags = "";
                         while (tagIterator.hasNext()) {
 
                             String tagName = tagIterator.next().asText();
-                            // Log.d(Globalconstant.TAG, "ID: " + temp.get(Globalconstant.ID).asText());
-                            //Log.d(Globalconstant.TAG, "TAG NAME: " + tagIterator.next().asText());
-                            //String auxTag = tagIterator.next().asText();
                             tags += tagName + ",";
                             tagsValues.put(DatabaseOpenHelper._ID, temp.get(Globalconstant.ID).asText());
                             tagsValues.put(DatabaseOpenHelper.TAG_NAME, tagName);
-                            //Log.d(Globalconstant.TAG, "TAGS: " + tagIterator.next());
                             Uri uriTag = context.getContentResolver().insert(MyContentProvider.CONTENT_URI_DOC_TAGS, tagsValues);
                             values.put(DatabaseOpenHelper.TAGS, tags.substring(0, tags.length() - 1));
-
                         }
 
                     } else {
@@ -512,7 +505,7 @@ public class LoadData {
     private Cursor getDocInfo() {
 
 
-        String[] projection = null;
+        String[] projection;
         String selection = null;
         String orderBy = null;
         Cursor query;
@@ -569,7 +562,7 @@ public class LoadData {
             } else if (!issn.isEmpty()) {
                 toProcess = true;
                 urlfilter = "issn=" + issn;
-            } else if (!doi.isEmpty()) {
+            } else if (!isbn.isEmpty()) {
                 toProcess = true;
                 urlfilter = "isbn=" + isbn;
             } else if (!scopus.isEmpty()) {

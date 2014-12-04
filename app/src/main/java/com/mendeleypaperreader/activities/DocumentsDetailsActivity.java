@@ -273,6 +273,8 @@ public class DocumentsDetailsActivity extends Activity {
                         try {
                             startActivity(intent);
                         } catch (ActivityNotFoundException e) {
+
+                            Log.w(Globalconstant.TAG, " Error opening file");
                             // Instruct the user to install a PDF reader here, or something
                         }
                     }
@@ -343,7 +345,7 @@ public class DocumentsDetailsActivity extends Activity {
     private String getDocId() {
 
         Bundle bundle = getIntent().getExtras();
-        return bundle.getString("doc_id");
+        return bundle.getString("DOC_ID");
     }
 
 
@@ -351,6 +353,8 @@ public class DocumentsDetailsActivity extends Activity {
 
         if (Globalconstant.LOG)
             Log.d(Globalconstant.TAG, "getdocDetails - DOC_DETAILS");
+
+
 
         docId = getDocId();
 
@@ -406,7 +410,16 @@ public class DocumentsDetailsActivity extends Activity {
         relativeLayout.setBackgroundColor(Color.parseColor("#e5e5e5"));
 
         TextView doc_type = (TextView) findViewById(R.id.docype);
-        doc_type.setText(cursor.getString(cursor.getColumnIndex("_id")).substring(0, 1).toUpperCase() + cursor.getString(cursor.getColumnIndex("_id")).substring(1));
+        String doc_types = cursor.getString(cursor.getColumnIndex("_id"));
+
+        if(doc_types.length() > 0){
+            doc_type.setText(doc_types.substring(0, 1).toUpperCase() + doc_types.substring(1));
+        }
+        else{
+            doc_type.setText(doc_types);
+        }
+
+
 
         isDownloaded = cursor.getString(cursor.getColumnIndex(DatabaseOpenHelper.IS_DOWNLOAD));
 
@@ -745,6 +758,11 @@ public class DocumentsDetailsActivity extends Activity {
         RelativeLayout.LayoutParams layout_doc_url;
         RelativeLayout.LayoutParams layout_reader_count;
 
+        //fix related bug when url is null
+        if(t_doc_url == null){
+            t_doc_url = "";
+        }
+
 
         if (!t_doc_url.isEmpty()) {
 
@@ -804,12 +822,14 @@ public class DocumentsDetailsActivity extends Activity {
 
         //READER COUNTER - VALUE
 
-        readerCounterValue = new TextView(this);
         RelativeLayout.LayoutParams layoutReaderCounterValue;
         readerCounterValue.setBackgroundColor(Color.WHITE);
         readerValue = cursor.getString(cursor.getColumnIndex(DatabaseOpenHelper.READER_COUNT));
 
-        if (!readerValue.equals("0") || !readerValue.isEmpty())
+
+        Log.e(Globalconstant.TAG, "READER COUNT: " + readerValue);
+
+        if (!readerValue.equals("0"))
             readerCounterValue.setCompoundDrawables(null, null, image, null);
 
         readerCounterValue.setId(25);

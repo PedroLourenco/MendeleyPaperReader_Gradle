@@ -30,4 +30,6 @@
   	<dimen name="image_size">30dip</dimen>
   	<dimen name="pading">8dp</dimen>
 
+    <dimen name="marginTop">8dp</dimen>
+    <dimen name="padingRight">8dp</dimen>
 </resources>

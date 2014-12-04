@@ -223,6 +223,7 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
         if (Globalconstant.LOG)
             Log.d(Globalconstant.TAG, "position: " + position);
 
+        searchView.setQuery("", false);
         //cursor with My Library information
         Cursor c = mAdapter.getCursor();
         c.moveToPosition(position);
@@ -239,7 +240,7 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
         }
 
         Intent doc_details = new Intent(getActivity().getApplicationContext(), DocumentsDetailsActivity.class);
-        doc_details.putExtra("doc_id", doc_id);
+        doc_details.putExtra("DOC_ID", doc_id);
         startActivity(doc_details);
 
     }
@@ -293,19 +294,12 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
         Uri uri = null;
 
         if (!TextUtils.isEmpty(grid_currentQuery)) {
-            Log.d(Globalconstant.TAG, "DEFAULT");
             String sort = DatabaseOpenHelper.TITLE + " ASC";
             String[] grid_columns = {DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
+            uri = Uri.parse(MyContentProvider.CONTENT_URI_UNION_SEARCH + "/"+ DatabaseOpenHelper.TITLE + "/"+ DatabaseOpenHelper.AUTHORS);
+            return new CursorLoader(getActivity().getApplicationContext(), uri , grid_columns, null, new String[]{"'%" + grid_currentQuery + "%'"}, sort);
 
-            String grid_whereClause = DatabaseOpenHelper.TITLE + " LIKE ?";
-
-
-            Log.d(Globalconstant.TAG, "DEFAULT" + !TextUtils.isEmpty(grid_currentQuery));
-            return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_DOC_DETAILS, grid_columns, grid_whereClause, new String[]{grid_currentQuery + "%"}, sort);
-        }
-
-
-        if (index == 1) { //All doc
+        } else if (index == 1) { //All doc
             Log.d(Globalconstant.TAG, "All doc");
             title.setText(Globalconstant.MYLIBRARY[0]);
             projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};

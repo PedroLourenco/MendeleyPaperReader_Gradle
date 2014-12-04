@@ -1,11 +1,15 @@
 package com.mendeleypaperreader.activities;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.SpannableStringBuilder;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -35,6 +39,15 @@ public class DocTagsActivity extends ListActivity {
         tag.setText("Tags");
         TextView docTagTitle = (TextView) findViewById(R.id.docTitle);
         docTagTitle.setText(getDocTitle());
+
+
+        String text = getResources().getString(R.string.list_title) + "  " + getDocTitle();
+        SpannableStringBuilder builder = new SpannableStringBuilder(text);
+
+        builder.setSpan(new StyleSpan(Typeface.BOLD), 0, 5, 0);
+        docTagTitle.setText(builder);
+
+
 
         String[] dataColumnsTags = {"_id"};
         int[] viewDocTags = {R.id.tagName};   //criar nova lista para as tags com um novo icon
@@ -89,13 +102,13 @@ public class DocTagsActivity extends ListActivity {
         Log.d(Globalconstant.TAG, " tag name: " + description);
 
 
+        Intent listDocTag = new Intent(getApplicationContext(), ListDocTagsActivity.class);
+        listDocTag.putExtra("TAG_NAME", description);
+        startActivity(listDocTag);
         // Otherwise we need to launch a new activity to display
         // the dialog fragment with selected text.
 
-        //Intent intent = new Intent();
-        //intent.setClass(getApplicationContext(), DocsTagListActivity.class);
 
-        //startActivity(intent);
     }
 
 }
