@@ -37,7 +37,7 @@ public class MyContentProvider extends ContentProvider {
     public static final Uri CONTENT_URI_GROUPS = Uri.parse("content://" + AUTHORITY + "/" + DatabaseOpenHelper.TABLE_GROUPS);
     public static final Uri CONTENT_URI_DOC_TAGS = Uri.parse("content://" + AUTHORITY + "/" + DatabaseOpenHelper.TABLE_DOC_TAGS);
     public static final Uri CONTENT_URI_UNION_SEARCH = Uri.parse("content://" + AUTHORITY + "/" + "DUMMY");
-
+    public static final Uri CONTENT_URI_DOC_NOTES = Uri.parse("content://" + AUTHORITY + "/" + DatabaseOpenHelper.TABLE_DOC_NOTES);
 
     public static final int ALLDOCS = 1;
     public static final int ALL_DOCS_ID = 2;
@@ -60,7 +60,8 @@ public class MyContentProvider extends ContentProvider {
     public static final int ALL_DOC_TAGS = 19;
     public static final int DOC_TAGS_ID = 20;
     public static final int SEARCH_DOCS = 21;
-
+    public static final int ALL_DOC_NOTES = 22;
+    public static final int DOC_NOTES_ID = 23;
 
 
     private static final UriMatcher sURIMatcher =
@@ -87,6 +88,8 @@ public class MyContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_DOC_TAGS, ALL_DOC_TAGS);
         sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_DOC_TAGS + "/id", DOC_TAGS_ID);
         sURIMatcher.addURI(AUTHORITY, "DUMMY/" +DatabaseOpenHelper.TITLE + "/" + DatabaseOpenHelper.AUTHORS , SEARCH_DOCS);
+        sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_DOC_NOTES, ALL_DOC_NOTES);
+        sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_DOC_NOTES + "/id", DOC_NOTES_ID);
     }
 
 
@@ -265,6 +268,18 @@ public class MyContentProvider extends ContentProvider {
                     return newUri;
                 }
                 break;
+            case ALL_DOC_NOTES:
+
+                long docNotesRow = db.insert(DatabaseOpenHelper.TABLE_DOC_NOTES, null, values);
+
+                // If record is added successfully
+                if (docNotesRow > 0) {
+
+                    Uri newUri = ContentUris.withAppendedId(CONTENT_URI_DOC_NOTES, docNotesRow);
+                    getContext().getContentResolver().notifyChange(newUri, null);
+                    return newUri;
+                }
+                break;
             default:
                 throw new SQLException("Failed to insert row into " + uri);
         }
@@ -325,6 +340,12 @@ public class MyContentProvider extends ContentProvider {
             case DOC_TAGS_ID:
 
                 queryBuilder.setTables(DatabaseOpenHelper.TABLE_DOC_TAGS);
+                queryBuilder.appendWhere(selection);
+                break;
+
+            case DOC_NOTES_ID:
+
+                queryBuilder.setTables(DatabaseOpenHelper.TABLE_DOC_NOTES);
                 queryBuilder.appendWhere(selection);
                 break;
 
@@ -425,6 +446,7 @@ public class MyContentProvider extends ContentProvider {
         count = count + db.delete(DatabaseOpenHelper.TABLE_ACADEMIC_STATUS_DOCS, selection, selectionArgs);
         count = count + db.delete(DatabaseOpenHelper.TABLE_GROUPS, selection, selectionArgs);
         count = count + db.delete(DatabaseOpenHelper.TABLE_DOC_TAGS, selection, selectionArgs);
+        count = count + db.delete(DatabaseOpenHelper.TABLE_DOC_NOTES, selection, selectionArgs);
         return count;
     }
 

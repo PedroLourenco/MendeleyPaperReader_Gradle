@@ -92,6 +92,8 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
 
     private void syncronizeData() throws JsonProcessingException, IOException {
 
+
+
         publishProgress((int) (1 / ((float) 7) * 100));
         load.getProfileInfo(Globalconstant.get_profile + access_token);
         publishProgress((int) (2 / ((float) 7) * 100));
@@ -103,6 +105,7 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
         publishProgress((int) (5 / ((float) 7) * 100));
         load.getFolders(Globalconstant.get_user_folders_url + access_token);
         publishProgress((int) (6 / ((float) 7) * 100));
+        load.getDocNotes();
         load.getCatalogId();
         publishProgress((int) (7 / ((float) 7) * 100));
         load.getFiles(Globalconstant.get_files + access_token);

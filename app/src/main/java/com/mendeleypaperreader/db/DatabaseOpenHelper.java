@@ -27,7 +27,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public final static String TABLE_COUNTRY_STATUS_DOCS = "country_status_docs";
     public final static String TABLE_GROUPS = "groups";
     public final static String TABLE_DOC_TAGS = "documents_tags";
-
+    public final static String TABLE_DOC_NOTES = "documents_notes";
 
     public final static String _ID = "_id";
     public final static String TYPE = "type";
@@ -97,6 +97,16 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public final static String GROUPS_NAME = "group_name";
     public final static String TAG_NAME = "tag_name";
 
+    //Table NOTES columns
+    public final static String NOTE_ID = "id";
+    public final static String PREVIOUS_ID = "previous_id";
+    public final static String COLOR = "color";
+    public final static String TEXT = "text";
+    public final static String POSITIONS = "position";
+    public final static String PRIVACY_LEVEL = "provacy_level";
+    public final static String FILEHASH = "filehash";
+    public final static String DOCUMENT_ID = "document_id";
+
 
     final static String[] document_details_columns = {_ID, TYPE, MONTH, YEAR, LAST_MODIFIED, DAY, GROUP_ID, SOURCE, TITLE, REVISION, IDENTIFIERS, ABSTRACT, PROFILE_ID, AUTHORS, ADDED, PAGES, VOLUME, ISSUE, WEBSITE, PUBLISHER, CITY, EDITION, INSTITUTION, SERIES, CHAPTER, EDITORS, READ, STARRED, AUTHORED, CONFIRMED, HIDDEN};
     final static String[] document_titles_columns = {TITLE, AUTHORS, SOURCE, YEAR};
@@ -121,6 +131,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
     private static String CREATE_TABLE_DOC_TAGS = "CREATE TABLE documents_tags (" + _ID + " TEXT, " + TAG_NAME + " TEXT ) ";
 
+    private static String CREATE_TABLE_DOC_NOTES = "CREATE TABLE documents_notes (" + NOTE_ID + " TEXT, " + TYPE + " TEXT, " + PREVIOUS_ID + " TEXT, "+ COLOR + " TEXT, "+ TEXT + " TEXT, " + POSITIONS + " TEXT, "+ PRIVACY_LEVEL + " TEXT, "+ FILEHASH + " TEXT, " +  DOCUMENT_ID + "  TEXT ) ";
 
     final private static String CREATE_TABLE_DOCUMENT_DETAILS =
 
@@ -187,6 +198,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_ACADEMIC_STATUS_DOCS);
         db.execSQL(CREATE_TABLE_GROUPS);
         db.execSQL(CREATE_TABLE_DOC_TAGS);
+        db.execSQL(CREATE_TABLE_DOC_NOTES);
     }
 
     @Override
@@ -226,6 +238,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
 
         db.execSQL(CREATE_TABLE_DOC_TAGS);
+        db.execSQL(CREATE_TABLE_DOC_NOTES);
 
 
     }

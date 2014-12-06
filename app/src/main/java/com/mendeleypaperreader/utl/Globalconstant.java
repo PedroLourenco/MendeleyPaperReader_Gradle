@@ -8,7 +8,7 @@ package com.mendeleypaperreader.utl;
 public class Globalconstant {
 
     public static String TAG = "PaperReader";
-    public static final boolean LOG = true;
+    public static final boolean LOG = false;
 
     public static String shared_file_name = "share_pref";
 
@@ -24,7 +24,8 @@ public class Globalconstant {
 
     //API URLs
 
-    public static String get_docs_in_groups = "https://mix.mendeley.com/documents?group_id=#groupId#&view=all&limit=400&access_token=";
+    public final static String get_docs_notes = "https://mix.mendeley.com/annotations?document_id=#docId#&limit=200&access_token=";
+    public final static String get_docs_in_groups = "https://mix.mendeley.com/documents?group_id=#groupId#&view=all&limit=400&access_token=";
     public static String get_groups_url = "https://mix.mendeley.com/groups?access_token=";
     public static String get_catalog_url = "https://mix.mendeley.com/catalog?";
     public static String get_metadata_url = "https://mix.mendeley.com/metadata";

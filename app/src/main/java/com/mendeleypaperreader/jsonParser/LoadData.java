@@ -61,19 +61,101 @@ public class LoadData {
     }
 
 
-    private Cursor getGroups() {
+    private Cursor getDocId() {
 
         if (Globalconstant.LOG)
             Log.d(Globalconstant.TAG, "getGROUPS- LOAD DATA");
 
-        String[] projection = new String[]{DatabaseOpenHelper._ID + " as _id"};
-        Uri uri = MyContentProvider.CONTENT_URI_GROUPS;
+        String[] projection = new String[]{DatabaseOpenHelper._ID};
+        Uri uri = MyContentProvider.CONTENT_URI_DOC_DETAILS;
 
 
         return this.context.getContentResolver().query(uri, projection, null, null, null);
 
 
     }
+
+
+    public void getDocNotes() {
+
+        Cursor cursorDocId = getDocId();
+        ContentValues noteValues = new ContentValues();
+
+        JSONParser jParser = new JSONParser();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonFactory factory = mapper.getFactory();
+        List<InputStream> link = new ArrayList<InputStream>();
+
+        while (cursorDocId.moveToNext()) {
+
+            String url = Globalconstant.get_docs_notes.replace("#docId#", cursorDocId.getString(cursorDocId.getColumnIndex(DatabaseOpenHelper._ID)));
+
+            getNotes(url + access_token);
+        }
+
+
+    }
+
+
+    private void getNotes(String url) {
+
+        //TODO - Apenas fazer o parse das notas do tipo note
+
+        ContentValues note_values = new ContentValues();
+
+        JSONParser jParser = new JSONParser();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonFactory factory = mapper.getFactory();
+        List<InputStream> link = new ArrayList<InputStream>();
+        link = jParser.getJACKSONFromUrl(url, true);
+
+        try {
+            for (InputStream oneItem : link) {
+                JsonParser jp = factory.createParser(oneItem);
+                JsonNode rootNode = mapper.readTree(jp);
+
+                Iterator<JsonNode> ite = rootNode.iterator();
+
+                while (ite.hasNext()) {
+                    JsonNode temp = ite.next();
+
+                    Log.d(Globalconstant.TAG, "getGROUPS- temp" + temp);
+
+                    if (temp.has(DatabaseOpenHelper.NOTE_ID)) {
+                        Log.d(Globalconstant.TAG, "getGROUPS- NOTE_ID: " + temp.get(DatabaseOpenHelper.NOTE_ID).asText());
+                        note_values.put(DatabaseOpenHelper.NOTE_ID, temp.get(DatabaseOpenHelper.NOTE_ID).asText());
+                    }
+
+                    if (temp.has(DatabaseOpenHelper.TYPE)) {
+                        Log.d(Globalconstant.TAG, "getGROUPS- TYPE: " + temp.get(DatabaseOpenHelper.TYPE).asText());
+                        note_values.put(DatabaseOpenHelper.TYPE, temp.get(DatabaseOpenHelper.TYPE).asText());
+                    }
+                    if (temp.has(DatabaseOpenHelper.TEXT)) {
+                        Log.d(Globalconstant.TAG, "getGROUPS- TEXT: " + temp.get(DatabaseOpenHelper.TEXT).asText());
+                        note_values.put(DatabaseOpenHelper.TEXT, temp.get(DatabaseOpenHelper.TEXT).asText());
+                    }
+                    if (temp.has(DatabaseOpenHelper.DOCUMENT_ID)) {
+                        Log.d(Globalconstant.TAG, "getGROUPS- DOCUMENT_ID: " + temp.get(DatabaseOpenHelper.DOCUMENT_ID).asText());
+                        note_values.put(DatabaseOpenHelper.DOCUMENT_ID, temp.get(DatabaseOpenHelper.DOCUMENT_ID).asText());
+                    }
+                    Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_DOC_NOTES, note_values);
+
+                }
+
+                jp.close();
+            }
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+
 
 
     public void getGroups(String url) {
@@ -111,12 +193,33 @@ public class LoadData {
             }
 
 
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
     }
+
+
+
+
+
+    private Cursor getGroups() {
+
+        if (Globalconstant.LOG)
+            Log.d(Globalconstant.TAG, "getGROUPS- LOAD DATA");
+
+        String[] projection = new String[]{DatabaseOpenHelper._ID + " as _id"};
+        Uri uri = MyContentProvider.CONTENT_URI_GROUPS;
+
+
+        return this.context.getContentResolver().query(uri, projection, null, null, null);
+
+
+    }
+
+
 
 
     public void getFiles(String url) {

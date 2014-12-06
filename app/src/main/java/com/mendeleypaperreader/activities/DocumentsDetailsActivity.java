@@ -106,6 +106,8 @@ public class DocumentsDetailsActivity extends Activity {
         if (Globalconstant.LOG)
             Log.d(Globalconstant.TAG, "DOC_DETAILS - doc_id: " + getDocId());
 
+        docId = getDocId();
+
         //Get to populate activity
         fillData(getdocDetails());
         getFile();
@@ -291,31 +293,7 @@ public class DocumentsDetailsActivity extends Activity {
     }
 
 
-    @Override
-    protected void onPause() {
-        super.onDestroy();
 
-        if (cursorProfiel != null && !cursorProfiel.isClosed()) {
-            cursorProfiel.close();
-        }
-        if (cursorDetails != null && !cursorDetails.isClosed()) {
-            cursorDetails.close();
-        }
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        if (cursorProfiel != null && !cursorProfiel.isClosed()) {
-            cursorProfiel.close();
-        }
-        if (cursorDetails != null && !cursorDetails.isClosed()) {
-            cursorDetails.close();
-        }
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -356,7 +334,7 @@ public class DocumentsDetailsActivity extends Activity {
 
 
 
-        docId = getDocId();
+
 
         String[] projection = new String[]{DatabaseOpenHelper.TYPE + " as _id", DatabaseOpenHelper.TITLE, DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE, DatabaseOpenHelper.YEAR, DatabaseOpenHelper.VOLUME, DatabaseOpenHelper.PAGES, DatabaseOpenHelper.ISSUE, DatabaseOpenHelper.ABSTRACT, DatabaseOpenHelper.WEBSITE, DatabaseOpenHelper.DOI, DatabaseOpenHelper.PMID, DatabaseOpenHelper.ISSN, DatabaseOpenHelper.STARRED, DatabaseOpenHelper.READER_COUNT, DatabaseOpenHelper.IS_DOWNLOAD, DatabaseOpenHelper.TAGS};
         String selection = DatabaseOpenHelper._ID + " = '" + docId + "'";
@@ -365,6 +343,33 @@ public class DocumentsDetailsActivity extends Activity {
         cursorDetails = getApplicationContext().getContentResolver().query(uri, projection, selection, null, null);
 
         return cursorDetails;
+
+    }
+
+
+    private String getdocNotes() {
+
+        if (Globalconstant.LOG)
+            Log.d(Globalconstant.TAG, "getdocDetails - DOC_NOTES");
+
+
+
+
+
+        String[] projection = new String[]{DatabaseOpenHelper.TEXT + " as _id"};
+        String selection = DatabaseOpenHelper.DOCUMENT_ID + " = '" + docId + "'";
+        Uri uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_NOTES + "/id");
+
+        Cursor cursorNotes = getApplicationContext().getContentResolver().query(uri, projection, selection, null, null);
+
+
+        if(cursorNotes.getCount() > 0){
+            cursorNotes.moveToPosition(0);
+
+            return cursorNotes.getString(cursorNotes.getColumnIndex(DatabaseOpenHelper._ID));
+        }
+
+        return "";
 
     }
 
@@ -610,6 +615,7 @@ public class DocumentsDetailsActivity extends Activity {
         relativeLayout.addView(doc_note_title);
 
 
+
         TextView doc_notes = new TextView(this);
         doc_notes.setId(14);
         doc_notes.setBackgroundColor(Color.WHITE);
@@ -619,7 +625,7 @@ public class DocumentsDetailsActivity extends Activity {
         doc_notes.setMaxLines(2);
         doc_notes.setEllipsize(TruncateAt.END);
         doc_notes.setCompoundDrawables(null, null, image, null);
-        doc_notes.setText("Note for test ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
+        doc_notes.setText(getdocNotes());
         doc_notes.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.authors_size));
         doc_notes.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
         RelativeLayout.LayoutParams layout_doc_notes = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
