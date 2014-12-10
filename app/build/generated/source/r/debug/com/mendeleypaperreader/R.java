@@ -901,12 +901,13 @@ containing a value of this type.
         public static final int ic_action_share=0x7f020068;
         public static final int icon_mendeley48_48=0x7f020069;
         public static final int paper_reader_512_512=0x7f02006a;
-        public static final int person=0x7f02006b;
-        public static final int sigin_button_shape=0x7f02006c;
-        public static final int starim=0x7f02006d;
-        public static final int tag=0x7f02006e;
-        public static final int texttopline=0x7f02006f;
-        public static final int trash=0x7f020070;
+        public static final int paper_reader_512x512=0x7f02006b;
+        public static final int person=0x7f02006c;
+        public static final int sigin_button_shape=0x7f02006d;
+        public static final int starim=0x7f02006e;
+        public static final int tag=0x7f02006f;
+        public static final int texttopline=0x7f020070;
+        public static final int trash=0x7f020071;
     }
     public static final class id {
         public static final int Doctitle=0x7f080059;
@@ -1120,25 +1121,27 @@ containing a value of this type.
         public static final int my_library=0x7f0b0033;
         public static final int network_error=0x7f0b0034;
         public static final int no_network_connection=0x7f0b0035;
-        public static final int pmid=0x7f0b0036;
-        public static final int progress_dialog_message_prefix_connecting=0x7f0b0037;
-        public static final int progress_dialog_message_prefix_downloading=0x7f0b0038;
-        public static final int progress_dialog_title_connecting=0x7f0b0039;
-        public static final int progress_dialog_title_downloading=0x7f0b003a;
-        public static final int readers=0x7f0b003b;
-        public static final int settings_3G=0x7f0b003c;
-        public static final int sync_data=0x7f0b003d;
-        public static final int sync_data_0=0x7f0b003e;
-        public static final int title=0x7f0b003f;
-        public static final int title_activity_doc_tags=0x7f0b0040;
-        public static final int title_activity_readers=0x7f0b0041;
-        public static final int urls=0x7f0b0042;
-        public static final int user_message_download_canceled=0x7f0b0043;
-        public static final int user_message_download_complete=0x7f0b0044;
-        public static final int warning=0x7f0b0045;
-        public static final int web_link=0x7f0b0046;
-        public static final int wifi_settings=0x7f0b0047;
-        public static final int word_ok=0x7f0b0048;
+        public static final int notes=0x7f0b0036;
+        public static final int pmid=0x7f0b0037;
+        public static final int progress_dialog_message_prefix_connecting=0x7f0b0038;
+        public static final int progress_dialog_message_prefix_downloading=0x7f0b0039;
+        public static final int progress_dialog_title_connecting=0x7f0b003a;
+        public static final int progress_dialog_title_downloading=0x7f0b003b;
+        public static final int readers=0x7f0b003c;
+        public static final int settings_3G=0x7f0b003d;
+        public static final int sync_data=0x7f0b003e;
+        public static final int sync_data_0=0x7f0b003f;
+        public static final int tags=0x7f0b0040;
+        public static final int title=0x7f0b0041;
+        public static final int title_activity_doc_tags=0x7f0b0042;
+        public static final int title_activity_readers=0x7f0b0043;
+        public static final int urls=0x7f0b0044;
+        public static final int user_message_download_canceled=0x7f0b0045;
+        public static final int user_message_download_complete=0x7f0b0046;
+        public static final int warning=0x7f0b0047;
+        public static final int web_link=0x7f0b0048;
+        public static final int wifi_settings=0x7f0b0049;
+        public static final int word_ok=0x7f0b004a;
     }
     public static final class style {
         /** 

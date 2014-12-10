@@ -58,14 +58,12 @@ import com.mendeleypaperreader.utl.Globalconstant;
 public class DocumentsDetailsActivity extends Activity {
 
     // private Cursor foldersAdapter;
-    private TextView doc_abstract, doc_url, doc_pmid, doc_issn, doc_catalog, readerCounterValue, doc_tags;
-    private String docId, mAbstract, t_doc_url, issn, doi, pmid, doc_title, doc_authors_text, doc_source_text, readerValue, isDownloaded, tags;
-    private static SessionManager session;
+    private TextView doc_abstract, doc_url, doc_pmid, doc_issn, doc_catalog, readerCounterValue, doc_tags, docNotes;
+    private String docId, mAbstract, t_doc_url, issn, doi, pmid, doc_title, doc_authors_text, doc_source_text, readerValue, isDownloaded, tags, notes;    private static SessionManager session;
     private static String code;
     private static String refresh_token;
     private Boolean isInternetPresent = false;
     private Boolean isToSync = false;
-    private Cursor cursorProfiel;
     private Cursor cursorDetails;
     private Cursor cursorFile;
     private Thread downloaderThread;
@@ -102,6 +100,7 @@ public class DocumentsDetailsActivity extends Activity {
         doc_catalog = new TextView(this);
         readerCounterValue = new TextView(this);
         doc_tags = new TextView(this);
+        docNotes = new TextView(this);
 
         if (Globalconstant.LOG)
             Log.d(Globalconstant.TAG, "DOC_DETAILS - doc_id: " + getDocId());
@@ -111,6 +110,7 @@ public class DocumentsDetailsActivity extends Activity {
         //Get to populate activity
         fillData(getdocDetails());
         getFile();
+
         //Onlcick on abstract
         OnClickListener click_on_abstract = new OnClickListener() {
 
@@ -123,11 +123,33 @@ public class DocumentsDetailsActivity extends Activity {
 
         doc_abstract.setOnClickListener(click_on_abstract);
 
+
+        //Onlcick on NOTES
+        OnClickListener click_on_notes = new OnClickListener() {
+
+            public void onClick(View v) {
+
+                Log.d(Globalconstant.TAG, "DOC_DETAILS - NOTES: ");
+
+                Intent notesIntent = new Intent(getApplicationContext(), AbstractDescriptionActivity.class);
+                notesIntent.putExtra("abstract", notes);
+                startActivity(notesIntent);
+            }
+        };
+
+
+        docNotes.setOnClickListener(click_on_notes);
+        if (!notes.isEmpty()) {
+            Log.d(Globalconstant.TAG, "DOC_DETAILS - NOTES: -------");
+            docNotes.setOnClickListener(click_on_notes);
+        }
+
+
         //Onlcick on tag
         OnClickListener click_on_tag = new OnClickListener() {
 
             public void onClick(View v) {
-                Log.d(Globalconstant.TAG, "CLICKED!!");
+
 
                 Intent tag_intent = new Intent(getApplicationContext(), DocTagsActivity.class);
                 tag_intent.putExtra("DOC_TITLE", doc_title);
@@ -332,10 +354,6 @@ public class DocumentsDetailsActivity extends Activity {
         if (Globalconstant.LOG)
             Log.d(Globalconstant.TAG, "getdocDetails - DOC_DETAILS");
 
-
-
-
-
         String[] projection = new String[]{DatabaseOpenHelper.TYPE + " as _id", DatabaseOpenHelper.TITLE, DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE, DatabaseOpenHelper.YEAR, DatabaseOpenHelper.VOLUME, DatabaseOpenHelper.PAGES, DatabaseOpenHelper.ISSUE, DatabaseOpenHelper.ABSTRACT, DatabaseOpenHelper.WEBSITE, DatabaseOpenHelper.DOI, DatabaseOpenHelper.PMID, DatabaseOpenHelper.ISSN, DatabaseOpenHelper.STARRED, DatabaseOpenHelper.READER_COUNT, DatabaseOpenHelper.IS_DOWNLOAD, DatabaseOpenHelper.TAGS};
         String selection = DatabaseOpenHelper._ID + " = '" + docId + "'";
         Uri uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
@@ -399,7 +417,7 @@ public class DocumentsDetailsActivity extends Activity {
         projection = new String[]{setting_name + " as _id"};
         Uri uri = MyContentProvider.CONTENT_URI_PROFILE;
 
-        cursorProfiel = getApplicationContext().getContentResolver().query(uri, projection, selection, null, null);
+        Cursor cursorProfiel = getApplicationContext().getContentResolver().query(uri, projection, selection, null, null);
         cursorProfiel.moveToPosition(0);
 
         return cursorProfiel.getString(cursorProfiel.getColumnIndex(DatabaseOpenHelper._ID));
@@ -572,7 +590,7 @@ public class DocumentsDetailsActivity extends Activity {
         //Document Tags
         TextView doc_tag_title = new TextView(this);
         doc_tag_title.setId(11);
-        doc_tag_title.setText("TAGS");
+        doc_tag_title.setText(getResources().getString(R.string.tags));
         doc_tag_title.setTypeface(null, Typeface.BOLD);
         doc_tag_title.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.source_size));
         doc_tag_title.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
@@ -602,9 +620,10 @@ public class DocumentsDetailsActivity extends Activity {
         relativeLayout.addView(doc_tags);
 
         //Document Notes
+
         TextView doc_note_title = new TextView(this);
         doc_note_title.setId(13);
-        doc_note_title.setText("NOTES");
+        doc_note_title.setText(getResources().getString(R.string.notes));
         doc_note_title.setTypeface(null, Typeface.BOLD);
         doc_note_title.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.source_size));
         doc_note_title.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
@@ -615,24 +634,27 @@ public class DocumentsDetailsActivity extends Activity {
         relativeLayout.addView(doc_note_title);
 
 
+        notes = getdocNotes();
+        docNotes.setId(14);
+        docNotes.setBackgroundColor(Color.WHITE);
+        docNotes.setMinLines(1);
+        docNotes.setMaxLines(2);
+        docNotes.setEllipsize(TruncateAt.END);
 
-        TextView doc_notes = new TextView(this);
-        doc_notes.setId(14);
-        doc_notes.setBackgroundColor(Color.WHITE);
-        doc_notes.setClickable(true);
-        doc_notes.setEnabled(false);
-        doc_notes.setMinLines(1);
-        doc_notes.setMaxLines(2);
-        doc_notes.setEllipsize(TruncateAt.END);
-        doc_notes.setCompoundDrawables(null, null, image, null);
-        doc_notes.setText(getdocNotes());
-        doc_notes.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.authors_size));
-        doc_notes.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
+        if (!mAbstract.isEmpty()){
+            docNotes.setCompoundDrawables(null, null, image, null);
+            docNotes.setText(notes);
+        }
+
+
+
+        docNotes.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.authors_size));
+        docNotes.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
         RelativeLayout.LayoutParams layout_doc_notes = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         layout_doc_notes.addRule(RelativeLayout.BELOW, doc_note_title.getId());
         layout_doc_notes.setMargins(0, getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingTop), 0, getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingBottom));
-        doc_notes.setLayoutParams(layout_doc_notes);
-        relativeLayout.addView(doc_notes);
+        docNotes.setLayoutParams(layout_doc_notes);
+        relativeLayout.addView(docNotes);
 
 
         issn = cursor.getString(cursor.getColumnIndex(DatabaseOpenHelper.ISSN));
@@ -650,7 +672,7 @@ public class DocumentsDetailsActivity extends Activity {
             doc_catalog_title.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.source_size));
             doc_catalog_title.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
             RelativeLayout.LayoutParams layout_doc_catalog_title = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-            layout_doc_catalog_title.addRule(RelativeLayout.BELOW, doc_notes.getId());
+            layout_doc_catalog_title.addRule(RelativeLayout.BELOW, docNotes.getId());
             layout_doc_catalog_title.setMargins(0, getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingTop), 0, getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingBottom));
             doc_catalog_title.setLayoutParams(layout_doc_catalog_title);
             relativeLayout.addView(doc_catalog_title);
@@ -809,7 +831,7 @@ public class DocumentsDetailsActivity extends Activity {
                 layout_doc_url_title.addRule(RelativeLayout.BELOW, doc_catalog.getId());
             } else {
                 //Document URL
-                layout_doc_url_title.addRule(RelativeLayout.BELOW, doc_notes.getId());
+                layout_doc_url_title.addRule(RelativeLayout.BELOW, docNotes.getId());
             }
 
         }
@@ -857,7 +879,7 @@ public class DocumentsDetailsActivity extends Activity {
         } else if (t_doc_url.isEmpty() && issn.isEmpty() && pmid.isEmpty() && !doi.isEmpty()) {
             layout_reader_count.addRule(RelativeLayout.BELOW, doc_catalog.getId());
         } else {
-            layout_reader_count.addRule(RelativeLayout.BELOW, doc_notes.getId());
+            layout_reader_count.addRule(RelativeLayout.BELOW, docNotes.getId());
         }
     }
 

@@ -31,6 +31,8 @@
 
     <!-- DocumentsDetailActivity -->
 
+    <string name="tags">TAGS</string>
+    <string name="notes">NOTES</string>
     <string name="email_subject">" - Shared document by Paper Reader"</string>
     <string name="email_text">The following document was shared using Android Paper Reader app:</string>
     <string name="email_publication">"Publication: "</string>

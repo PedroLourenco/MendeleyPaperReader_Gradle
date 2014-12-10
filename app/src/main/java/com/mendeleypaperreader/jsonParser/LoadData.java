@@ -99,8 +99,6 @@ public class LoadData {
 
     private void getNotes(String url) {
 
-        //TODO - Apenas fazer o parse das notas do tipo note
-
         ContentValues note_values = new ContentValues();
 
         JSONParser jParser = new JSONParser();
@@ -119,23 +117,28 @@ public class LoadData {
                 while (ite.hasNext()) {
                     JsonNode temp = ite.next();
 
-                    Log.d(Globalconstant.TAG, "getGROUPS- temp" + temp);
 
                     if (temp.has(DatabaseOpenHelper.NOTE_ID)) {
-                        Log.d(Globalconstant.TAG, "getGROUPS- NOTE_ID: " + temp.get(DatabaseOpenHelper.NOTE_ID).asText());
+
                         note_values.put(DatabaseOpenHelper.NOTE_ID, temp.get(DatabaseOpenHelper.NOTE_ID).asText());
                     }
 
                     if (temp.has(DatabaseOpenHelper.TYPE)) {
-                        Log.d(Globalconstant.TAG, "getGROUPS- TYPE: " + temp.get(DatabaseOpenHelper.TYPE).asText());
-                        note_values.put(DatabaseOpenHelper.TYPE, temp.get(DatabaseOpenHelper.TYPE).asText());
+
+                        String noteType = temp.get(DatabaseOpenHelper.TYPE).asText();
+
+                        if (!noteType.equals("note")) {
+                            break;
+                        }
+
+                        note_values.put(DatabaseOpenHelper.TYPE, noteType);
                     }
                     if (temp.has(DatabaseOpenHelper.TEXT)) {
-                        Log.d(Globalconstant.TAG, "getGROUPS- TEXT: " + temp.get(DatabaseOpenHelper.TEXT).asText());
-                        note_values.put(DatabaseOpenHelper.TEXT, temp.get(DatabaseOpenHelper.TEXT).asText());
+
+                        note_values.put(DatabaseOpenHelper.TEXT, temp.get(DatabaseOpenHelper.TEXT).asText().replace("<br/>", " "));
                     }
                     if (temp.has(DatabaseOpenHelper.DOCUMENT_ID)) {
-                        Log.d(Globalconstant.TAG, "getGROUPS- DOCUMENT_ID: " + temp.get(DatabaseOpenHelper.DOCUMENT_ID).asText());
+
                         note_values.put(DatabaseOpenHelper.DOCUMENT_ID, temp.get(DatabaseOpenHelper.DOCUMENT_ID).asText());
                     }
                     Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_DOC_NOTES, note_values);
@@ -146,16 +149,12 @@ public class LoadData {
             }
 
 
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
     }
-
-
-
 
 
     public void getGroups(String url) {
@@ -193,16 +192,12 @@ public class LoadData {
             }
 
 
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
     }
-
-
-
 
 
     private Cursor getGroups() {
@@ -218,8 +213,6 @@ public class LoadData {
 
 
     }
-
-
 
 
     public void getFiles(String url) {

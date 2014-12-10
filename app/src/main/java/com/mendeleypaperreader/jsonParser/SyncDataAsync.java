@@ -22,7 +22,6 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
     Activity activity;
     private static LoadData load;
     ProgressDialog dialog;
-    private static SessionManager session;
     String access_token;
 
 
@@ -31,7 +30,7 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
         this.activity = activity;
         load = new LoadData(this.activity.getApplicationContext());
         dialog = new ProgressDialog(context);
-        session = new SessionManager(this.activity.getApplicationContext());
+        SessionManager session = new SessionManager(this.activity.getApplicationContext());
         session.savePreferences("IS_DB_CREATED", "YES");
         access_token = session.LoadPreference("access_token");
 
@@ -94,22 +93,23 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
 
 
 
-        publishProgress((int) (1 / ((float) 7) * 100));
+        publishProgress((int) (1 / ((float) 9) * 100));
         load.getProfileInfo(Globalconstant.get_profile + access_token);
-        publishProgress((int) (2 / ((float) 7) * 100));
+        publishProgress((int) (2 / ((float) 9) * 100));
         load.getGroups(Globalconstant.get_groups_url + access_token);
-        publishProgress((int) (3 / ((float) 7) * 100));
+        publishProgress((int) (3 / ((float) 9) * 100));
         load.getGroupDocs();
-        publishProgress((int) (4 / ((float) 7) * 100));
+        publishProgress((int) (4 / ((float) 9) * 100));
         load.getUserLibrary(Globalconstant.get_user_library_url + access_token);
-        publishProgress((int) (5 / ((float) 7) * 100));
+        publishProgress((int) (5 / ((float) 9) * 100));
         load.getFolders(Globalconstant.get_user_folders_url + access_token);
-        publishProgress((int) (6 / ((float) 7) * 100));
+        publishProgress((int) (6 / ((float) 9) * 100));
         load.getDocNotes();
+        publishProgress((int) (7 / ((float) 9) * 100));
         load.getCatalogId();
-        publishProgress((int) (7 / ((float) 7) * 100));
+        publishProgress((int) (8 / ((float) 9) * 100));
         load.getFiles(Globalconstant.get_files + access_token);
-        publishProgress((int) (8 / ((float) 7.6) * 100));
+        publishProgress((int) (9 / ((float) 9.6) * 100));
 
 
     }
