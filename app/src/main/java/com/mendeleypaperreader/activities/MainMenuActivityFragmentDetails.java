@@ -92,7 +92,7 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
         title = (TextView) view.findViewById(R.id.detailTitle);
         title.setTypeface(null, Typeface.BOLD);
         title.setText(description);
-        String[] dataColumns = {"_id", Globalconstant.AUTHORS, "data"};
+        String[] dataColumns = {"_id", DatabaseOpenHelper.AUTHORS, "data"};
         int[] viewIDs = {R.id.Doctitle, R.id.authors, R.id.data};
         mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.list_row_all_doc, null, dataColumns, viewIDs, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 

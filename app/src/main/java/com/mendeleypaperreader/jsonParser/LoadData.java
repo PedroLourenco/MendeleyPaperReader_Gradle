@@ -177,12 +177,12 @@ public class LoadData {
                 while (ite.hasNext()) {
                     JsonNode temp = ite.next();
 
-                    if (temp.has(Globalconstant.GROUP_NAME)) {
-                        values.put(DatabaseOpenHelper.GROUPS_NAME, temp.get(Globalconstant.GROUP_NAME).asText());
+                    if (temp.has(DatabaseOpenHelper.NAME)) {
+                        values.put(DatabaseOpenHelper.GROUPS_NAME, temp.get(DatabaseOpenHelper.NAME).asText());
                     }
 
-                    if (temp.has(Globalconstant.ID)) {
-                        values.put(DatabaseOpenHelper._ID, temp.get(Globalconstant.ID).asText());
+                    if (temp.has(DatabaseOpenHelper.ID)) {
+                        values.put(DatabaseOpenHelper._ID, temp.get(DatabaseOpenHelper.ID).asText());
                     }
                     Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_GROUPS, values);
 
@@ -235,29 +235,29 @@ public class LoadData {
                 while (ite.hasNext()) {
                     JsonNode temp = ite.next();
 
-                    if (temp.has(Globalconstant.ID)) {
-                        values.put(DatabaseOpenHelper.FILE_ID, temp.get(Globalconstant.ID).asText());
+                    if (temp.has(DatabaseOpenHelper.ID)) {
+                        values.put(DatabaseOpenHelper.FILE_ID, temp.get(DatabaseOpenHelper.ID).asText());
                     }
 
-                    if (temp.has(Globalconstant.FILE_DOC_ID)) {
-                        values.put(DatabaseOpenHelper.FILE_DOC_ID, temp.get(Globalconstant.FILE_DOC_ID).asText());
+                    if (temp.has(DatabaseOpenHelper.FILE_DOC_ID)) {
+                        values.put(DatabaseOpenHelper.FILE_DOC_ID, temp.get(DatabaseOpenHelper.FILE_DOC_ID).asText());
                     } else {
                         values.put(DatabaseOpenHelper.FILE_DOC_ID, "");
                     }
 
-                    if (temp.has(Globalconstant.FILE_NAME)) {
-                        values.put(DatabaseOpenHelper.FILE_NAME, temp.get(Globalconstant.FILE_NAME).asText());
+                    if (temp.has(DatabaseOpenHelper.FILE_NAME)) {
+                        values.put(DatabaseOpenHelper.FILE_NAME, temp.get(DatabaseOpenHelper.FILE_NAME).asText());
                     } else {
                         values.put(DatabaseOpenHelper.FILE_NAME, "");
                     }
 
-                    if (temp.has(Globalconstant.FILE_MIME_TYPE)) {
-                        values.put(DatabaseOpenHelper.FILE_MIME_TYPE, temp.get(Globalconstant.FILE_MIME_TYPE).asText());
+                    if (temp.has(DatabaseOpenHelper.FILE_MIME_TYPE)) {
+                        values.put(DatabaseOpenHelper.FILE_MIME_TYPE, temp.get(DatabaseOpenHelper.FILE_MIME_TYPE).asText());
                     } else {
                         values.put(DatabaseOpenHelper.FILE_MIME_TYPE, "");
                     }
-                    if (temp.has(Globalconstant.FILE_FILEHASH)) {
-                        values.put(DatabaseOpenHelper.FILE_FILEHASH, temp.get(Globalconstant.FILE_FILEHASH).asText());
+                    if (temp.has(DatabaseOpenHelper.FILE_FILEHASH)) {
+                        values.put(DatabaseOpenHelper.FILE_FILEHASH, temp.get(DatabaseOpenHelper.FILE_FILEHASH).asText());
                     } else {
                         values.put(DatabaseOpenHelper.FILE_FILEHASH, "");
                     }
@@ -297,35 +297,35 @@ public class LoadData {
                 while (ite.hasNext()) {
                     JsonNode temp = ite.next();
 
-                    if (temp.has(Globalconstant.ID)) {
-                        values.put(DatabaseOpenHelper.FOLDER_ID, temp.get(Globalconstant.ID).asText());
+                    if (temp.has(DatabaseOpenHelper.ID)) {
+                        values.put(DatabaseOpenHelper.FOLDER_ID, temp.get(DatabaseOpenHelper.ID).asText());
                     }
 
-                    if (temp.has(Globalconstant.NAME)) {
-                        values.put(DatabaseOpenHelper.FOLDER_NAME, temp.get(Globalconstant.NAME).asText());
+                    if (temp.has(DatabaseOpenHelper.NAME)) {
+                        values.put(DatabaseOpenHelper.FOLDER_NAME, temp.get(DatabaseOpenHelper.NAME).asText());
                     } else {
                         values.put(DatabaseOpenHelper.FOLDER_NAME, "");
                     }
 
-                    if (temp.has(Globalconstant.PARENT_ID)) {
-                        values.put(DatabaseOpenHelper.FOLDER_PARENT, temp.get(Globalconstant.PARENT_ID).asText());
+                    if (temp.has(DatabaseOpenHelper.PARENT_ID)) {
+                        values.put(DatabaseOpenHelper.FOLDER_PARENT, temp.get(DatabaseOpenHelper.PARENT_ID).asText());
                     } else {
                         values.put(DatabaseOpenHelper.FOLDER_PARENT, "");
                     }
 
-                    if (temp.has(Globalconstant.ADDED)) {
-                        values.put(DatabaseOpenHelper.FOLDER_ADDED, temp.get(Globalconstant.ADDED).asText());
+                    if (temp.has(DatabaseOpenHelper.ADDED)) {
+                        values.put(DatabaseOpenHelper.FOLDER_ADDED, temp.get(DatabaseOpenHelper.ADDED).asText());
                     } else {
                         values.put(DatabaseOpenHelper.FOLDER_ADDED, "");
                     }
-                    if (temp.has(Globalconstant.GROUP)) {
-                        values.put(DatabaseOpenHelper.FOLDER_GROUP, temp.get(Globalconstant.GROUP).asText());
+                    if (temp.has(DatabaseOpenHelper.GROUP)) {
+                        values.put(DatabaseOpenHelper.FOLDER_GROUP, temp.get(DatabaseOpenHelper.GROUP).asText());
                     } else {
                         values.put(DatabaseOpenHelper.FOLDER_GROUP, "");
                     }
 
                     Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_FOLDERS, values);
-                    getDocsInFolder(temp.get(Globalconstant.ID).asText());
+                    getDocsInFolder(temp.get(DatabaseOpenHelper.ID).asText());
                 }
 
                 jp.close();
@@ -368,46 +368,46 @@ public class LoadData {
                     JsonNode temp = ite.next();
                     Log.d(Globalconstant.TAG, "STRING: " + temp);
 
-                    if (temp.has(Globalconstant.ID)) {
-                        docId = temp.get(Globalconstant.ID).asText();
+                    if (temp.has(DatabaseOpenHelper.ID)) {
+                        docId = temp.get(DatabaseOpenHelper.ID).asText();
                         values.put(DatabaseOpenHelper._ID, docId);
                     }
 
-                    if (temp.has(Globalconstant.TITLE)) {
-                        docTitle = temp.get(Globalconstant.TITLE).asText();
+                    if (temp.has(DatabaseOpenHelper.TITLE)) {
+                        docTitle = temp.get(DatabaseOpenHelper.TITLE).asText();
                         values.put(DatabaseOpenHelper.TITLE, docTitle);
                     } else {
                         docTitle = "";
                         values.put(DatabaseOpenHelper.TITLE, docTitle);
                     }
 
-                    if (temp.has(Globalconstant.TYPE)) {
-                        values.put(DatabaseOpenHelper.TYPE, temp.get(Globalconstant.TYPE).asText());
+                    if (temp.has(DatabaseOpenHelper.TYPE)) {
+                        values.put(DatabaseOpenHelper.TYPE, temp.get(DatabaseOpenHelper.TYPE).asText());
                     } else {
                         values.put(DatabaseOpenHelper.TYPE, "");
                     }
 
 
-                    if (temp.has(Globalconstant.YEAR)) {
-                        values.put(DatabaseOpenHelper.YEAR, temp.get(Globalconstant.YEAR).asText());
+                    if (temp.has(DatabaseOpenHelper.YEAR)) {
+                        values.put(DatabaseOpenHelper.YEAR, temp.get(DatabaseOpenHelper.YEAR).asText());
                     } else {
                         values.put(DatabaseOpenHelper.YEAR, "");
                     }
-                    if (temp.has(Globalconstant.LAST_MODIFIED)) {
-                        values.put(DatabaseOpenHelper.LAST_MODIFIED, temp.get(Globalconstant.LAST_MODIFIED).asText());
+                    if (temp.has(DatabaseOpenHelper.LAST_MODIFIED)) {
+                        values.put(DatabaseOpenHelper.LAST_MODIFIED, temp.get(DatabaseOpenHelper.LAST_MODIFIED).asText());
                     } else {
                         values.put(DatabaseOpenHelper.LAST_MODIFIED, "");
                     }
 
-                    if (temp.has(Globalconstant.TAGS)) {
+                    if (temp.has(DatabaseOpenHelper.TAGS)) {
 
-                        Iterator<JsonNode> tagIterator = temp.get(Globalconstant.TAGS).elements();
+                        Iterator<JsonNode> tagIterator = temp.get(DatabaseOpenHelper.TAGS).elements();
                         String tags = "";
                         while (tagIterator.hasNext()) {
 
                             String tagName = tagIterator.next().asText();
                             tags += tagName + ",";
-                            tagsValues.put(DatabaseOpenHelper._ID, temp.get(Globalconstant.ID).asText());
+                            tagsValues.put(DatabaseOpenHelper._ID, temp.get(DatabaseOpenHelper.ID).asText());
                             tagsValues.put(DatabaseOpenHelper.TAG_NAME, tagName);
                             Uri uriTag = context.getContentResolver().insert(MyContentProvider.CONTENT_URI_DOC_TAGS, tagsValues);
                             values.put(DatabaseOpenHelper.TAGS, tags.substring(0, tags.length() - 1));
@@ -417,62 +417,62 @@ public class LoadData {
                         values.put(DatabaseOpenHelper.TAGS, "");
                     }
 
-                    if (temp.has(Globalconstant.CREATED)) {
-                        values.put(DatabaseOpenHelper.ADDED, temp.get(Globalconstant.CREATED).asText());
+                    if (temp.has(DatabaseOpenHelper.CREATED)) {
+                        values.put(DatabaseOpenHelper.ADDED, temp.get(DatabaseOpenHelper.CREATED).asText());
                     } else {
                         values.put(DatabaseOpenHelper.ADDED, "");
                     }
 
-                    if (temp.has(Globalconstant.GROUP_ID)) {
-                        values.put(DatabaseOpenHelper.GROUP_ID, temp.get(Globalconstant.GROUP_ID).asText());
+                    if (temp.has(DatabaseOpenHelper.GROUP_ID)) {
+                        values.put(DatabaseOpenHelper.GROUP_ID, temp.get(DatabaseOpenHelper.GROUP_ID).asText());
                     } else {
                         values.put(DatabaseOpenHelper.GROUP_ID, "");
                     }
-                    if (temp.has(Globalconstant.SOURCE)) {
-                        values.put(DatabaseOpenHelper.SOURCE, temp.get(Globalconstant.SOURCE).asText());
+                    if (temp.has(DatabaseOpenHelper.SOURCE)) {
+                        values.put(DatabaseOpenHelper.SOURCE, temp.get(DatabaseOpenHelper.SOURCE).asText());
                     } else {
                         values.put(DatabaseOpenHelper.SOURCE, "");
                     }
 
-                    if (temp.has(Globalconstant.PAGES)) {
-                        values.put(DatabaseOpenHelper.PAGES, temp.get(Globalconstant.PAGES).asText());
+                    if (temp.has(DatabaseOpenHelper.PAGES)) {
+                        values.put(DatabaseOpenHelper.PAGES, temp.get(DatabaseOpenHelper.PAGES).asText());
                     } else {
                         values.put(DatabaseOpenHelper.PAGES, "");
                     }
 
-                    if (temp.has(Globalconstant.VOLUME)) {
-                        values.put(DatabaseOpenHelper.VOLUME, temp.get(Globalconstant.VOLUME).asText());
+                    if (temp.has(DatabaseOpenHelper.VOLUME)) {
+                        values.put(DatabaseOpenHelper.VOLUME, temp.get(DatabaseOpenHelper.VOLUME).asText());
                     } else {
                         values.put(DatabaseOpenHelper.VOLUME, "");
                     }
-                    if (temp.has(Globalconstant.ISSUE)) {
-                        values.put(DatabaseOpenHelper.ISSUE, temp.get(Globalconstant.ISSUE).asText());
+                    if (temp.has(DatabaseOpenHelper.ISSUE)) {
+                        values.put(DatabaseOpenHelper.ISSUE, temp.get(DatabaseOpenHelper.ISSUE).asText());
                     } else {
                         values.put(DatabaseOpenHelper.ISSUE, "");
                     }
 
-                    if (temp.has(Globalconstant.STARRED)) {
-                        values.put(DatabaseOpenHelper.STARRED, temp.get(Globalconstant.STARRED).asText());
+                    if (temp.has(DatabaseOpenHelper.STARRED)) {
+                        values.put(DatabaseOpenHelper.STARRED, temp.get(DatabaseOpenHelper.STARRED).asText());
                     } else {
                         values.put(DatabaseOpenHelper.STARRED, "");
                     }
-                    if (temp.has(Globalconstant.AUTHORED)) {
-                        values.put(DatabaseOpenHelper.AUTHORED, temp.get(Globalconstant.AUTHORED).asText());
+                    if (temp.has(DatabaseOpenHelper.AUTHORED)) {
+                        values.put(DatabaseOpenHelper.AUTHORED, temp.get(DatabaseOpenHelper.AUTHORED).asText());
 
                     } else {
                         values.put(DatabaseOpenHelper.AUTHORED, "");
                     }
 
-                    if (temp.has(Globalconstant.ABSTRACT)) {
-                        values.put(DatabaseOpenHelper.ABSTRACT, temp.get(Globalconstant.ABSTRACT).asText());
+                    if (temp.has(DatabaseOpenHelper.ABSTRACT)) {
+                        values.put(DatabaseOpenHelper.ABSTRACT, temp.get(DatabaseOpenHelper.ABSTRACT).asText());
                     } else {
                         values.put(DatabaseOpenHelper.ABSTRACT, "");
                     }
 
                     //Array
                     //authors":[{"first_name":"Asger","last_name":"Hobolth"},{"first_name":"Ole F","last_name":"Christensen"},{"first_name":"Thomas","last_name":"Mailund"},{"first_name":"Mikkel H","last_name":"Schierup"}]
-                    if (temp.has(Globalconstant.AUTHORS)) {
-                        Iterator<JsonNode> authorsIterator = temp.get(Globalconstant.AUTHORS).elements();
+                    if (temp.has(DatabaseOpenHelper.AUTHORS)) {
+                        Iterator<JsonNode> authorsIterator = temp.get(DatabaseOpenHelper.AUTHORS).elements();
                         String authors = "";
                         String aux_surname, aux_forenamed;
 
@@ -480,21 +480,21 @@ public class LoadData {
 
                             JsonNode author = authorsIterator.next();
 
-                            if (author.has(Globalconstant.FORENAME)) {
-                                aux_forenamed = author.get(Globalconstant.FORENAME).asText();
+                            if (author.has(DatabaseOpenHelper.PROFILE_FIRST_NAME)) {
+                                aux_forenamed = author.get(DatabaseOpenHelper.PROFILE_FIRST_NAME).asText();
 
                             } else {
                                 aux_forenamed = "";
                             }
 
-                            if (author.has(Globalconstant.SURNAME)) {
-                                aux_surname = author.get(Globalconstant.SURNAME).asText();
+                            if (author.has(DatabaseOpenHelper.PROFILE_LAST_NAME)) {
+                                aux_surname = author.get(DatabaseOpenHelper.PROFILE_LAST_NAME).asText();
 
                             } else {
                                 aux_surname = "";
                             }
 
-                            author.get(Globalconstant.SURNAME);
+                            author.get(DatabaseOpenHelper.PROFILE_LAST_NAME);
 
                             String author_name = aux_forenamed + " " + aux_surname;
 
@@ -512,9 +512,9 @@ public class LoadData {
                     }
 
 
-                    if (temp.has(Globalconstant.IDENTIFIERS)) {
+                    if (temp.has(DatabaseOpenHelper.IDENTIFIERS)) {
 
-                        Iterator<Entry<String, JsonNode>> identifierIterator = temp.get(Globalconstant.IDENTIFIERS).fields();
+                        Iterator<Entry<String, JsonNode>> identifierIterator = temp.get(DatabaseOpenHelper.IDENTIFIERS).fields();
 
                         values.put(DatabaseOpenHelper.ISSN, "");
                         values.put(DatabaseOpenHelper.ISBN, "");
@@ -577,10 +577,10 @@ public class LoadData {
                 while (ite.hasNext()) {
                     JsonNode temp = ite.next();
 
-                    if (temp.has(Globalconstant.ID)) {
+                    if (temp.has(DatabaseOpenHelper.ID)) {
 
                         values.put(DatabaseOpenHelper.FOLDER_ID, folderId);
-                        values.put(DatabaseOpenHelper.DOC_DETAILS_ID, temp.get(Globalconstant.ID).asText());
+                        values.put(DatabaseOpenHelper.DOC_DETAILS_ID, temp.get(DatabaseOpenHelper.ID).asText());
 
                     } else {
                         values.put(DatabaseOpenHelper.FOLDER_ID, "");
@@ -759,11 +759,11 @@ public class LoadData {
                 Map<String, Object> mapObject = mapper.readValue(oneItem, new TypeReference<Map<String, Object>>() {
                 });
 
-                values.put(DatabaseOpenHelper.PROFILE_ID, mapObject.get(Globalconstant.ID).toString());
-                values.put(DatabaseOpenHelper.PROFILE_FIRST_NAME, mapObject.get(Globalconstant.FORENAME).toString());
-                values.put(DatabaseOpenHelper.PROFILE_LAST_NAME, mapObject.get(Globalconstant.SURNAME).toString());
-                values.put(DatabaseOpenHelper.PROFILE_DISPLAY_NAME, mapObject.get(Globalconstant.PROFILE_DISPLAY_NAME).toString());
-                values.put(DatabaseOpenHelper.PROFILE_LINK, mapObject.get(Globalconstant.PROFILE_LINK).toString());
+                values.put(DatabaseOpenHelper.PROFILE_ID, mapObject.get(DatabaseOpenHelper.ID).toString());
+                values.put(DatabaseOpenHelper.PROFILE_FIRST_NAME, mapObject.get(DatabaseOpenHelper.PROFILE_FIRST_NAME).toString());
+                values.put(DatabaseOpenHelper.PROFILE_LAST_NAME, mapObject.get(DatabaseOpenHelper.PROFILE_LAST_NAME).toString());
+                values.put(DatabaseOpenHelper.PROFILE_DISPLAY_NAME, mapObject.get(DatabaseOpenHelper.PROFILE_DISPLAY_NAME).toString());
+                values.put(DatabaseOpenHelper.PROFILE_LINK, mapObject.get(DatabaseOpenHelper.PROFILE_LINK).toString());
 
                 Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_PROFILE, values);
 

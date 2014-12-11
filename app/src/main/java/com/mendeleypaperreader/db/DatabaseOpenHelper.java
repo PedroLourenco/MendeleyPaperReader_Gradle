@@ -30,6 +30,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public final static String TABLE_DOC_NOTES = "documents_notes";
 
     public final static String _ID = "_id";
+    public final static String ID = "id";
     public final static String TYPE = "type";
     public final static String MONTH = "month";
     public final static String YEAR = "year";
@@ -51,6 +52,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public final static String PROFILE_ID = "profile_id";
     public final static String AUTHORS = "authors";        //ARRAY
     public final static String ADDED = "added";
+    public final static String CREATED = "created";
     public final static String PAGES = "pages";
     public final static String VOLUME = "volume";
     public final static String ISSUE = "issue";
@@ -74,9 +76,12 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public final static String READER_COUNT = "reader_count";
     public final static String FOLDER_ID = "folder_id";
     public final static String FOLDER_NAME = "folder_name";
+    public final static String NAME = "name";
     public final static String FOLDER_ADDED = "folder_added";
     public final static String FOLDER_PARENT = "folder_parent";
+    public final static String PARENT_ID = "parent_id";
     public final static String FOLDER_GROUP = "folder_group";
+    public final static String GROUP = "group";
     public final static String FILE_ID = "file_id";
     public final static String FILE_NAME = "file_name";
     public final static String FILE_MIME_TYPE = "mime_type";

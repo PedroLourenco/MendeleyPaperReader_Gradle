@@ -45,7 +45,7 @@ public class ListDocTagsActivity extends ListActivity {
         builder.setSpan(new StyleSpan(Typeface.BOLD), 0, 3, 0);
         docTagTitle.setText(builder);
 
-        String[] dataColumns = {"_id", Globalconstant.AUTHORS, "data"};
+        String[] dataColumns = {"_id", DatabaseOpenHelper.AUTHORS, "data"};
         int[] viewIDs = {R.id.Doctitle, R.id.authors, R.id.data};
         adapterDocTags = new SimpleCursorAdapter(getApplicationContext(), R.layout.list_row_all_doc, cursorDocTags, dataColumns, viewIDs, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 

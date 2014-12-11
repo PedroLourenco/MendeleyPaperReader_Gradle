@@ -102,8 +102,6 @@ public class DocumentsDetailsActivity extends Activity {
         doc_tags = new TextView(this);
         docNotes = new TextView(this);
 
-        if (Globalconstant.LOG)
-            Log.d(Globalconstant.TAG, "DOC_DETAILS - doc_id: " + getDocId());
 
         docId = getDocId();
 
@@ -129,8 +127,6 @@ public class DocumentsDetailsActivity extends Activity {
 
             public void onClick(View v) {
 
-                Log.d(Globalconstant.TAG, "DOC_DETAILS - NOTES: ");
-
                 Intent notesIntent = new Intent(getApplicationContext(), AbstractDescriptionActivity.class);
                 notesIntent.putExtra("abstract", notes);
                 startActivity(notesIntent);
@@ -138,9 +134,7 @@ public class DocumentsDetailsActivity extends Activity {
         };
 
 
-        docNotes.setOnClickListener(click_on_notes);
         if (!notes.isEmpty()) {
-            Log.d(Globalconstant.TAG, "DOC_DETAILS - NOTES: -------");
             docNotes.setOnClickListener(click_on_notes);
         }
 
@@ -641,7 +635,7 @@ public class DocumentsDetailsActivity extends Activity {
         docNotes.setMaxLines(2);
         docNotes.setEllipsize(TruncateAt.END);
 
-        if (!mAbstract.isEmpty()){
+        if (!notes.isEmpty()){
             docNotes.setCompoundDrawables(null, null, image, null);
             docNotes.setText(notes);
         }
