@@ -5,6 +5,7 @@
     android:layout_height="wrap_content" 
     android:paddingTop="@dimen/doc_type_paddingTop"  
     android:paddingBottom="@dimen/doc_type_paddingBottom"  
-    android:paddingLeft="@dimen/doc_type_paddingLeft" 
+    android:paddingLeft="@dimen/doc_type_paddingLeft"
+    android:textSize="@dimen/folder_text_size"
     android:background="@drawable/gradient_bg_list"
     style="?android:attr/windowTitleStyle" /> 

@@ -586,7 +586,7 @@ public class DocumentsDetailsActivity extends Activity {
         doc_tag_title.setId(11);
         doc_tag_title.setText(getResources().getString(R.string.tags));
         doc_tag_title.setTypeface(null, Typeface.BOLD);
-        doc_tag_title.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.source_size));
+        doc_tag_title.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
         doc_tag_title.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
 
         RelativeLayout.LayoutParams layout_doc_tag_title = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -605,7 +605,7 @@ public class DocumentsDetailsActivity extends Activity {
         if (!tags.isEmpty())
             doc_tags.setCompoundDrawables(null, null, image, null);
         doc_tags.setText(tags);
-        doc_tags.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.authors_size));
+        doc_tags.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
         doc_tags.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
         RelativeLayout.LayoutParams layout_doc_tags = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         layout_doc_tags.addRule(RelativeLayout.BELOW, doc_tag_title.getId());
@@ -619,7 +619,7 @@ public class DocumentsDetailsActivity extends Activity {
         doc_note_title.setId(13);
         doc_note_title.setText(getResources().getString(R.string.notes));
         doc_note_title.setTypeface(null, Typeface.BOLD);
-        doc_note_title.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.source_size));
+        doc_note_title.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
         doc_note_title.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
         RelativeLayout.LayoutParams layout_doc_note_title = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         layout_doc_note_title.addRule(RelativeLayout.BELOW, doc_tags.getId());
@@ -642,7 +642,7 @@ public class DocumentsDetailsActivity extends Activity {
 
 
 
-        docNotes.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.authors_size));
+        docNotes.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
         docNotes.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
         RelativeLayout.LayoutParams layout_doc_notes = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         layout_doc_notes.addRule(RelativeLayout.BELOW, doc_note_title.getId());
@@ -663,7 +663,7 @@ public class DocumentsDetailsActivity extends Activity {
             doc_catalog_title.setId(15);
             doc_catalog_title.setTypeface(null, Typeface.BOLD);
             doc_catalog_title.setText(getResources().getString(R.string.catalog_ids));
-            doc_catalog_title.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.source_size));
+            doc_catalog_title.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
             doc_catalog_title.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
             RelativeLayout.LayoutParams layout_doc_catalog_title = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             layout_doc_catalog_title.addRule(RelativeLayout.BELOW, docNotes.getId());
@@ -679,7 +679,7 @@ public class DocumentsDetailsActivity extends Activity {
             doc_catalog.setMaxLines(1);
             doc_catalog.setEllipsize(TruncateAt.END);
             doc_catalog.setCompoundDrawables(null, null, image, null);
-            doc_catalog.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.source_size));
+            doc_catalog.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
             doc_catalog.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
             RelativeLayout.LayoutParams layout_doc_catalog = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             layout_doc_catalog.setMargins(0, getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingTop), 0, getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingBottom));
@@ -692,7 +692,7 @@ public class DocumentsDetailsActivity extends Activity {
             doc_pmid.setMaxLines(1);
             doc_pmid.setEllipsize(TruncateAt.END);
             doc_pmid.setCompoundDrawables(null, null, image, null);
-            doc_pmid.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.source_size));
+            doc_pmid.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
             doc_pmid.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
             RelativeLayout.LayoutParams layout_doc_pmid = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             layout_doc_pmid.setMargins(0, getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingTop), 0, getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingBottom));
@@ -705,7 +705,7 @@ public class DocumentsDetailsActivity extends Activity {
             doc_issn.setMaxLines(1);
             doc_issn.setEllipsize(TruncateAt.END);
             doc_issn.setCompoundDrawables(null, null, image, null);
-            doc_issn.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.source_size));
+            doc_issn.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
             doc_issn.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
             RelativeLayout.LayoutParams layout_doc_issn = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             layout_doc_issn.setMargins(0, getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingTop), 0, getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingBottom));
@@ -792,7 +792,7 @@ public class DocumentsDetailsActivity extends Activity {
             doc_url_title.setId(22);
             doc_url_title.setTypeface(null, Typeface.BOLD);
             doc_url_title.setText(getResources().getString(R.string.urls));
-            doc_url_title.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.source_size));
+            doc_url_title.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
             doc_url_title.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
             layout_doc_url_title = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             doc_url_title.setLayoutParams(layout_doc_url_title);
@@ -805,7 +805,7 @@ public class DocumentsDetailsActivity extends Activity {
             doc_url.setMaxLines(1);
             doc_url.setEllipsize(TruncateAt.END);
             doc_url.setCompoundDrawables(null, null, image, null);
-            doc_url.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.source_size));
+            doc_url.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
             doc_url.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
             layout_doc_url = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             layout_doc_url.setMargins(0, getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingTop), 0, getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingBottom));
@@ -856,7 +856,7 @@ public class DocumentsDetailsActivity extends Activity {
 
         readerCounterValue.setId(25);
         readerCounterValue.setText(getResources().getString(R.string.readers) + "\t\t" + readerValue);
-        readerCounterValue.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.source_size));
+        readerCounterValue.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
         readerCounterValue.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
         layoutReaderCounterValue = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         readerCounterValue.setLayoutParams(layoutReaderCounterValue);
