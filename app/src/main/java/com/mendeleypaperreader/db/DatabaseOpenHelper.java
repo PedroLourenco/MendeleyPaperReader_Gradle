@@ -210,9 +210,9 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
 
-        SessionManager session;
-        session = new SessionManager(this.mContext);
-        session.savePreferences("versionCode", "05");
+        //SessionManager session;
+        //session = new SessionManager(this.mContext);
+        //session.savePreferences("versionCode", "5");
 
 
         //db.execSQL(CREATE_TABLE_GROUPS);

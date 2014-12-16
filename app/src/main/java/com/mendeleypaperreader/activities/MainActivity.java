@@ -81,6 +81,7 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
+
         if (!version.toString().equals(session.LoadPreference("versionCode"))) {
             session.deletePreferences();
             session.savePreferences("versionCode", version.toString());
