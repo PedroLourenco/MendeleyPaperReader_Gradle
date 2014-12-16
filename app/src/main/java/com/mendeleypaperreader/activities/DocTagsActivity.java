@@ -98,10 +98,6 @@ public class DocTagsActivity extends ListActivity {
         Cursor tags = adapterDocTags.getCursor();
         String description = tags.getString(tags.getColumnIndex("_id"));
 
-        Log.d(Globalconstant.TAG, " position: " + position);
-        Log.d(Globalconstant.TAG, " tag name: " + description);
-
-
         Intent listDocTag = new Intent(getApplicationContext(), ListDocTagsActivity.class);
         listDocTag.putExtra("TAG_NAME", description);
         startActivity(listDocTag);

@@ -224,12 +224,6 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
         mCurCheckPosition = index;
 
 
-        if (Globalconstant.LOG)
-            Log.d(Globalconstant.TAG, "ITEM SELECTED: " + description);
-        Log.d(Globalconstant.TAG, "ITEM index: " + index);
-        Log.d(Globalconstant.TAG, "ITEM foldersCount: " + foldersCount);
-
-
         if (mDualPane) {
 
             if (Globalconstant.LOG)

@@ -366,7 +366,7 @@ public class LoadData {
                 while (ite.hasNext()) {
 
                     JsonNode temp = ite.next();
-                    Log.d(Globalconstant.TAG, "STRING: " + temp);
+
 
                     if (temp.has(DatabaseOpenHelper.ID)) {
                         docId = temp.get(DatabaseOpenHelper.ID).asText();

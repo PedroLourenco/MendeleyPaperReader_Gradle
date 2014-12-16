@@ -300,33 +300,33 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
             return new CursorLoader(getActivity().getApplicationContext(), uri , grid_columns, null, new String[]{"'%" + grid_currentQuery + "%'"}, sort);
 
         } else if (index == 1) { //All doc
-            Log.d(Globalconstant.TAG, "All doc");
+
             title.setText(Globalconstant.MYLIBRARY[0]);
             projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
             uri = MyContentProvider.CONTENT_URI_DOC_DETAILS;
         } else if (index == 2) { //added
-            Log.d(Globalconstant.TAG, "added");
+
             title.setText(Globalconstant.MYLIBRARY[1]);
             projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
             selection = DatabaseOpenHelper.ADDED + " >= datetime('now', 'start of month')";
             uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
         } else if (index == 3) { //Starred = true
-            Log.d(Globalconstant.TAG, "Starred = true");
+
             title.setText(Globalconstant.MYLIBRARY[2]);
             projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
             selection = DatabaseOpenHelper.STARRED + " = 'true'";
             uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
         } else if (index == 4) { //Authored = true
-            Log.d(Globalconstant.TAG, "Authored = true");
+
             title.setText(Globalconstant.MYLIBRARY[3]);
             projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
             selection = DatabaseOpenHelper.AUTHORED + " = 'true'";
             uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
         } else if (index == 5) { //Trash
-            Log.d(Globalconstant.TAG, "Trash");
+
             title.setText(Globalconstant.MYLIBRARY[4]);
         } else if (index > 5 && index <= getFoldersCount() + 7) {
-            Log.d(Globalconstant.TAG, "Folders");
+
             String folderName = getShownDescription();
             if (folderName.contains("'")) {
                 folderName = folderName.replaceAll("'", "''");
@@ -338,7 +338,7 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
 
             uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
         } else if (index > getFoldersCount()) {
-            Log.d(Globalconstant.TAG, "Groups");
+
             String groupName = getShownDescription();
             if (groupName.contains("'")) {
                 groupName = groupName.replaceAll("'", "''");

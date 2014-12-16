@@ -849,7 +849,7 @@ public class DocumentsDetailsActivity extends Activity {
         readerValue = cursor.getString(cursor.getColumnIndex(DatabaseOpenHelper.READER_COUNT));
 
 
-        Log.e(Globalconstant.TAG, "READER COUNT: " + readerValue);
+
 
         if (!readerValue.equals("0"))
             readerCounterValue.setCompoundDrawables(null, null, image, null);
