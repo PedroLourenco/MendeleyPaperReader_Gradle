@@ -2,6 +2,7 @@ package com.mendeleypaperreader.db;
 
 
 import android.content.Context;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -130,13 +131,13 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
     final private static String CREATE_TABLE_FOLDERS_DOCS = "CREATE TABLE folders_docs (" + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + FOLDER_ID + " TEXT, " + DOC_DETAILS_ID + " TEXT) ";
 
-    final private static String CREATE_TABLE_ACADEMIC_STATUS_DOCS = "CREATE TABLE academic_status_docs (" + DOC_DETAILS_ID + " TEXT, " + STATUS + " TEXT, " + COUNT + " TEXT) ";
+    final private static String CREATE_TABLE_ACADEMIC_STATUS_DOCS = "CREATE TABLE if not exists academic_status_docs (" + DOC_DETAILS_ID + " TEXT, " + STATUS + " TEXT, " + COUNT + " TEXT) ";
 
-    final private static String CREATE_TABLE_GROUPS = "CREATE TABLE groups (" + _ID + " TEXT PRIMARY KEY, " + GROUPS_NAME + " TEXT ) ";
+    final private static String CREATE_TABLE_GROUPS = "CREATE TABLE if not exists groups (" + _ID + " TEXT PRIMARY KEY, " + GROUPS_NAME + " TEXT ) ";
 
-    private static String CREATE_TABLE_DOC_TAGS = "CREATE TABLE documents_tags (" + _ID + " TEXT, " + TAG_NAME + " TEXT ) ";
+    private static String CREATE_TABLE_DOC_TAGS = "CREATE TABLE if not exists documents_tags (" + _ID + " TEXT, " + TAG_NAME + " TEXT ) ";
 
-    private static String CREATE_TABLE_DOC_NOTES = "CREATE TABLE documents_notes (" + NOTE_ID + " TEXT, " + TYPE + " TEXT, " + PREVIOUS_ID + " TEXT, "+ COLOR + " TEXT, "+ TEXT + " TEXT, " + POSITIONS + " TEXT, "+ PRIVACY_LEVEL + " TEXT, "+ FILEHASH + " TEXT, " +  DOCUMENT_ID + "  TEXT ) ";
+    private static String CREATE_TABLE_DOC_NOTES = "CREATE TABLE if not exists documents_notes (" + NOTE_ID + " TEXT, " + TYPE + " TEXT, " + PREVIOUS_ID + " TEXT, "+ COLOR + " TEXT, "+ TEXT + " TEXT, " + POSITIONS + " TEXT, "+ PRIVACY_LEVEL + " TEXT, "+ FILEHASH + " TEXT, " +  DOCUMENT_ID + "  TEXT ) ";
 
     final private static String CREATE_TABLE_DOCUMENT_DETAILS =
 
@@ -171,7 +172,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
 
     final private static String DATABASE_NAME = "Mendeley_library.db";
-    final private static Integer VERSION = 4;
+    final private static Integer VERSION = 5;
     final private Context mContext;
 
     public DatabaseOpenHelper(Context context, String name,
@@ -210,18 +211,30 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
 
-        //SessionManager session;
-        //session = new SessionManager(this.mContext);
-        //session.savePreferences("versionCode", "5");
+        SessionManager session;
+        session = new SessionManager(this.mContext);
+        session.savePreferences("versionCode", "1");
 
 
-        //db.execSQL(CREATE_TABLE_GROUPS);
+        db.execSQL(CREATE_TABLE_GROUPS);
+        db.execSQL(CREATE_TABLE_ACADEMIC_STATUS_DOCS);
 
         //Release_2 version 0.2.0 - Add column reader_count to table documents_details
         //Database verson 2
-        //db.execSQL("ALTER TABLE document_details ADD COLUMN reader_count TEXT ;");
-        //db.execSQL("ALTER TABLE document_details ADD COLUMN is_download TEXT ;");
-        //db.execSQL(CREATE_TABLE_ACADEMIC_STATUS_DOCS);
+
+        try {
+            db.execSQL("ALTER TABLE document_details ADD COLUMN reader_count TEXT ;");
+        } catch (SQLException e) {
+            Log.i("ADD COLUMN reader_count", "reader_count already exists");
+        }
+
+        try {
+            db.execSQL("ALTER TABLE document_details ADD COLUMN is_download TEXT ;");
+        } catch (SQLException e) {
+            Log.i("ADD is_download Week", "is_download already exists");
+        }
+
+
         //db.execSQL(CREATE_TABLE_COUNTRY_STATUS_DOCS);
 
         //Release_4 delete old columns of table documents_details

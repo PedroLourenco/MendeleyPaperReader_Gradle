@@ -848,7 +848,10 @@ public class DocumentsDetailsActivity extends Activity {
         readerCounterValue.setBackgroundColor(Color.WHITE);
         readerValue = cursor.getString(cursor.getColumnIndex(DatabaseOpenHelper.READER_COUNT));
 
-
+        //fix related bug when readervalue is null
+        if(readerValue == null){
+            readerValue = "0";
+        }
 
 
         if (!readerValue.equals("0"))

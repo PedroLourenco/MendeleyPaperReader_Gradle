@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
         // Session Manager
         session = new SessionManager(MainActivity.this);
 
-        //delete peferences on update app
+       /* //delete peferences on update app
         Integer version = 1;
         try {
             version = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
@@ -87,7 +87,7 @@ public class MainActivity extends Activity {
             session.savePreferences("versionCode", version.toString());
         }
 
-
+*/
         // check internet connection
         final ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
 
