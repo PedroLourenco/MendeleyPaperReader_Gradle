@@ -59,7 +59,8 @@ public class DocumentsDetailsActivity extends Activity {
 
     // private Cursor foldersAdapter;
     private TextView doc_abstract, doc_url, doc_pmid, doc_issn, doc_catalog, readerCounterValue, doc_tags, docNotes;
-    private String docId, mAbstract, t_doc_url, issn, doi, pmid, doc_title, doc_authors_text, doc_source_text, readerValue, isDownloaded, tags, notes;    private static SessionManager session;
+    private String docId, mAbstract, t_doc_url, issn, doi, pmid, doc_title, doc_authors_text, doc_source_text, readerValue, isDownloaded, tags, notes;
+    private static SessionManager session;
     private static String code;
     private static String refresh_token;
     private Boolean isInternetPresent = false;
@@ -119,7 +120,10 @@ public class DocumentsDetailsActivity extends Activity {
             }
         };
 
-        doc_abstract.setOnClickListener(click_on_abstract);
+
+        if (!mAbstract.isEmpty()) {
+            doc_abstract.setOnClickListener(click_on_abstract);
+        }
 
 
         //Onlcick on NOTES
@@ -309,8 +313,6 @@ public class DocumentsDetailsActivity extends Activity {
     }
 
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
@@ -365,9 +367,6 @@ public class DocumentsDetailsActivity extends Activity {
             Log.d(Globalconstant.TAG, "getdocDetails - DOC_NOTES");
 
 
-
-
-
         String[] projection = new String[]{DatabaseOpenHelper.TEXT + " as _id"};
         String selection = DatabaseOpenHelper.DOCUMENT_ID + " = '" + docId + "'";
         Uri uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_NOTES + "/id");
@@ -375,7 +374,7 @@ public class DocumentsDetailsActivity extends Activity {
         Cursor cursorNotes = getApplicationContext().getContentResolver().query(uri, projection, selection, null, null);
 
 
-        if(cursorNotes.getCount() > 0){
+        if (cursorNotes.getCount() > 0) {
             cursorNotes.moveToPosition(0);
 
             return cursorNotes.getString(cursorNotes.getColumnIndex(DatabaseOpenHelper._ID));
@@ -429,13 +428,11 @@ public class DocumentsDetailsActivity extends Activity {
         TextView doc_type = (TextView) findViewById(R.id.docype);
         String doc_types = cursor.getString(cursor.getColumnIndex("_id"));
 
-        if(doc_types.length() > 0){
+        if (doc_types.length() > 0) {
             doc_type.setText(doc_types.substring(0, 1).toUpperCase() + doc_types.substring(1));
-        }
-        else{
+        } else {
             doc_type.setText(doc_types);
         }
-
 
 
         isDownloaded = cursor.getString(cursor.getColumnIndex(DatabaseOpenHelper.IS_DOWNLOAD));
@@ -635,11 +632,10 @@ public class DocumentsDetailsActivity extends Activity {
         docNotes.setMaxLines(2);
         docNotes.setEllipsize(TruncateAt.END);
 
-        if (!notes.isEmpty()){
+        if (!notes.isEmpty()) {
             docNotes.setCompoundDrawables(null, null, image, null);
             docNotes.setText(notes);
         }
-
 
 
         docNotes.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
@@ -781,7 +777,7 @@ public class DocumentsDetailsActivity extends Activity {
         RelativeLayout.LayoutParams layout_reader_count;
 
         //fix related bug when url is null
-        if(t_doc_url == null){
+        if (t_doc_url == null) {
             t_doc_url = "";
         }
 
@@ -849,7 +845,7 @@ public class DocumentsDetailsActivity extends Activity {
         readerValue = cursor.getString(cursor.getColumnIndex(DatabaseOpenHelper.READER_COUNT));
 
         //fix related bug when readervalue is null
-        if(readerValue == null){
+        if (readerValue == null) {
             readerValue = "0";
         }
 

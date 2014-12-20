@@ -1,0 +1,33 @@
+<resources>
+
+    <!--
+         tablet MDPI like 9.4''
+    -->
+    <dimen name="activity_horizontal_margin">64dp</dimen>
+    
+    
+     <!-- Activity Main Menu domensions -->
+     
+    <dimen name="title_size">40sp</dimen>
+  	<dimen name="button_height">30dp</dimen>
+  	<dimen name="button_margin">250dp</dimen>
+  	<dimen name="button_new_account_margin_bottom">20dp</dimen>
+  	<dimen name="button_auth_margin_bottom">5dp</dimen>
+  	<dimen name="button_text_size">20sp</dimen>
+    
+  	<!-- list_row_with_image.xml -->
+  	<dimen name="folder_text_size">14sp</dimen>
+  	
+  	<!-- list_row_all_doc.xml -->
+  	<dimen name="doc_title_size">15sp</dimen>
+  	<dimen name="authors_size">13sp</dimen>
+  	<dimen name="source_size">14sp</dimen>
+  	<dimen name="doc_details">14sp</dimen>
+  	
+  	 <!-- Activity Documents details domensions -->
+  	<dimen name="image_size">30dip</dimen>
+  	<dimen name="pading">8dp</dimen>
+
+    <dimen name="marginTop">8dp</dimen>
+    <dimen name="padingRight">8dp</dimen>
+</resources>

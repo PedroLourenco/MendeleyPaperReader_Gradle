@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.mendeleypaperreader.activities.MainActivity;
+import com.mendeleypaperreader.sessionManager.SessionManager;
 import com.robotium.solo.Solo;
 import com.mendeleypaperreader.R;
 
@@ -50,9 +51,13 @@ public class LoginTest extends ActivityInstrumentationTestCase2<MainActivity> {
         solo.enterTextInWebElement(By.id("username"), "pdrolourenco@gmail.com");
         solo.enterTextInWebElement(By.id("password"), "000000");
         solo.clickOnText("Authorize");
-        solo.waitForActivity("MainMenuActivity");
 
-        assertTrue(solo.waitForText("Sync data..."));
+        solo.sleep(10000);
+        SessionManager session = new SessionManager(activity.getApplicationContext());
+        session.isLogged();
+
+
+        assertEquals(true,session.isLogged());
 
 
     }
@@ -65,10 +70,14 @@ public class LoginTest extends ActivityInstrumentationTestCase2<MainActivity> {
     // Our tearDown...
     public void tearDown() throws Exception {
         try {
-            solo.finalize();
+            solo.finishOpenedActivities();
+
+            getActivity().finish();
+
         } catch (Throwable e) {
             e.printStackTrace();
             getActivity().finish();
+
             super.tearDown();
         }
 

@@ -23,6 +23,7 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
     private static LoadData load;
     ProgressDialog dialog;
     String access_token;
+    SessionManager session;
 
 
     public SyncDataAsync(Context context, Activity activity) {
@@ -30,8 +31,7 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
         this.activity = activity;
         load = new LoadData(this.activity.getApplicationContext());
         dialog = new ProgressDialog(context);
-        SessionManager session = new SessionManager(this.activity.getApplicationContext());
-        session.savePreferences("IS_DB_CREATED", "YES");
+        session = new SessionManager(this.activity.getApplicationContext());
         access_token = session.LoadPreference("access_token");
 
     }
@@ -80,7 +80,7 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
     protected void onPostExecute(String json) {
         if (dialog.isShowing())
             dialog.dismiss();
-
+        session.savePreferences("IS_DB_CREATED", "YES");
         unlockScreenOrientation();
     }
 
