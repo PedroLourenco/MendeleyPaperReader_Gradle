@@ -52,7 +52,7 @@ public class LoginTest extends ActivityInstrumentationTestCase2<MainActivity> {
         solo.enterTextInWebElement(By.id("password"), "000000");
         solo.clickOnText("Authorize");
 
-        solo.sleep(10000);
+        solo.sleep(1000000);
         SessionManager session = new SessionManager(activity.getApplicationContext());
         session.isLogged();
 
