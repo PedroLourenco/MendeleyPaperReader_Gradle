@@ -52,12 +52,17 @@ public class LoginTest extends ActivityInstrumentationTestCase2<MainActivity> {
         solo.enterTextInWebElement(By.id("password"), "000000");
         solo.clickOnText("Authorize");
 
-        solo.sleep(1000000);
+        solo.sleep(10000);
         SessionManager session = new SessionManager(activity.getApplicationContext());
         session.isLogged();
 
 
         assertEquals(true,session.isLogged());
+
+        solo.waitForDialogToClose(600000000);
+
+
+        assertEquals("YES",session.LoadPreference("IS_DB_CREATED"));
 
 
     }

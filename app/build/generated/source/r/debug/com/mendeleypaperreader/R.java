@@ -901,13 +901,12 @@ containing a value of this type.
         public static final int ic_action_share=0x7f020068;
         public static final int icon_mendeley48_48=0x7f020069;
         public static final int paper_reader_512_512=0x7f02006a;
-        public static final int paper_reader_512x512=0x7f02006b;
-        public static final int person=0x7f02006c;
-        public static final int sigin_button_shape=0x7f02006d;
-        public static final int starim=0x7f02006e;
-        public static final int tag=0x7f02006f;
-        public static final int texttopline=0x7f020070;
-        public static final int trash=0x7f020071;
+        public static final int person=0x7f02006b;
+        public static final int sigin_button_shape=0x7f02006c;
+        public static final int starim=0x7f02006d;
+        public static final int tag=0x7f02006e;
+        public static final int texttopline=0x7f02006f;
+        public static final int trash=0x7f020070;
     }
     public static final class id {
         public static final int Doctitle=0x7f090059;
