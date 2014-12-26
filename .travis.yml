@@ -31,4 +31,4 @@ before_install:
 
 script:
 
-  - calabash-android run bin/Dashboard-debug.apk -v
+  - calabash-android run bin/app-debug-unaligned.apk -v
