@@ -31,4 +31,4 @@ before_install:
 
 script:
 
-  - calabash-android run app/scr/calabash/test/features/app-debug-unaligned.apk
+  - calabash-android run app/src/calabash/test/features/app-debug-unaligned.apk
