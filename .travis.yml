@@ -13,9 +13,15 @@ env:
   matrix:
     - ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
 
+deploy:
 
+  on:
+    tags: true
+    all_branches: true
 
 before_install:
+   -gem install calabash-android
+   - gem install calabash-cucumber
    # Create and start emulator
    - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
    - emulator -avd test -no-skin -no-audio -no-window &
