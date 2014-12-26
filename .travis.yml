@@ -21,7 +21,7 @@ deploy:
 
 
     before_script:
-        - gem install calabash-android
+       - gem install calabash-android
        - gem install calabash-cucumber
        - gem install travis-artifacts
 
