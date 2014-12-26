@@ -12,7 +12,7 @@ Then(/^I wait for the Mendeley oauth login page$/) do
   wait_for( timeout: 30 ) { query( "webview css:'*'" ).length != 3 }
 end
 
-Then(/^I wait tjo see "(.*?)"$/) do |arg1|
+Then(/^I wait too see "(.*?)"$/) do |arg1|
   wait_for_elements_exist("webView css:'#username'")
 end
 
