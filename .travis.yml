@@ -26,6 +26,10 @@ before_install:
      - TERM=dumb ./gradlew assemble
 
    before_script:
+   # Calabash install
+     - "gem install calabash-android"
+     - "gem install travis-artifacts"
+     - "gem install pry"
      # Make sure the emulator has started before running tests
      - chmod +x gradlew
      - chmod +x wait_for_emulator
