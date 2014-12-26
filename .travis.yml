@@ -22,16 +22,8 @@ before_install:
    - adb wait-for-device
 
 
-  
-   before_script:
-   # Calabash install
-     - "gem install calabash-android"
-     - "gem install travis-artifacts"
-     - "gem install pry"
-     # Make sure the emulator has started before running tests
-     - chmod +x gradlew
-     - chmod +x wait_for_emulator
-     - ./wait_for_emulator
+
+
 
    script:
      - TERM=dumb ./gradlew clean build connectedCheck
