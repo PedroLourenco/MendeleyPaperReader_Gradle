@@ -36,4 +36,4 @@ before_script:
   - ./wait_for_emulator
 
 script:
-  - TERM=dumb ./gradlew clean build calabashDebug
+  - TERM=dumb ./gradlew clean build connectedCheck
