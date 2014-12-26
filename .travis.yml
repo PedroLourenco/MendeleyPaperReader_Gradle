@@ -22,8 +22,3 @@ before_install:
    - adb wait-for-device
 
 
-
-
-
-   script:
-     - TERM=dumb ./gradlew clean build connectedCheck
