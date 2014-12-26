@@ -22,9 +22,7 @@ before_install:
    - adb wait-for-device
 
 
-   install:
-     - TERM=dumb ./gradlew assemble
-
+  
    before_script:
    # Calabash install
      - "gem install calabash-android"
