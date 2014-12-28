@@ -22,7 +22,7 @@ before_install:
    # Create and start emulator
    - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
    - emulator -avd test -no-skin -no-audio -no-window &
-   - sleep 45
+   #- sleep 45
 
 
 
@@ -30,13 +30,13 @@ before_install:
 before_script:
   # Make sure the emulator has started before running tests
 
- # - chmod +x wait_for_emulator
- # - ./wait_for_emulator
+ - chmod +x wait_for_emulator
+ - ./wait_for_emulator
 
 script:
   #- TERM=dumb ./gradlew clean build connectedAndroidTest
-  - ./gradlew clean build
+  #- ./gradlew clean build
   #- adb install -r features/app-debug-unaligned.apk
-  - calabash-android resign app/build/outputs/apk/app-debug-unaligned.apk
-  - calabash-android build app/build/outputs/apk/app-debug-unaligned.apk
-  - travis_wait calabash-android run app/build/outputs/apk/app-debug-unaligned.apk
+  - calabash-android resign features/bin/app-debug-unaligned.apk
+  - calabash-android build features/bin/app-debug-unaligned.apk
+  - travis_wait calabash-android run features/bin/app-debug-unaligned.apk
