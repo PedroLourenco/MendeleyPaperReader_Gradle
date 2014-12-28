@@ -35,8 +35,8 @@ before_script:
 
 script:
   #- TERM=dumb ./gradlew clean build connectedAndroidTest
-  #- ./gradlew clean build calabashDebug
+  - ./gradlew clean build
   #- adb install -r features/app-debug-unaligned.apk
-  - calabash-android resign features/app-debug-unaligned.apk
-  - calabash-android build features/app-debug-unaligned.apk
-  - travis_wait calabash-android run features/app-debug-unaligned.apk
+  - calabash-android resign MendeleyPaperReader/app/build/outputs/apk/app-debug-unaligned.apk
+  - calabash-android build MendeleyPaperReader/app/build/outputs/apk/app-debug-unaligned.apk
+  - travis_wait calabash-android run MendeleyPaperReader/app/build/outputs/apk/app-debug-unaligned.apk
