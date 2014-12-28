@@ -41,4 +41,4 @@ script:
   #- adb install -r features/app-debug-unaligned.apk
   - calabash-android resign features/app-debug-unaligned.apk
   - calabash-android build features/app-debug-unaligned.apk
-  - calabash-android run features/app-debug-unaligned.apk
+  - travis_wait calabash-android run features/app-debug-unaligned.apk
