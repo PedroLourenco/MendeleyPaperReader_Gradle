@@ -36,7 +36,7 @@ before_script:
   - ./wait_for_emulator
 
 script:
-  #- TERM=dumb ./gradlew clean build calabashDebug
+  - TERM=dumb ./gradlew clean build calabashDebug --debug
   #- ./gradlew clean build calabashDebug
-  - adb install -r features/app-debug-unaligned.apk
-  - calabash-android run features/app-debug-unaligned.apk
+  #- adb install -r features/app-debug-unaligned.apk
+  #- calabash-android run features/app-debug-unaligned.apk
