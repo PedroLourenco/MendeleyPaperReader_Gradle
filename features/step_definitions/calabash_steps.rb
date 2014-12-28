@@ -21,9 +21,7 @@ end
 
 Then(/^I touch "([^"]*)"$/) do |arg|
   system "#{default_device.adb_command} shell input keyevent KEYCODE_ENTER"
-  #sleep(120)
-  printf("travis1")
-  #touch("webView css:'.controls'")
+
 end
 
 
@@ -35,9 +33,6 @@ Then(/^I wait for the "([^"]*)" progress dialog to close$/) do |text|
 
       wait_for(timeout: 1000) { 1 == query("TextView {text CONTAINS '#{text}'}").length }
 
-    #printf("travis")
-    #   sleep(120)
-    #   printf("travis1")
     end
   end
 
