@@ -37,4 +37,5 @@ before_script:
 
 script:
   #- TERM=dumb ./gradlew clean build calabashDebug
-  - ./gradlew clean build calabashDebug
+  #- ./gradlew clean build calabashDebug
+  - calabash-android run features/app-debug-unaligned.apk
