@@ -31,7 +31,7 @@ Then(/^I wait for the "([^"]*)" progress dialog to close$/) do |text|
     # wait for dialog
     unless query("TextView {text CONTAINS '#{text}'}").length == 1
 
-      wait_for(timeout: 1000) { 1 == query("TextView {text CONTAINS '#{text}'}").length }
+      wait_for(timeout: 10000) { 1 == query("TextView {text CONTAINS '#{text}'}").length }
 
     end
   end
@@ -39,7 +39,7 @@ Then(/^I wait for the "([^"]*)" progress dialog to close$/) do |text|
 
   unless query("TextView {text CONTAINS '#{text}'}").length == 0
     # If it does, then wait for it to close...
-    wait_for(timeout: 1000) { 0 == query("TextView {text CONTAINS '#{text}'}").length }
+    wait_for(timeout: 10000) { 0 == query("TextView {text CONTAINS '#{text}'}").length }
   end
 
 end
