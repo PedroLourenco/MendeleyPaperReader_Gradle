@@ -12,9 +12,6 @@ Then(/^I wait for the Mendeley oauth login page$/) do
   wait_for( timeout: 30 ) { query( "webview css:'*'" ).length != 3 }
 end
 
-Then(/^I wait too see "(.*?)"$/) do |arg1|
-  wait_for_elements_exist("webView css:'#username'")
-end
 
 
 Then(/^I enter "([^"]*)" into the "([^"]*)" input field$/) do |value, label_name|
@@ -24,7 +21,8 @@ end
 
 Then(/^I touch "([^"]*)"$/) do |arg|
   system "#{default_device.adb_command} shell input keyevent KEYCODE_ENTER"
-
+  sleep(120)
+  printf("travis1")
   #touch("webView css:'.controls'")
 end
 
@@ -38,7 +36,7 @@ Then(/^I wait for the "([^"]*)" progress dialog to close$/) do |text|
       wait_for(timeout: 1000) { 1 == query("TextView {text CONTAINS '#{text}'}").length }
 
     printf("travis")
-       sleep(200)
+       sleep(120)
        printf("travis1")
     end
   end
