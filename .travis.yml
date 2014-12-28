@@ -39,6 +39,6 @@ script:
   #- TERM=dumb ./gradlew clean build connectedAndroidTest
   #- ./gradlew clean build calabashDebug
   #- adb install -r features/app-debug-unaligned.apk
-  - Calabash-android resign features/app-debug-unaligned.apk
-  - Calabash-android build features/app-debug-unaligned.apk
+  - calabash-android resign features/app-debug-unaligned.apk
+  - calabash-android build features/app-debug-unaligned.apk
   - calabash-android run features/app-debug-unaligned.apk
