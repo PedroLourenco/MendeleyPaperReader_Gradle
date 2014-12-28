@@ -12,9 +12,6 @@ Then(/^I wait for the Mendeley oauth login page$/) do
   wait_for( timeout: 30 ) { query( "webview css:'*'" ).length != 3 }
 end
 
-Then(/^I wait tjo see "(.*?)"$/) do |arg1|
-  wait_for_elements_exist("webView css:'#username'")
-end
 
 
 Then(/^I enter "([^"]*)" into the "([^"]*)" input field$/) do |value, label_name|
@@ -23,7 +20,10 @@ end
 
 
 Then(/^I touch "([^"]*)"$/) do |arg|
-  touch("webView css:'.controls'")
+  system "#{default_device.adb_command} shell input keyevent KEYCODE_ENTER"
+  #sleep(120)
+  printf("travis1")
+  #touch("webView css:'.controls'")
 end
 
 
@@ -33,14 +33,18 @@ Then(/^I wait for the "([^"]*)" progress dialog to close$/) do |text|
     # wait for dialog
     unless query("TextView {text CONTAINS '#{text}'}").length == 1
 
-      wait_for(timeout: 90) { 1 == query("TextView {text CONTAINS '#{text}'}").length }
+      wait_for(timeout: 1000) { 1 == query("TextView {text CONTAINS '#{text}'}").length }
+
+    #printf("travis")
+    #   sleep(120)
+    #   printf("travis1")
     end
   end
 
 
   unless query("TextView {text CONTAINS '#{text}'}").length == 0
     # If it does, then wait for it to close...
-    wait_for(timeout: 60) { 0 == query("TextView {text CONTAINS '#{text}'}").length }
+    wait_for(timeout: 1000) { 0 == query("TextView {text CONTAINS '#{text}'}").length }
   end
 
 end
@@ -62,7 +66,9 @@ end
 
 
 Then(/^Validate if you are in the right activity$/) do
-  query("TextView text:'My Publications'")
+
+
+   wait_for(timeout: 60) { 1 == query("TextView text:'My Publications'").length}
 end
 
 Then(/^I touch on "([^"]*)" button$/) do |text|

@@ -35,8 +35,8 @@ dependencies {
 }
 
 calabashTest {
-    featuresPath = "app/src/calabash/test/features/"
-    //profile = "android"
+    featuresPath = "features/"
+
 }
 
 

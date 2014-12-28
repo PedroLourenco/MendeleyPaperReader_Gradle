@@ -1,0 +1,1 @@
+/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/classes/test/debug
