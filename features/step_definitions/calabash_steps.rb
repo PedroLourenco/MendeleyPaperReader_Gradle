@@ -3,7 +3,7 @@ require 'calabash-android/calabash_steps'
 
 
 Given(/^I wait for the Sign in button to appear$/) do
-  touch "button text:'Sign inf'"
+  touch "button text:'Sign in'"
 end
 
 
