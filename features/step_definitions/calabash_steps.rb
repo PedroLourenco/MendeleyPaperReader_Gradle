@@ -23,7 +23,9 @@ end
 
 
 Then(/^I touch "([^"]*)"$/) do |arg|
-  touch("webView css:'.controls'")
+  system "#{default_device.adb_command} shell input keyevent KEYCODE_ENTER"
+
+  #touch("webView css:'.controls'")
 end
 
 
