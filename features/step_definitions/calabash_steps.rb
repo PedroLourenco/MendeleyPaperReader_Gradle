@@ -36,6 +36,10 @@ Then(/^I wait for the "([^"]*)" progress dialog to close$/) do |text|
     unless query("TextView {text CONTAINS '#{text}'}").length == 1
 
       wait_for(timeout: 1000) { 1 == query("TextView {text CONTAINS '#{text}'}").length }
+
+    printf("travis")
+       sleep(200)
+       printf("travis1")
     end
   end
 
@@ -64,7 +68,9 @@ end
 
 
 Then(/^Validate if you are in the right activity$/) do
-  query("TextView text:'My Publications'")
+
+
+   wait_for(timeout: 60) { 1 == query("TextView text:'My Publications'").length}
 end
 
 Then(/^I touch on "([^"]*)" button$/) do |text|
