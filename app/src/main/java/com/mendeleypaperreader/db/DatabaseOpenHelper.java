@@ -172,7 +172,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
 
     final private static String DATABASE_NAME = "Mendeley_library.db";
-    final private static Integer VERSION = 5;
+    final private static Integer VERSION = 6;
     final private Context mContext;
 
     public DatabaseOpenHelper(Context context, String name,
