@@ -311,11 +311,7 @@ public class MyContentProvider extends ContentProvider {
                 queryBuilder.setTables(DatabaseOpenHelper.TABLE_FOLDERS);
                 break;
 
-            case ALL_PROFILE:
-
-                queryBuilder.setTables(DatabaseOpenHelper.TABLE_PROFILE);
-                break;
-
+            
             case ALL_ACADEMIC_DOCS_ID:
 
                 queryBuilder.setTables(DatabaseOpenHelper.TABLE_ACADEMIC_STATUS_DOCS);
@@ -332,6 +328,11 @@ public class MyContentProvider extends ContentProvider {
                 queryBuilder.setTables(DatabaseOpenHelper.TABLE_FILES);
                 queryBuilder.appendWhere(selection);
                 break;
+            case ALL_FILES:
+
+                queryBuilder.setTables(DatabaseOpenHelper.TABLE_FILES);
+                break;
+
 
             case ALL_GROUPS:
                 queryBuilder.setTables(DatabaseOpenHelper.TABLE_GROUPS);
@@ -347,6 +348,10 @@ public class MyContentProvider extends ContentProvider {
 
                 queryBuilder.setTables(DatabaseOpenHelper.TABLE_DOC_NOTES);
                 queryBuilder.appendWhere(selection);
+                break;
+            case ALL_PROFILE:
+
+                queryBuilder.setTables(DatabaseOpenHelper.TABLE_PROFILE);
                 break;
 
             case SEARCH_DOCS:

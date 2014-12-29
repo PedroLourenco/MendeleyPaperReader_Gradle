@@ -10,7 +10,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+
+import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Message;
 import com.mendeleypaperreader.activities.DocumentsDetailsActivity;
@@ -32,6 +35,10 @@ public class DownloaderThread extends Thread
 	private String downloadUrl;
 	private String fileId;
 	private String filename;
+    private Activity mActivity;
+    private Context mContext;
+    private boolean mIsHandler;
+    private String mDocId;
 
 
 	/**
@@ -39,17 +46,33 @@ public class DownloaderThread extends Thread
 	 * @param inParentActivity Reference to DocumentsDetailsActivity activity.
 	 * @param inUrl String representing the URL of the file to be downloaded.
 	 */
-	public DownloaderThread(DocumentsDetailsActivity inParentActivity, String inUrl, String fileId)
+	public DownloaderThread(Context context,DocumentsDetailsActivity inParentActivity, String inUrl, String fileId, boolean isHandler)
 	{
 		downloadUrl = "";
+        mIsHandler = isHandler;
 		this.fileId = fileId;
 		if(inUrl != null)
 		{
 			downloadUrl = inUrl;
 		}
 		parentActivity = inParentActivity;
+        mContext = context;
 	}
 
+
+    public DownloaderThread(Context context, String inUrl, String fileId, boolean isHandler, String docId)
+    {
+        downloadUrl = "";
+        mIsHandler = isHandler;
+        mContext = context;
+        mDocId = docId;
+        this.fileId = fileId;
+        if(inUrl != null)
+        {
+            downloadUrl = inUrl;
+        }
+        
+    }
 
 
 	private String getFileName(){
@@ -93,7 +116,7 @@ public class DownloaderThread extends Thread
 		Uri uri_ = Uri.parse(MyContentProvider.CONTENT_URI_FILES + "/id");
 		values.put(DatabaseOpenHelper.FILE_NAME, filename);	
 		String where = DatabaseOpenHelper.FILE_ID + " = '" + this.fileId + "'";
-		parentActivity.getContentResolver().update(uri_, values, where, null);
+        mContext.getApplicationContext().getContentResolver().update(uri_, values, where, null);
 
 		return filename;
 
@@ -118,12 +141,14 @@ public class DownloaderThread extends Thread
 		File outFile;
 		FileOutputStream fileStream;
 		Message msg;
-
-		// we're going to connect now
-		msg = Message.obtain(parentActivity.activityHandler,
-				DocumentsDetailsActivity.MESSAGE_CONNECTING_STARTED,
-				0, 0, downloadUrl);
-		parentActivity.activityHandler.sendMessage(msg);
+        
+        if(mIsHandler) {
+            // we're going to connect now
+            msg = Message.obtain(parentActivity.activityHandler,
+                    DocumentsDetailsActivity.MESSAGE_CONNECTING_STARTED,
+                    0, 0, downloadUrl);
+            parentActivity.activityHandler.sendMessage(msg);
+        }
 
 		try
 		{
@@ -136,16 +161,17 @@ public class DownloaderThread extends Thread
 			fileName = getFileName();
 
 			// notify download start
-			int fileSizeInKB = fileSize / 1024;
-			msg = Message.obtain(parentActivity.activityHandler,
-					DocumentsDetailsActivity.MESSAGE_DOWNLOAD_STARTED,
-					fileSizeInKB, 0, fileName);
-			parentActivity.activityHandler.sendMessage(msg);
-
+			if(mIsHandler) {
+                int fileSizeInKB = fileSize / 1024;
+                msg = Message.obtain(parentActivity.activityHandler,
+                        DocumentsDetailsActivity.MESSAGE_DOWNLOAD_STARTED,
+                        fileSizeInKB, 0, fileName);
+                parentActivity.activityHandler.sendMessage(msg);
+            }
 			// start download
 			inStream = new BufferedInputStream(conn.getInputStream());
 
-			outFile = new File(parentActivity.getApplicationContext().getExternalFilesDir(null) + "/" + fileName);
+			outFile = new File(mContext.getApplicationContext().getExternalFilesDir(null) + "/" + fileName);
 			//outFile = new File(Environment.getExternalStorageDirectory() + "/" + fileName);
 			fileStream = new FileOutputStream(outFile);
 			outStream = new BufferedOutputStream(fileStream, DOWNLOAD_BUFFER_SIZE);
@@ -155,13 +181,15 @@ public class DownloaderThread extends Thread
 			{
 				outStream.write(data, 0, bytesRead);
 
-				// update progress bar
-				totalRead += bytesRead;
-				int totalReadInKB = totalRead / 1024;
-				msg = Message.obtain(parentActivity.activityHandler,
-						DocumentsDetailsActivity.MESSAGE_UPDATE_PROGRESS_BAR,
-						totalReadInKB, 0);
-				parentActivity.activityHandler.sendMessage(msg);
+                if(mIsHandler) {
+                    // update progress bar
+                    totalRead += bytesRead;
+                    int totalReadInKB = totalRead / 1024;
+                    msg = Message.obtain(parentActivity.activityHandler,
+                            DocumentsDetailsActivity.MESSAGE_UPDATE_PROGRESS_BAR,
+                            totalReadInKB, 0);
+                    parentActivity.activityHandler.sendMessage(msg);
+                }       
 			}
 
 			outStream.close();
@@ -175,35 +203,51 @@ public class DownloaderThread extends Thread
 			}
 			else
 			{
-				// notify completion
-				msg = Message.obtain(parentActivity.activityHandler,
-						DocumentsDetailsActivity.MESSAGE_DOWNLOAD_COMPLETE);
-				parentActivity.activityHandler.sendMessage(msg);
+                if(mIsHandler) {
+                    // notify completion
+                    msg = Message.obtain(parentActivity.activityHandler,
+                            DocumentsDetailsActivity.MESSAGE_DOWNLOAD_COMPLETE);
+                    parentActivity.activityHandler.sendMessage(msg);
+                }  else{
+                    ContentValues values = new ContentValues();
+                    Uri uri_ = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
+                    values.put(DatabaseOpenHelper.IS_DOWNLOAD, "YES");
+                    String where = DatabaseOpenHelper._ID + " = '" + mDocId + "'";
+                    mContext.getContentResolver().update(uri_, values, where, null);
+                    
+                    
+                }
 			}
 		}
 		catch(MalformedURLException e)
 		{
-			String errMsg = parentActivity.getString(R.string.error_message_bad_url);
-			msg = Message.obtain(parentActivity.activityHandler,
-					DocumentsDetailsActivity.MESSAGE_ENCOUNTERED_ERROR,
-					0, 0, errMsg);
-			parentActivity.activityHandler.sendMessage(msg);
+            if(mIsHandler) {
+                String errMsg = parentActivity.getString(R.string.error_message_bad_url);
+                msg = Message.obtain(parentActivity.activityHandler,
+                        DocumentsDetailsActivity.MESSAGE_ENCOUNTERED_ERROR,
+                        0, 0, errMsg);
+                parentActivity.activityHandler.sendMessage(msg);
+            }      
 		}
 		catch(FileNotFoundException e)
 		{
-			String errMsg = parentActivity.getString(R.string.error_message_file_not_found);
-			msg = Message.obtain(parentActivity.activityHandler,
-					DocumentsDetailsActivity.MESSAGE_ENCOUNTERED_ERROR,
-					0, 0, errMsg);
-			parentActivity.activityHandler.sendMessage(msg); 
+            if(mIsHandler) {
+                String errMsg = parentActivity.getString(R.string.error_message_file_not_found);
+                msg = Message.obtain(parentActivity.activityHandler,
+                        DocumentsDetailsActivity.MESSAGE_ENCOUNTERED_ERROR,
+                        0, 0, errMsg);
+                parentActivity.activityHandler.sendMessage(msg);
+            }      
 		}
 		catch(Exception e)
 		{
-			String errMsg = parentActivity.getString(R.string.error_message_general);
-			msg = Message.obtain(parentActivity.activityHandler,
-					DocumentsDetailsActivity.MESSAGE_ENCOUNTERED_ERROR,
-					0, 0, errMsg);
-			parentActivity.activityHandler.sendMessage(msg); 
+            if(mIsHandler) {
+                String errMsg = parentActivity.getString(R.string.error_message_general);
+                msg = Message.obtain(parentActivity.activityHandler,
+                        DocumentsDetailsActivity.MESSAGE_ENCOUNTERED_ERROR,
+                        0, 0, errMsg);
+                parentActivity.activityHandler.sendMessage(msg);
+            }
 		}
 	}
 

@@ -101,6 +101,10 @@ public class MainMenuActivity extends FragmentActivity {
             case R.id.menu_refresh:
                 refreshToken();
                 return true;
+            case R.id.menu_settings:
+                Intent i_settings = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivity(i_settings);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -120,7 +124,7 @@ public class MainMenuActivity extends FragmentActivity {
                 .setPositiveButton(getResources().getString(R.string.word_ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
-                        session.deletePreferences();
+                        session.deleteAllPreferences();
                         getContentResolver().delete(MyContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
                         finish();
                     }

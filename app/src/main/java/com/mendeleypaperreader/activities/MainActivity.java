@@ -83,7 +83,7 @@ public class MainActivity extends Activity {
 
 
         if (!version.toString().equals(session.LoadPreference("versionCode"))) {
-            session.deletePreferences();
+            session.deleteAllPreferences();
             session.savePreferences("versionCode", version.toString());
         }
 

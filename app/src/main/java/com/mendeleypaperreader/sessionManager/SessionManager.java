@@ -55,10 +55,17 @@ public class SessionManager {
 
     }
 
+    public void deletePreferences(String Key) {
+        editor.remove(Key);
+        editor.commit();
+    }
+    
+    
+
     /**
-     * delete shared preferences
+     * delete all shared preferences
      */
-    public void deletePreferences() {
+    public void deleteAllPreferences() {
         // Clearing all data from Shared Preferences
         editor.clear();
         editor.commit();

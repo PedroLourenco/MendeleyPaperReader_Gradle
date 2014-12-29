@@ -82,6 +82,7 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
             dialog.dismiss();
         session.savePreferences("IS_DB_CREATED", "YES");
         unlockScreenOrientation();
+        load.downloadFiles();
     }
 
     protected void updateProgress(int progress) {
@@ -110,6 +111,7 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
         publishProgress((int) (8 / ((float) 9) * 100));
         load.getFiles(Globalconstant.get_files + access_token);
         publishProgress((int) (9 / ((float) 9.6) * 100));
+
 
 
     }

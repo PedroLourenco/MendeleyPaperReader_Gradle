@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.sessionManager.SessionManager;
+import com.mendeleypaperreader.utl.DownloaderThread;
+import com.mendeleypaperreader.utl.GetDataBaseInformation;
 import com.mendeleypaperreader.utl.Globalconstant;
 import com.mendeleypaperreader.utl.JSONParser;
 
@@ -34,6 +36,7 @@ public class LoadData {
 
     private Context context;
     private static String access_token;
+    private GetDataBaseInformation getDataBaseInformation;
 
     public LoadData(Context context) {
         this.context = context;
@@ -41,8 +44,39 @@ public class LoadData {
         SessionManager session = new SessionManager(this.context);
         access_token = session.LoadPreference("access_token");
 
+        getDataBaseInformation = new GetDataBaseInformation(this.context);
 
     }
+    
+    
+    
+    public void downloadFiles(){
+
+        
+        Thread downloaderThread;
+
+        Log.d(Globalconstant.TAG, "downloadFiles: ");
+
+       Cursor cursorFiles = getDataBaseInformation.getFile();
+       
+        while (cursorFiles.moveToNext()) {
+            
+            String fileId = cursorFiles.getString(cursorFiles.getColumnIndex(DatabaseOpenHelper._ID));
+            String docId = cursorFiles.getString(cursorFiles.getColumnIndex(DatabaseOpenHelper.DOCUMENT_ID));
+            String url = Globalconstant.get_files_by_doc_id.replace("file_id", fileId) + access_token;
+
+            Log.d(Globalconstant.TAG, "URL: " + url);
+            Log.d(Globalconstant.TAG, "fileId: " + fileId);
+
+            downloaderThread = new DownloaderThread(this.context, url, fileId, false, docId);
+            downloaderThread.start();
+
+        }  
+        
+        
+        
+    }
+    
 
 
     public void getGroupDocs() {
@@ -79,20 +113,13 @@ public class LoadData {
     public void getDocNotes() {
 
         Cursor cursorDocId = getDocId();
-        ContentValues noteValues = new ContentValues();
-
-        JSONParser jParser = new JSONParser();
         ObjectMapper mapper = new ObjectMapper();
-        JsonFactory factory = mapper.getFactory();
-        List<InputStream> link = new ArrayList<InputStream>();
-
         while (cursorDocId.moveToNext()) {
 
             String url = Globalconstant.get_docs_notes.replace("#docId#", cursorDocId.getString(cursorDocId.getColumnIndex(DatabaseOpenHelper._ID)));
 
             getNotes(url + access_token);
         }
-
 
     }
 

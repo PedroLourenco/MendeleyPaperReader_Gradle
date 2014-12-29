@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
 
-   
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -21,7 +21,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.mendeleypaperreader.activities.MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name"
             android:noHistory="true" >
             <intent-filter>
@@ -31,52 +31,57 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.mendeleypaperreader.activities.MainMenuActivity"
+            android:name=".activities.MainMenuActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.mendeleypaperreader.activities.DetailsActivity"
+            android:name=".activities.DetailsActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:parentActivityName="com.mendeleypaperreader.activities.MainMenuActivity" >
+            android:parentActivityName=".activities.MainMenuActivity" >
         </activity>
         <activity
-            android:name="com.mendeleypaperreader.activities.DocumentsDetailsActivity"
+            android:name=".activities.DocumentsDetailsActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:parentActivityName="com.mendeleypaperreader.activities.DetailsActivity" >
+            android:parentActivityName=".activities.DetailsActivity" >
         </activity>
         <activity
-            android:name="com.mendeleypaperreader.activities.AbstractDescriptionActivity"
+            android:name=".activities.AbstractDescriptionActivity"
             android:label="@string/app_name"
-            android:parentActivityName="com.mendeleypaperreader.activities.DocumentsDetailsActivity" >
+            android:parentActivityName=".activities.DocumentsDetailsActivity" >
         </activity>
         <activity
-            android:name="com.mendeleypaperreader.activities.AboutActivity"
+            android:name=".activities.AboutActivity"
             android:label="@string/app_name"
-            android:parentActivityName="com.mendeleypaperreader.activities.MainMenuActivity" >
+            android:parentActivityName=".activities.MainMenuActivity" >
         </activity>
         <activity
-            android:name="com.mendeleypaperreader.activities.ReadersActivity"
+            android:name=".activities.ReadersActivity"
             android:label="@string/app_name"
-            android:parentActivityName="com.mendeleypaperreader.activities.DocumentsDetailsActivity" >
+            android:parentActivityName=".activities.DocumentsDetailsActivity" >
         </activity>
         <activity
-            android:name="com.mendeleypaperreader.activities.DocTagsActivity"
+            android:name=".activities.DocTagsActivity"
             android:label="@string/app_name"
-            android:parentActivityName="com.mendeleypaperreader.activities.DocumentsDetailsActivity" >
+            android:parentActivityName=".activities.DocumentsDetailsActivity" >
         </activity>
         <activity
-            android:name="com.mendeleypaperreader.activities.ListDocTagsActivity"
+            android:name=".activities.ListDocTagsActivity"
             android:label="@string/app_name"
-            android:parentActivityName="com.mendeleypaperreader.activities.DocumentsDetailsActivity" >
+            android:parentActivityName=".activities.DocumentsDetailsActivity" >
         </activity>
 
         <provider
-            android:name="com.mendeleypaperreader.contentProvider.MyContentProvider"
+            android:name=".contentProvider.MyContentProvider"
             android:authorities="com.android.mendeleypaperreader.utl.MyContentProvider"
             android:exported="false" />
 
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".activities.MainMenuActivity" >>
+        </activity>
     </application>
 
 </manifest>

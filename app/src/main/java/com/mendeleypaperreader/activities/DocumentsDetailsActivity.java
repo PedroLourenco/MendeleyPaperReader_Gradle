@@ -49,6 +49,7 @@ import com.mendeleypaperreader.sessionManager.GetAccessToken;
 import com.mendeleypaperreader.sessionManager.SessionManager;
 import com.mendeleypaperreader.utl.ConnectionDetector;
 import com.mendeleypaperreader.utl.DownloaderThread;
+import com.mendeleypaperreader.utl.GetDataBaseInformation;
 import com.mendeleypaperreader.utl.Globalconstant;
 
 /**
@@ -71,6 +72,7 @@ public class DocumentsDetailsActivity extends Activity {
     private ImageView download;
     private ProgressDialog progressDialog;
     private DocumentsDetailsActivity thisActivity;
+    private GetDataBaseInformation getDataBaseInformation;
 
 
     // Used to communicate state changes in the DownloaderThread
@@ -102,6 +104,7 @@ public class DocumentsDetailsActivity extends Activity {
         readerCounterValue = new TextView(this);
         doc_tags = new TextView(this);
         docNotes = new TextView(this);
+        getDataBaseInformation = new GetDataBaseInformation(getApplicationContext());
 
 
         docId = getDocId();
@@ -281,7 +284,7 @@ public class DocumentsDetailsActivity extends Activity {
                         SessionManager session = new SessionManager(thisActivity);
                         String access_token = session.LoadPreference("access_token");
                         String url = Globalconstant.get_files_by_doc_id.replace("file_id", flileId) + access_token;
-                        downloaderThread = new DownloaderThread(thisActivity, url, flileId);
+                        downloaderThread = new DownloaderThread(getApplicationContext(),thisActivity, url, flileId, true);
                         downloaderThread.start();
                     } else {
 
@@ -401,21 +404,6 @@ public class DocumentsDetailsActivity extends Activity {
 
     }
 
-
-    private String getProfileSettings(String setting_name) {
-
-        String[] projection;
-        String selection = null;
-
-        projection = new String[]{setting_name + " as _id"};
-        Uri uri = MyContentProvider.CONTENT_URI_PROFILE;
-
-        Cursor cursorProfiel = getApplicationContext().getContentResolver().query(uri, projection, selection, null, null);
-        cursorProfiel.moveToPosition(0);
-
-        return cursorProfiel.getString(cursorProfiel.getColumnIndex(DatabaseOpenHelper._ID));
-
-    }
 
 
     private void fillData(Cursor cursor) {
@@ -901,8 +889,8 @@ public class DocumentsDetailsActivity extends Activity {
         }
 
 
-        String email_text = resources.getString(R.string.email_text) + "<br/><br/><b>" + doc_title + "</b><br/><br/>" + resources.getString(R.string.email_authors) + doc_authors_text + "<br/><br/>" + resources.getString(R.string.email_publication) + doc_source_text + "<br/><br/>" + "<br/><br/>" + t_doc_url + "<br/><br/>" + resources.getString(R.string.email_mendeley_profile) + getProfileSettings(DatabaseOpenHelper.PROFILE_LINK) + "<br/><br/>" + resources.getString(R.string.email_play_store);
-        String email_subject_text = getProfileSettings(DatabaseOpenHelper.PROFILE_DISPLAY_NAME) + resources.getString(R.string.email_subject);
+        String email_text = resources.getString(R.string.email_text) + "<br/><br/><b>" + doc_title + "</b><br/><br/>" + resources.getString(R.string.email_authors) + doc_authors_text + "<br/><br/>" + resources.getString(R.string.email_publication) + doc_source_text + "<br/><br/>" + "<br/><br/>" + t_doc_url + "<br/><br/>" + resources.getString(R.string.email_mendeley_profile) + getDataBaseInformation.getProfileInformation(DatabaseOpenHelper.PROFILE_LINK) + "<br/><br/>" + resources.getString(R.string.email_play_store);
+        String email_subject_text = getDataBaseInformation.getProfileInformation(DatabaseOpenHelper.PROFILE_DISPLAY_NAME) + resources.getString(R.string.email_subject);
         String sms_text = doc_title;
 
 
