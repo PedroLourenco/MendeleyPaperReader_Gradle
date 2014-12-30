@@ -1,6 +1,4 @@
 package com.mendeleypaperreader.utl;
-
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;

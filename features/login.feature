@@ -1,7 +1,7 @@
 Feature: Test log in and log out functions
 
   @login_test
-  Scenario: As a logged in user I can add a file
+  Scenario: Test Login
     Given I wait for the Sign in button to appear
     Then I wait for the Mendeley oauth login page
     Then I enter "pdrolourenco@gmail.com" into the "username" input field
@@ -9,7 +9,8 @@ Feature: Test log in and log out functions
     Then I touch "Authorize"
     Then I wait for the "Contacting Mendeley ..." progress dialog to close
     Then I wait for the "Sync data..." progress dialog to close
-    Then Validate if you are in the right activity
+    Then I validate if it's the right activity - MainMenuActivity
+
 
 
   @logOut_test

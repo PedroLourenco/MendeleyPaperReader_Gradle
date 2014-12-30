@@ -262,6 +262,7 @@ public class DocumentsDetailsActivity extends Activity {
         String flagDownload = cursorDetails.getString(cursorDetails.getColumnIndex(DatabaseOpenHelper.IS_DOWNLOAD));
 
         if (flagDownload != null && flagDownload.equals("YES")) {
+            download.setTag("open");
             download.setImageResource(R.drawable.ic_action_read);
 
         }
@@ -1135,6 +1136,7 @@ public class DocumentsDetailsActivity extends Activity {
                     dismissCurrentProgressDialog();
                     displayMessage(getString(R.string.user_message_download_complete));
                     //change icon
+                    download.setTag("open");
                     download.setImageResource(R.drawable.ic_action_read);
                     isDownloaded = "YES";
                     //update column - table documents_details - is_download

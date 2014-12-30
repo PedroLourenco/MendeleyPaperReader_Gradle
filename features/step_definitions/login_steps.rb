@@ -44,23 +44,8 @@ Then(/^I wait for the "([^"]*)" progress dialog to close$/) do |text|
 
 end
 
-=begin
-Then(/^I can see "(.*?)" on folder list$/) do |arg1|
 
-  preferences = get_preferences("MendeleyPaperReaderPREF")
-
-
-  printf('tokens'  + preferences.keys.to_s)
-
-  if !preferences.has_key? 'access_token'
-    fail(msg="Error. Login fail.")
-
-  end
-end
-=end
-
-
-Then(/^Validate if you are in the right activity$/) do
+Then(/^I validate if it's the right activity - MainMenuActivity$/) do
 
 
    wait_for(timeout: 60) { 1 == query("TextView text:'My Publications'").length}

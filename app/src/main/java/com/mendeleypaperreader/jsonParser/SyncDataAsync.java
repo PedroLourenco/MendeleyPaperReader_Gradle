@@ -82,7 +82,11 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
             dialog.dismiss();
         session.savePreferences("IS_DB_CREATED", "YES");
         unlockScreenOrientation();
-        load.downloadFiles();
+
+        if (session.LoadPreference("syncOnLoad").equals("true")){
+            load.downloadFiles();
+        }
+
     }
 
     protected void updateProgress(int progress) {

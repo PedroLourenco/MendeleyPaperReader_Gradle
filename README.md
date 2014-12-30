@@ -23,6 +23,13 @@ This APP are using the new Mendeley API .
 
 Android 3.1+ support
 
+
+## Testing
+
+Integration / Acceptance tests are written using cucumber/calabash-android and can be found features/, to run them:
+
+    $ calabash-android run "path_to_apk"
+
 ##  Downloads
 
-* **[GooglePlay](https://play.google.com/store/apps/details?id=com.mendeleypaperreader&hl=pt_PT)**
+[![Google Play](http://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=com.mendeleypaperreader)

@@ -47,34 +47,24 @@ public class LoadData {
         getDataBaseInformation = new GetDataBaseInformation(this.context);
 
     }
-    
-    
-    
-    public void downloadFiles(){
 
-        
+
+    public void downloadFiles() {
+
         Thread downloaderThread;
 
-        Log.d(Globalconstant.TAG, "downloadFiles: ");
+        Cursor cursorFiles = getDataBaseInformation.getFile();
 
-       Cursor cursorFiles = getDataBaseInformation.getFile();
-       
         while (cursorFiles.moveToNext()) {
-            
+
             String fileId = cursorFiles.getString(cursorFiles.getColumnIndex(DatabaseOpenHelper._ID));
             String docId = cursorFiles.getString(cursorFiles.getColumnIndex(DatabaseOpenHelper.DOCUMENT_ID));
             String url = Globalconstant.get_files_by_doc_id.replace("file_id", fileId) + access_token;
 
-            Log.d(Globalconstant.TAG, "URL: " + url);
-            Log.d(Globalconstant.TAG, "fileId: " + fileId);
-
             downloaderThread = new DownloaderThread(this.context, url, fileId, false, docId);
             downloaderThread.start();
 
-        }  
-        
-        
-        
+        }
     }
     
 
