@@ -15,16 +15,15 @@
         android:icon="@drawable/ic_action_refresh"
         android:showAsAction="always"
         android:title="@string/menu_refresh"/>
-
     <item
-        android:id="@+id/menu_logout"
-        android:title="@string/menu_logout"
+        android:id="@+id/menu_settings"
+        android:title="@string/menu_settings"
         android:orderInCategory="100"
         android:icon="@drawable/ic_action_refresh"
         android:showAsAction="never"/>
     <item
-        android:id="@+id/menu_settings"
-        android:title="@string/menu_settings"
+        android:id="@+id/menu_logout"
+        android:title="@string/menu_logout"
         android:orderInCategory="100"
         android:icon="@drawable/ic_action_refresh"
         android:showAsAction="never"/>

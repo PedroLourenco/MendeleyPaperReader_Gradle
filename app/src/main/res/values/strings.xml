@@ -43,9 +43,9 @@
     <!-- About activity -->
 
     <string name="msg_about">Get access to Mendeley database papers.</string>
-    <string name="bugfix"><b>Version 0.4.1 (December, 2014)</b> \n Bug fix - Older versions could not log in. \n\n <b>Version 0.4.0 (December, 2014)</b> \n Bug fix. \n Get Tags and Notes. \n Add Search functionality. \n\n <b>Version 0.3.0 (November, 2014)</b> \n Bug fix. \n Get groups folder and articles. \n\n <b>Version 0.2.0 (October, 2014)</b> \n Bug fix. \n Readers counter by Academic status. \n Download articles. \n\n <b>Version 0.1.1 (September, 2014)</b> \n Bug Fix - In some devices app crashes when trying to open the browser. \n App crashes when trying to download large libraries.\n\n <b>Version 0.0.1 (July, 2014)</b> \n Initial Version.</string>
+    <string name="bugfix"><b>Version 0.5.0 (January, 2015)</b> \n Download files on synchronize \n\n <b>Version 0.4.1 (December, 2014)</b> \n Bug fix - Older versions could not log in. \n\n <b>Version 0.4.0 (December, 2014)</b> \n Bug fix. \n Get Tags and Notes. \n Add Search functionality. \n\n <b>Version 0.3.0 (November, 2014)</b> \n Bug fix. \n Get groups folder and articles. \n\n <b>Version 0.2.0 (October, 2014)</b> \n Bug fix. \n Readers counter by Academic status. \n Download articles. \n\n <b>Version 0.1.1 (September, 2014)</b> \n Bug Fix - In some devices app crashes when trying to open the browser. \n App crashes when trying to download large libraries.\n\n <b>Version 0.0.1 (July, 2014)</b> \n Initial Version.</string>
     <string name="web_link"></string>
-    <string name="msg_current_version">Version 0.4.1</string>
+    <string name="msg_current_version">Version 0.5.0</string>
     <string name="email">pdrolourenco@gmail.com</string>
     <string name="msg_email">"Contact: "</string>
 
@@ -89,5 +89,13 @@
     <string name="list_title">TITLE:</string>
     <string name="list_tag">TAG:</string>
     <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Settings activity -->
+    <string name="user">User:</string>
+    <string name="syncOption">Synchronization options</string>
+    <string name="syncOnLoadCheckBox">Sync files on load</string>
+    <string name="syncOnLoadCheckBoxHelp">Choose this option if you want to synchronize files. When is turned off you can still download files as you need.</string>
+    
+    
 
 </resources>

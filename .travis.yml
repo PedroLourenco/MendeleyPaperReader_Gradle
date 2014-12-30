@@ -35,6 +35,6 @@ before_script:
  - ./wait_for_emulator
 
 script:
-  - calabash-android resign features/bin/app-release-unaligned.apk
-  - calabash-android build features/bin/app-release-unaligned.apk
-  - travis_wait calabash-android run features/bin/app-release-unaligned.apk
+  - calabash-android resign features/bin/app-debug-unaligned.apk
+  - calabash-android build features/bin/app-debug-unaligned.apk
+  - travis_wait calabash-android run features/bin/app-debug-unaligned.apk

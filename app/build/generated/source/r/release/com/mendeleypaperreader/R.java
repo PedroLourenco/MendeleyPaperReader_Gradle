@@ -815,7 +815,7 @@ containing a value of this type.
         public static final int trash=0x7f020070;
     }
     public static final class id {
-        public static final int Doctitle=0x7f09005f;
+        public static final int Doctitle=0x7f090060;
         public static final int NewAccount=0x7f09004f;
         public static final int abstractDescription=0x7f090043;
         public static final int action_bar=0x7f09001c;
@@ -829,17 +829,17 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f090001;
         public static final int action_menu_presenter=0x7f090002;
         public static final int action_mode_close_button=0x7f090024;
-        public static final int action_settings=0x7f09006c;
+        public static final int action_settings=0x7f09006d;
         public static final int activity_chooser_view_content=0x7f090025;
         public static final int always=0x7f090013;
         public static final int auth=0x7f09004e;
-        public static final int authors=0x7f090060;
+        public static final int authors=0x7f090061;
         public static final int beginning=0x7f09000f;
         public static final int checkBoxSyncOnLoad=0x7f09005b;
         public static final int checkbox=0x7f09002d;
         public static final int collapseActionView=0x7f090014;
         public static final int current_version=0x7f09003f;
-        public static final int data=0x7f090061;
+        public static final int data=0x7f090062;
         public static final int default_activity_button=0x7f090028;
         public static final int detailTitle=0x7f090053;
         public static final int details=0x7f090052;
@@ -860,7 +860,7 @@ containing a value of this type.
         public static final int folder=0x7f090050;
         public static final int folders=0x7f090051;
         public static final int footer=0x7f090047;
-        public static final int grid_default_search=0x7f090068;
+        public static final int grid_default_search=0x7f090069;
         public static final int home=0x7f090003;
         public static final int homeAsUp=0x7f09000a;
         public static final int icon=0x7f09002a;
@@ -870,13 +870,13 @@ containing a value of this type.
         public static final int layoutSync=0x7f090059;
         public static final int layoutSyncHelp=0x7f09005c;
         public static final int listMode=0x7f090006;
-        public static final int list_header_title=0x7f090063;
-        public static final int list_image=0x7f09005e;
+        public static final int list_header_title=0x7f090064;
+        public static final int list_image=0x7f09005f;
         public static final int list_item=0x7f090029;
-        public static final int menu_About=0x7f09006b;
-        public static final int menu_logout=0x7f090069;
-        public static final int menu_refresh=0x7f090067;
-        public static final int menu_settings=0x7f09006a;
+        public static final int menu_About=0x7f09006c;
+        public static final int menu_logout=0x7f09006a;
+        public static final int menu_refresh=0x7f090068;
+        public static final int menu_settings=0x7f09006b;
         public static final int middle=0x7f090011;
         public static final int msg_about=0x7f09003d;
         public static final int never=0x7f090016;
@@ -886,8 +886,8 @@ containing a value of this type.
         public static final int progress_horizontal=0x7f090005;
         public static final int radio=0x7f09002f;
         public static final int readers=0x7f090054;
-        public static final int readersCount=0x7f090065;
-        public static final int readersStatus=0x7f090064;
+        public static final int readersCount=0x7f090066;
+        public static final int readersStatus=0x7f090065;
         public static final int readersTotal=0x7f090055;
         public static final int readersValue=0x7f090056;
         public static final int relativedoc=0x7f09004c;
@@ -911,18 +911,19 @@ containing a value of this type.
         public static final int split_action_bar=0x7f09001e;
         public static final int submit_area=0x7f090039;
         public static final int tabMode=0x7f090008;
-        public static final int tagName=0x7f090062;
+        public static final int tagName=0x7f090063;
         public static final int textViewProfileName=0x7f090058;
         public static final int textViewSync=0x7f09005a;
+        public static final int textViewSyncHelp=0x7f09005d;
         public static final int textViewUser=0x7f090057;
-        public static final int thumbnail=0x7f09005d;
+        public static final int thumbnail=0x7f09005e;
         public static final int title=0x7f09002b;
         public static final int top_action_bar=0x7f090020;
         public static final int txt_version3=0x7f090040;
         public static final int up=0x7f090021;
         public static final int useLogo=0x7f09000e;
         public static final int web_link=0x7f090041;
-        public static final int webview=0x7f090066;
+        public static final int webview=0x7f090067;
         public static final int withText=0x7f090017;
     }
     public static final class integer {
@@ -1045,20 +1046,24 @@ containing a value of this type.
         public static final int progress_dialog_title_downloading=0x7f0b003d;
         public static final int readers=0x7f0b003e;
         public static final int settings_3G=0x7f0b003f;
-        public static final int sync_data=0x7f0b0040;
-        public static final int sync_data_0=0x7f0b0041;
-        public static final int tags=0x7f0b0042;
-        public static final int title=0x7f0b0043;
-        public static final int title_activity_doc_tags=0x7f0b0044;
-        public static final int title_activity_readers=0x7f0b0045;
-        public static final int title_activity_settings=0x7f0b0046;
-        public static final int urls=0x7f0b0047;
-        public static final int user_message_download_canceled=0x7f0b0048;
-        public static final int user_message_download_complete=0x7f0b0049;
-        public static final int warning=0x7f0b004a;
-        public static final int web_link=0x7f0b004b;
-        public static final int wifi_settings=0x7f0b004c;
-        public static final int word_ok=0x7f0b004d;
+        public static final int syncOnLoadCheckBox=0x7f0b0040;
+        public static final int syncOnLoadCheckBoxHelp=0x7f0b0041;
+        public static final int syncOption=0x7f0b0042;
+        public static final int sync_data=0x7f0b0043;
+        public static final int sync_data_0=0x7f0b0044;
+        public static final int tags=0x7f0b0045;
+        public static final int title=0x7f0b0046;
+        public static final int title_activity_doc_tags=0x7f0b0047;
+        public static final int title_activity_readers=0x7f0b0048;
+        public static final int title_activity_settings=0x7f0b0049;
+        public static final int urls=0x7f0b004a;
+        public static final int user=0x7f0b004b;
+        public static final int user_message_download_canceled=0x7f0b004c;
+        public static final int user_message_download_complete=0x7f0b004d;
+        public static final int warning=0x7f0b004e;
+        public static final int web_link=0x7f0b004f;
+        public static final int wifi_settings=0x7f0b0050;
+        public static final int word_ok=0x7f0b0051;
     }
     public static final class style {
         /** 

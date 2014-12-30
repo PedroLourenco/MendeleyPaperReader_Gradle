@@ -8,7 +8,7 @@
         android:id="@+id/textViewUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="User:"
+        android:text="@string/user"
         android:textStyle="bold"
         android:padding="@dimen/pading"/>
 
@@ -19,8 +19,7 @@
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/textViewUser"
         android:layout_toRightOf="@+id/textViewUser"
-        android:padding="@dimen/pading"
-        android:text="User:ffffff" />
+        android:padding="@dimen/pading" />
 
 
     <RelativeLayout
@@ -35,7 +34,7 @@
             android:id="@+id/textViewSync"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Synchronization options" />
+            android:text="@string/syncOption" />
 
 
     </RelativeLayout>
@@ -45,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layoutSync"
-        android:text="Sync files on load"
+        android:text="@string/syncOnLoadCheckBox"
         android:onClick="itemClicked"/>
 
     <RelativeLayout
@@ -59,10 +58,10 @@
         android:padding="@dimen/marginTop">
 
         <TextView
-            android:id="@+id/textViewSync"
+            android:id="@+id/textViewSyncHelp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Choose this option if you want to synchronize files. When is turned off you can still download files as you need." />
+            android:text="@string/syncOnLoadCheckBoxHelp" />
 
 
     </RelativeLayout>
