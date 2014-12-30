@@ -34,6 +34,8 @@ Then(/^I wait for the "([^"]*)" progress dialog to close$/) do |text|
       wait_for(timeout: 10000) { 1 == query("TextView {text CONTAINS '#{text}'}").length }
 
     end
+    
+    printf("TRAVIS")
   end
 
 
