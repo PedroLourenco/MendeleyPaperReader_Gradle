@@ -21,7 +21,7 @@ before_install:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
   - gem install calabash-android
-  - gem install cucumber
+  #- gem install cucumber
   
 cache:
   - apt
@@ -47,4 +47,4 @@ script:
   - ./gradlew build
   - calabash-android resign features/bin/app-debug-unaligned.apk
   #- calabash-android build features/bin/app-debug-unaligned.apk
-  - travis_wait calabash-android run features/bin/app-debug-unaligned.apk
+  - calabash-android run features/bin/app-debug-unaligned.apk
