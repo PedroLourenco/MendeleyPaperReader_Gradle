@@ -22,10 +22,22 @@ before_install:
    - gem install calabash-android
    - gem install calabash-cucumber
    # Create and start emulator
-   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
-     - emulator -avd test -no-skin -no-audio -no-window &
+   - "export DISPLAY=:99.0"
+     - "sh -e /etc/init.d/xvfb start"
+     # give xvfb some time to start
+     - sleep 3
+     - echo no | android create avd --force -n test -t android-19 --abi armeabi-v7a
+     # check emulator config
+     - cat /home/travis/.android/avd/test.avd/config.ini
+     # change HEAP size
+     #BinhNT6509 comment
+     #- python /home/travis/build/Nikkei/dive_android/calabash/CalabashConfigEmulator.py
+      # check emulator config
+     - cat /home/travis/.android/avd/test.avd/config.ini
+     - emulator -avd test -no-skin -no-audio -no-window -no-boot-anim &
      - android-wait-for-emulator
      - adb shell input keyevent 82 &
+     - sleep 45
 
 cache:
   - apt
