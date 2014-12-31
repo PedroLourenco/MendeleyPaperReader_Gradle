@@ -34,15 +34,20 @@ Then(/^I wait for the "([^"]*)" progress dialog to close$/) do |text|
       wait_for(timeout: 10000) { 1 == query("TextView {text CONTAINS '#{text}'}").length }
 
     end
-    
-    printf("TRAVIS")
   end
 
 
-  unless query("TextView {text CONTAINS '#{text}'}").length == 0
+  q = query("TextView {text CONTAINS '#{text}'}")
+  until q.empty?
+    puts('Sync data...');
+    q = query("TextView {text CONTAINS '#{text}'}")
+  end
+
+
+  #unless query("TextView {text CONTAINS '#{text}'}").length == 0
     # If it does, then wait for it to close...
-    wait_for(timeout: 10000) { 0 == query("TextView {text CONTAINS '#{text}'}").length }
-  end
+   # wait_for(timeout: 10000) { 0 == query("TextView {text CONTAINS '#{text}'}").length }
+  #end
 
 end
 
