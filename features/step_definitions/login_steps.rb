@@ -55,7 +55,7 @@ end
 Then(/^I validate if it's the right activity - MainMenuActivity$/) do
 
 
-   wait_for(timeout: 60) { 1 == query("TextView text:'My Publications'").length}
+   wait_for(timeout: 90) { 1 == query("TextView text:'My Publications'").length}
 end
 
 Then(/^I touch on "([^"]*)" button$/) do |text|
