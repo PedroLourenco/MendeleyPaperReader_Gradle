@@ -26,25 +26,17 @@ cache:
   - apt
 
 install:
-  - echo no | android create avd -n emulator -t android-19 --skin WVGA800 --force --abi armeabi-v7a
+   - gem install calabash-android
+   - gem install calabash-cucumber
   - TERM=dumb ./gradlew assemble
-  - gem install calabash-android
-  - gem install calabash-cucumber
 
 before_script:
    # Make sure the emulator has started before running tests
- sh -e /etc/init.d/xvfb start
- sleep 3 
- # give xvfb some time to start 
- emulator -avd emulator -prop persist.sys.language=en -prop persist.sys.country=US -noaudio -no-boot-anim &
- sleep 45
+  - chmod +x wait_for_emulator
+  - ./wait_for_emulator
 
 
 script:
-    adb kill-server
-    adb start-server
-    adb devices
-  #- calabash-android resign features/bin/app-debug-unaligned.apk
-  #- calabash-android build features/bin/app-debug-unaligned.apk
-  adb install -r features/bin/app-debug-unaligned.apk
+  - calabash-android resign features/bin/app-debug-unaligned.apk
+  - calabash-android build features/bin/app-debug-unaligned.apk
   - travis_wait calabash-android run features/bin/app-debug-unaligned.apk
