@@ -37,11 +37,11 @@ Then(/^I wait for the "([^"]*)" progress dialog to close$/) do |text|
   end
 
 
-  q = query("TextView {text CONTAINS '#{text}'}")
-  until q.empty?
-    puts('Sync data...');
-    q = query("TextView {text CONTAINS '#{text}'}")
-  end
+  #q = query("TextView {text CONTAINS '#{text}'}")
+  #until q.empty?
+  #  puts('Sync data...');
+  #  q = query("TextView {text CONTAINS '#{text}'}")
+  #end
 
 
   #unless query("TextView {text CONTAINS '#{text}'}").length == 0
