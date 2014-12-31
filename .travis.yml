@@ -43,7 +43,7 @@ before_script:
 script:
   - adb start-server
   - adb devices
-  - ./gradlew connectedCheck --info
+  #- ./gradlew connectedCheck --info
   - ./gradlew build
   - calabash-android resign features/bin/app-debug-unaligned.apk
   #- calabash-android build features/bin/app-debug-unaligned.apk
