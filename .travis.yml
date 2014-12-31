@@ -20,10 +20,8 @@ before_install:
    - gem install calabash-android
    - gem install calabash-cucumber
    # Create and start emulator
-   #- echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
-   #- emulator -avd test -no-skin -no-audio -no-window &
-   #- chmod +x wait_for_emulator
-    #- ./wait_for_emulator
+   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
+   - emulator -avd test -no-skin -no-audio -no-window &
 
 cache:
   - apt
@@ -33,13 +31,9 @@ install:
 
 before_script:
   # Make sure the emulator has started before running tests
-before_script:
-  - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
-  - emulator -avd test -no-skin -no-audio -no-window &
-  - curl http://is.gd/android_wait_for_emulator > android-wait-for-emulator
-  - chmod u+x android-wait-for-emulator
-  - ./android-wait-for-emulator
-  - adb shell input keyevent 82 &
+  - chmod +x wait_for_emulator
+  - ./wait_for_emulator
+
 
 script:
   - calabash-android resign features/bin/app-debug-unaligned.apk
