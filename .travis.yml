@@ -21,7 +21,7 @@ before_install:
    - gem install calabash-cucumber
    # Create and start emulator
    - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
-   #- emulator -avd test -no-skin -no-audio -no-window &
+   - emulator -avd test -no-skin -no-audio -no-window &
 
 cache:
   - apt
@@ -31,8 +31,8 @@ install:
 
 before_script:
   # Make sure the emulator has started before running tests
-  - chmod +x wait_for_emulator
-  - ./wait_for_emulator
+  #- chmod +x wait_for_emulator
+  #- ./wait_for_emulator
 
 
 script:
