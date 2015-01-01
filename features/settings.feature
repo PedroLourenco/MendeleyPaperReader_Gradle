@@ -3,15 +3,7 @@ Feature: Test sync on load scenarios
 
 @checkBox_text
   Scenario: As a logged in user test checkBox "sync on load"
-    Given I wait for the Sign in button to appear
-    Then I wait for the Mendeley oauth login page
-    Then I enter "pdrolourenco@gmail.com" into the "username" input field
-    Then I enter "000000" into the "password" input field
-    Then I touch "Authorize"
-    Then I wait for the "Contacting Mendeley ..." progress dialog to close
-    Then I wait for the "Sync data..." progress dialog to close
-    Then I validate if it's the right activity - MainMenuActivity
-    Then I see Settings button
+    Given I see Settings button
     Then I touch on "Settings" button
     Then I validate if it's the right activity - Settings
     Then I check the checkBox "syncOnLoad"
