@@ -36,7 +36,7 @@ Feature: Test log in and log out functions
     Then I touch on "Genome Biology and Evolution 2013"
     Then I confirm that the file has not been downloaded
     Then I go back
-    Then I sleep for 3 seconds
+    Then I sleep for 5 seconds
     Then I go back
     Then I validate if it's the right activity - MainMenuActivity
     Then I see Settings button

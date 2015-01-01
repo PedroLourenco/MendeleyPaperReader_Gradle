@@ -131,5 +131,5 @@ Then(/^I uncheckBox checkbox "([^"]*)"$/) do |arg|
 end
 
 Then(/^I sleep for (\d+) seconds$/) do |arg|
-  #sleep(5)
+  sleep(5)
 end
