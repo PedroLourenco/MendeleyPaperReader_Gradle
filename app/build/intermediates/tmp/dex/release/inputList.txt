@@ -1,7 +1,0 @@
-/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/classes/release
-/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/release/jackson-annotations-2.4.0-d87718e01c720db7bbff3248fcda22c75f026e4e.jar
-/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/release/robotium-solo-5.2.1-f1442d744b89bdc9bfea37de2202a6fef4625b94.jar
-/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/release/jackson-core-2.4.1.1-b788df8cecf44cc4b1edd0d6ae274aa682532fce.jar
-/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/release/classes-aa2701c5f675637ab230c45d936739b189887b6e.jar
-/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/release/support-v4-19.0.0-b1a257cd6a0532e4b1c38bbe78b5622361e396ed.jar
-/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/release/jackson-databind-2.2.4-fc6c16facfa00a0fa0e7694687b26467837b024d.jar
