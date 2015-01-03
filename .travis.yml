@@ -18,10 +18,10 @@ before_install:
   - emulator -avd test -no-skin -no-audio -no-window &
   #- gem install calabash-android
   
-#cache:
-#  - apt
-  
-  before_script:
+cache:
+  - apt
+
+before_script:
     - "export DISPLAY=:99.0"
     - "sh -e /etc/init.d/xvfb start"
     - gem install calabash-android
