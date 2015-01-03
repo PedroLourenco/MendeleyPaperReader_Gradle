@@ -115,10 +115,14 @@ Then(/^I uncheckBox checkbox "([^"]*)"$/) do |arg|
   touch "CheckBox id:'checkBoxSyncOnLoad'"
 end
 
-Then(/^I sleep for (\d+) seconds$/) do |arg|
-  sleep(5)
+Then(/^I sleep for (\d+) seconds$/) do |time|
+  sleep(9)
 end
 
 Then(/^I validate if it's the right activity \- AboutActivity$/) do
-  wait_for(timeout: 60) { 1 == query("TextView text:'Synchronization options'").length}
+  wait_for(timeout: 60) { 1 == query("TextView id:'msg_about'").length}
+end
+
+Then(/^I search for "([^"]*)"$/) do |text|
+  wait_for(timeout: 60) { 1 == query("TextView text:'#{text}'").length}
 end
