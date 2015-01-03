@@ -16,20 +16,31 @@ env:
 before_install:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
-  - gem install calabash-android
+  #- gem install calabash-android
   
-cache:
-  - apt
+#cache:
+#  - apt
+  
+  before_script:
+    - "export DISPLAY=:99.0"
+    - "sh -e /etc/init.d/xvfb start"
+    - gem install calabash-android
+    - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
+    - mksdcard 265M sdcard
+    - emulator -avd test -no-audio -no-boot-anim -sdcard sdcard &
+    - android-wait-for-emulator
+    - adb shell input keyevent 82
+    - sleep 20
 
 
-before_script:
-  - chmod +x wait_for_emulator
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 45
-  - chmod +x wait_for_emulator
-  - ./wait_for_emulator
-  - adb shell input keyevent 82 &
+#before_script:
+  #- chmod +x wait_for_emulator
+  #- "export DISPLAY=:99.0"
+  #- "sh -e /etc/init.d/xvfb start"
+  #- sleep 45
+  #- chmod +x wait_for_emulator
+  #- ./wait_for_emulator
+  #- adb shell input keyevent 82 &
 
 
 script:
