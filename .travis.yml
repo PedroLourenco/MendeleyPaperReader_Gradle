@@ -28,7 +28,8 @@ before_script:
     - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
     - mksdcard 265M sdcard
     - emulator -avd test -no-audio -no-boot-anim -sdcard sdcard &
-    - android-wait-for-emulator
+    - chmod +x wait_for_emulator
+    - ./wait_for_emulator
     - adb shell input keyevent 82
     - sleep 20
 
