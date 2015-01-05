@@ -26,9 +26,9 @@ Android 3.1+ support
 
 ## Testing
 
-Integration / Acceptance tests are written using cucumber/calabash-android and can be found features/, to run them:
+Integration/Acceptance tests are written using calabash-android and can be found features/, to run them:
 
-    $ calabash-android run "path_to_apk"
+    $ ./gradlew build calabashDebug
 
 ##  Downloads
 
