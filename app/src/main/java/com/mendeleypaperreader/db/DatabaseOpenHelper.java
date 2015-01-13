@@ -213,7 +213,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
         SessionManager session;
         session = new SessionManager(this.mContext);
-        session.savePreferences("versionCode", "1");
+        session.savePreferences("versionCode", "9");
 
 
         db.execSQL(CREATE_TABLE_GROUPS);
