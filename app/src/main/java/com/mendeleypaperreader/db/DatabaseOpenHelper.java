@@ -112,6 +112,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public final static String PRIVACY_LEVEL = "provacy_level";
     public final static String FILEHASH = "filehash";
     public final static String DOCUMENT_ID = "document_id";
+    private final static String SPACE = "''";
 
 
     final static String[] document_details_columns = {_ID, TYPE, MONTH, YEAR, LAST_MODIFIED, DAY, GROUP_ID, SOURCE, TITLE, REVISION, IDENTIFIERS, ABSTRACT, PROFILE_ID, AUTHORS, ADDED, PAGES, VOLUME, ISSUE, WEBSITE, PUBLISHER, CITY, EDITION, INSTITUTION, SERIES, CHAPTER, EDITORS, READ, STARRED, AUTHORED, CONFIRMED, HIDDEN};
@@ -161,13 +162,13 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                     + PAGES + " TEXT, "
                     + VOLUME + " TEXT, "
                     + ISSUE + " TEXT, "
-                    + WEBSITE + " TEXT, "
+                    + WEBSITE + " TEXT default " + SPACE + ", "
                     + EDITION + " TEXT, "           //not used
                     + STARRED + " TEXT, "
                     + AUTHORED + " TEXT, "
                     + CONFIRMED + " TEXT, "
                     + IS_DOWNLOAD + " TEXT, "
-                    + READER_COUNT + " TEXT, "
+                    + READER_COUNT + " TEXT default 0, "
                     + TAGS + " Text )";
 
 
@@ -205,6 +206,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_GROUPS);
         db.execSQL(CREATE_TABLE_DOC_TAGS);
         db.execSQL(CREATE_TABLE_DOC_NOTES);
+        db.execSQL("CREATE UNIQUE INDEX index_id on " + TABLE_DOCUMENT_DETAILS + " (" + _ID +")");
     }
 
     @Override
@@ -213,7 +215,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
         SessionManager session;
         session = new SessionManager(this.mContext);
-        session.savePreferences("versionCode", "9");
+        session.savePreferences("versionCode", "10");
 
 
         db.execSQL(CREATE_TABLE_GROUPS);
@@ -243,7 +245,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE IF NOT EXISTS TEMP_DOCUMENTS_DETAILS (" + _ID + " TEXT PRIMARY KEY, " + TYPE + " TEXT, " + YEAR + " TEXT, " + LAST_MODIFIED + " TEXT, " + GROUP_ID + " TEXT, " + SOURCE + " TEXT, " + TITLE + " TEXT, " + PMID + " TEXT, "
                 + DOI + " TEXT, " + ISSN + " TEXT, " + ARXIV + " TEXT, " + ISBN + " TEXT, " + SCOPUS + " TEXT, " + SSN + " TEXT, " + ABSTRACT + " TEXT, " + AUTHORS + " TEXT, " + ADDED + " TEXT, " + PAGES + " TEXT, " + VOLUME + " TEXT, " + ISSUE + " TEXT, " + AUTHORED + " TEXT, "
-                + WEBSITE + " TEXT, " + STARRED + " TEXT, " + TAGS + " TEXT, " + IS_DOWNLOAD + " TEXT, " + READER_COUNT + " TEXT )");
+                + WEBSITE + " TEXT default " + SPACE + " , " + STARRED + " TEXT, " + TAGS + " TEXT, " + IS_DOWNLOAD + " TEXT, " + READER_COUNT + " TEXT default 0)");
 
         db.execSQL("INSERT INTO TEMP_DOCUMENTS_DETAILS (" + _ID + ", " + TYPE + ", " + YEAR + ", " + LAST_MODIFIED + ", " + GROUP_ID + ", " + SOURCE + ", " + TITLE + ", " + PMID + ", "
                 + DOI + ",  " + ISSN + ",  " + ARXIV + ",  " + ISBN + ",  " + SCOPUS + ",  " + SSN + ",  " + ABSTRACT + ",  " + AUTHORS + ",  " + ADDED + ",  " + PAGES + ",  " + VOLUME + ",  " + ISSUE + ",  " + WEBSITE + ", " + STARRED + ", " + IS_DOWNLOAD + ", " + READER_COUNT + ", " + AUTHORED + ") " +
@@ -258,6 +260,9 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_DOC_TAGS);
         db.execSQL(CREATE_TABLE_DOC_NOTES);
 
+
+        //TAG: v10
+        db.execSQL("CREATE UNIQUE INDEX index_id on " + TABLE_DOCUMENT_DETAILS + " (" + _ID +")");
 
     }
 

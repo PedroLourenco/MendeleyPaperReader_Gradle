@@ -1,5 +1,6 @@
 package com.mendeleypaperreader.activities;
 
+import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,7 +11,7 @@ import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.sessionManager.SessionManager;
 import com.mendeleypaperreader.utl.GetDataBaseInformation;
 
-public class SettingsActivity extends ActionBarActivity {
+public class SettingsActivity extends Activity {
 
     GetDataBaseInformation getDataBaseInformation;
     SessionManager sessionManager;

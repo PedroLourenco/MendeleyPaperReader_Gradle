@@ -97,24 +97,29 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
     private void syncronizeData() throws JsonProcessingException, IOException {
 
 
-
-        publishProgress((int) (1 / ((float) 9) * 100));
+        long startTime = System.currentTimeMillis();
+        publishProgress((int) (1 / ((float) 10) * 100));
         load.getProfileInfo(Globalconstant.get_profile + access_token);
-        publishProgress((int) (2 / ((float) 9) * 100));
+        publishProgress((int) (2 / ((float) 10) * 100));
         load.getGroups(Globalconstant.get_groups_url + access_token);
-        publishProgress((int) (3 / ((float) 9) * 100));
+        publishProgress((int) (3 / ((float) 10) * 100));
         load.getGroupDocs();
-        publishProgress((int) (4 / ((float) 9) * 100));
+        publishProgress((int) (4 / ((float) 10) * 100));
         load.getUserLibrary(Globalconstant.get_user_library_url + access_token);
-        publishProgress((int) (5 / ((float) 9) * 100));
+        publishProgress((int) (5 / ((float) 10) * 100));
         load.getFolders(Globalconstant.get_user_folders_url + access_token);
-        publishProgress((int) (6 / ((float) 9) * 100));
+        publishProgress((int) (6 / ((float) 10) * 100));
+        load.getDocsInFolder();
+        publishProgress((int) (7 / ((float) 10) * 100));
         load.getDocNotes();
-        publishProgress((int) (7 / ((float) 9) * 100));
+        publishProgress((int) (8 / ((float) 10) * 100));
         load.getCatalogId();
-        publishProgress((int) (8 / ((float) 9) * 100));
+        publishProgress((int) (9 / ((float) 10) * 100));
         load.getFiles(Globalconstant.get_files + access_token);
-        publishProgress((int) (9 / ((float) 9.6) * 100));
+        publishProgress((int) (10 / ((float) 10.6) * 100));
+        long endTime = System.currentTimeMillis();
+
+        Log.d(Globalconstant.TAG, "That took " + (endTime - startTime) + " milliseconds");
 
 
 
