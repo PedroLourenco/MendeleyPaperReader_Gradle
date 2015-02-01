@@ -20,6 +20,7 @@ import com.mendeleypaperreader.utl.Globalconstant;
 import com.mendeleypaperreader.utl.JSONParser;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -80,7 +81,7 @@ public class LoadData {
 
         }
 
-
+        groups.close();
     }
 
 
@@ -99,84 +100,88 @@ public class LoadData {
     }
 
 
-    public void getDocNotes() {
+    public void getNotes() {
+
+        ContentValues[] valuesArray;
+
+        List<ContentValues> valueList = new ArrayList<ContentValues>();
+        List<InputStream> link = new ArrayList<InputStream>();
+
 
         Cursor cursorDocId = getDocId();
 
         while (cursorDocId.moveToNext()) {
 
-            String url = Globalconstant.get_docs_notes.replace("#docId#", cursorDocId.getString(cursorDocId.getColumnIndex(DatabaseOpenHelper._ID)));
-
-            getNotes(url + access_token);
-        }
-
-    }
+            String url = Globalconstant.get_docs_notes2 + cursorDocId.getString(cursorDocId.getColumnIndex(DatabaseOpenHelper._ID)) + "&limit=200&access_token=" + access_token;
 
 
-    private void getNotes(String url) {
+            JSONParser jParser = new JSONParser();
+            ObjectMapper mapper = new ObjectMapper();
+            JsonFactory factory = mapper.getFactory();
 
-        List<ContentValues> valueList = new ArrayList<ContentValues>();
 
-        ContentValues[] valuesArray;
+            link = jParser.getJACKSONFromUrl(url, true);
 
-        JSONParser jParser = new JSONParser();
-        ObjectMapper mapper = new ObjectMapper();
-        JsonFactory factory = mapper.getFactory();
-        List<InputStream> link = new ArrayList<InputStream>();
-        link = jParser.getJACKSONFromUrl(url, true);
+            try {
+                for (InputStream oneItem : link) {
+                    JsonParser jp = factory.createParser(oneItem);
 
-        try {
-            for (InputStream oneItem : link) {
-                JsonParser jp = factory.createParser(oneItem);
-                JsonNode rootNode = mapper.readTree(jp);
+                    JsonNode rootNode = mapper.readTree(jp);
 
-                Iterator<JsonNode> ite = rootNode.iterator();
+                    Iterator<JsonNode> ite = rootNode.iterator();
 
-                while (ite.hasNext()) {
-                    JsonNode temp = ite.next();
+                    while (ite.hasNext()) {
+                        JsonNode temp = ite.next();
 
-                    ContentValues note_values = new ContentValues();
+                        ContentValues note_values = new ContentValues();
 
-                    if (temp.has(DatabaseOpenHelper.NOTE_ID)) {
+                        if (temp.has(DatabaseOpenHelper.TYPE)) {
 
-                        note_values.put(DatabaseOpenHelper.NOTE_ID, temp.get(DatabaseOpenHelper.NOTE_ID).asText());
-                    }
+                            String noteType = temp.get(DatabaseOpenHelper.TYPE).asText();
 
-                    if (temp.has(DatabaseOpenHelper.TYPE)) {
+                            if (!noteType.equals("note")) {
+                                break;
+                            }
 
-                        String noteType = temp.get(DatabaseOpenHelper.TYPE).asText();
-
-                        if (!noteType.equals("note")) {
-                            break;
+                            note_values.put(DatabaseOpenHelper.TYPE, noteType);
                         }
 
-                        note_values.put(DatabaseOpenHelper.TYPE, noteType);
-                    }
-                    if (temp.has(DatabaseOpenHelper.TEXT)) {
 
-                        note_values.put(DatabaseOpenHelper.TEXT, temp.get(DatabaseOpenHelper.TEXT).asText().replace("<br/>", " "));
-                    }
-                    if (temp.has(DatabaseOpenHelper.DOCUMENT_ID)) {
+                        if (temp.has(DatabaseOpenHelper.NOTE_ID)) {
 
-                        note_values.put(DatabaseOpenHelper.DOCUMENT_ID, temp.get(DatabaseOpenHelper.DOCUMENT_ID).asText());
+                            note_values.put(DatabaseOpenHelper.NOTE_ID, temp.get(DatabaseOpenHelper.NOTE_ID).asText());
+                        }
+
+
+                        if (temp.has(DatabaseOpenHelper.TEXT)) {
+
+                            note_values.put(DatabaseOpenHelper.TEXT, temp.get(DatabaseOpenHelper.TEXT).asText().replace("<br/>", " "));
+                        }
+                        if (temp.has(DatabaseOpenHelper.DOCUMENT_ID)) {
+
+                            note_values.put(DatabaseOpenHelper.DOCUMENT_ID, temp.get(DatabaseOpenHelper.DOCUMENT_ID).asText());
+                        }
+
+                        valueList.add(note_values);
                     }
-                    //Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_DOC_NOTES, note_values);
-                    valueList.add(note_values);
+
+                    jp.close();
                 }
 
-                jp.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-            //Insert data on table groups
-            valuesArray = new ContentValues[valueList.size()];
-            valueList.toArray(valuesArray);
-            context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_DOC_NOTES, valuesArray);
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        //Insert data on table groups
+        valuesArray = new ContentValues[valueList.size()];
+        valueList.toArray(valuesArray);
 
+        context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_DOC_NOTES, valuesArray);
+
+
+        cursorDocId.close();
 
     }
 
@@ -302,8 +307,6 @@ public class LoadData {
                     }
 
                     valueList.add(values);
-                    //Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_FILES, values);
-
                 }
 
                 jp.close();
@@ -372,9 +375,6 @@ public class LoadData {
                     } else {
                         values.put(DatabaseOpenHelper.FOLDER_GROUP, "");
                     }
-
-                    //Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_FOLDERS, values);
-                    // getDocsInFolder(temp.get(DatabaseOpenHelper.ID).asText());
 
                     valueList.add(values);
 
@@ -666,6 +666,8 @@ public class LoadData {
             getDocsFolder(cursorFolderId.getString(cursorFolderId.getColumnIndex(DatabaseOpenHelper.FOLDER_ID)));
         }
 
+        cursorFolderId.close();
+
     }
 
 
@@ -746,7 +748,6 @@ public class LoadData {
     public void getCatalogId() {
 
         ContentValues values = new ContentValues();
-        ContentValues values1 = new ContentValues();
 
         List<ContentValues> valueList = new ArrayList<ContentValues>();
 
@@ -763,42 +764,42 @@ public class LoadData {
 
             String docId = cursorDocs.getString(cursorDocs.getColumnIndex(DatabaseOpenHelper._ID));
             String auxPmid = cursorDocs.getString(cursorDocs.getColumnIndex(DatabaseOpenHelper.PMID));
-            String pmid = URLEncoder.encode(auxPmid);
             String auxDoi = cursorDocs.getString(cursorDocs.getColumnIndex(DatabaseOpenHelper.DOI));
-            String doi = URLEncoder.encode(auxDoi);
             String auxIssn = cursorDocs.getString(cursorDocs.getColumnIndex(DatabaseOpenHelper.ISSN));
-            String issn = URLEncoder.encode(auxIssn);
             String auxIsbn = cursorDocs.getString(cursorDocs.getColumnIndex(DatabaseOpenHelper.ISBN));
-            String isbn = URLEncoder.encode(auxIsbn);
             String auxScopus = cursorDocs.getString(cursorDocs.getColumnIndex(DatabaseOpenHelper.SCOPUS));
-            String scopus = URLEncoder.encode(auxScopus);
             String auxArxiv = cursorDocs.getString(cursorDocs.getColumnIndex(DatabaseOpenHelper.ARXIV));
-            String arxiv = URLEncoder.encode(auxArxiv);
-
             String where = DatabaseOpenHelper._ID + " = '" + docId + "'";
 
-            if (!pmid.isEmpty()) {
-                toProcess = true;
-                urlfilter = "pmid=" + pmid;
-            } else if (!doi.isEmpty()) {
-                toProcess = true;
-                urlfilter = "doi=" + doi;
-            } else if (!issn.isEmpty()) {
-                toProcess = true;
-                urlfilter = "issn=" + issn;
-            } else if (!isbn.isEmpty()) {
-                toProcess = true;
-                urlfilter = "isbn=" + isbn;
-            } else if (!scopus.isEmpty()) {
-                toProcess = true;
-                urlfilter = "scopus=" + scopus;
-            } else if (!arxiv.isEmpty()) {
-                toProcess = true;
-                urlfilter = "arxiv=" + arxiv;
+
+            try {
+                if (!auxPmid.isEmpty()) {
+                    toProcess = true;
+                    urlfilter = "pmid=" + URLEncoder.encode(auxPmid, "UTF-8");
+                } else if (!auxDoi.isEmpty()) {
+                    toProcess = true;
+                    urlfilter = "doi=" + URLEncoder.encode(auxDoi, "UTF-8");
+                } else if (!auxIssn.isEmpty()) {
+                    toProcess = true;
+                    urlfilter = "issn=" + URLEncoder.encode(auxIssn, "UTF-8");
+                } else if (!auxIsbn.isEmpty()) {
+                    toProcess = true;
+                    urlfilter = "isbn=" + URLEncoder.encode(auxIsbn, "UTF-8");
+                } else if (!auxScopus.isEmpty()) {
+                    toProcess = true;
+                    urlfilter = "scopus=" + URLEncoder.encode(auxScopus, "UTF-8");
+                } else if (!auxArxiv.isEmpty()) {
+                    toProcess = true;
+                    urlfilter = "arxiv=" + URLEncoder.encode(auxArxiv, "UTF-8");
+                }
+
+            } catch (UnsupportedEncodingException uee) {
+                Log.d(Globalconstant.TAG, "encode " + uee);
             }
 
 
             if (toProcess) {
+                toProcess = false;
 
                 String url = Globalconstant.get_catalog_url + urlfilter + "&view=stats&access_token=" + access_token;
 
@@ -851,21 +852,25 @@ public class LoadData {
 
                                     valueList.add(academic_docs_values);
                                 }
+
+
                             }
                         }
 
                     }
 
-                    //Insert data on table Folders_doc
-                    valuesArray = new ContentValues[valueList.size()];
-                    valueList.toArray(valuesArray);
-                    context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_ACADEMIC_DOCS, valuesArray);
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
+        //Insert data on table Academic_status
+        valuesArray = new ContentValues[valueList.size()];
+        valueList.toArray(valuesArray);
+        context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_ACADEMIC_DOCS, valuesArray);
+
+        cursorDocs.close();
     }
 
 
@@ -876,7 +881,7 @@ public class LoadData {
         JSONParser jParser = new JSONParser();
         ObjectMapper mapper = new ObjectMapper();
         List<InputStream> link = new ArrayList<InputStream>();
-        link = jParser.getJACKSONFromUrl(url, true);
+        link = jParser.getJACKSONFromUrl(url, false);
 
         try {
 

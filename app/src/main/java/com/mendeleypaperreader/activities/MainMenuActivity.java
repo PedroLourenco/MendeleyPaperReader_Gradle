@@ -4,6 +4,8 @@ package com.mendeleypaperreader.activities;
 import java.util.Calendar;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -145,7 +147,7 @@ public class MainMenuActivity extends FragmentActivity {
 
     public void syncData() {
 
-        new SyncDataAsync(MainMenuActivity.this, MainMenuActivity.this).execute();
+        new SyncDataAsync(MainMenuActivity.this).execute();
     }
 
 

@@ -46,11 +46,6 @@ public class DetailsActivity extends FragmentActivity {
         session = new SessionManager(DetailsActivity.this);
 
 
-        /* //verify orientation permissions
-        if (getResources().getBoolean(R.bool.portrait_only)) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }*/
-
         if (savedInstanceState == null) {
             // During initial setup, plug in the details fragment.
             MainMenuActivityFragmentDetails details = new MainMenuActivityFragmentDetails();
@@ -92,7 +87,7 @@ public class DetailsActivity extends FragmentActivity {
 
     private void syncData() {
 
-        new SyncDataAsync(DetailsActivity.this, DetailsActivity.this).execute();
+        new SyncDataAsync(DetailsActivity.this).execute();
     }
 
 

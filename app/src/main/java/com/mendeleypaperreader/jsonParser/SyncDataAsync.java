@@ -1,6 +1,7 @@
 package com.mendeleypaperreader.jsonParser;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -26,9 +27,9 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
     SessionManager session;
 
 
-    public SyncDataAsync(Context context, Activity activity) {
+    public SyncDataAsync(Context context) {
         //his.context = context;
-        this.activity = activity;
+        this.activity = (Activity)context;
         load = new LoadData(this.activity.getApplicationContext());
         dialog = new ProgressDialog(context);
         session = new SessionManager(this.activity.getApplicationContext());
@@ -43,7 +44,9 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
         lockScreenOrientation();
         dialog.setIndeterminate(true);
         dialog.setCancelable(false);
-        dialog.show();
+        
+        if (!this.activity.isFinishing())
+            dialog.show();
 
     }
 
@@ -111,7 +114,7 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
         publishProgress((int) (6 / ((float) 10) * 100));
         load.getDocsInFolder();
         publishProgress((int) (7 / ((float) 10) * 100));
-        load.getDocNotes();
+        load.getNotes();
         publishProgress((int) (8 / ((float) 10) * 100));
         load.getCatalogId();
         publishProgress((int) (9 / ((float) 10) * 100));
@@ -119,7 +122,16 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
         publishProgress((int) (10 / ((float) 10.6) * 100));
         long endTime = System.currentTimeMillis();
 
+
+
         Log.d(Globalconstant.TAG, "That took " + (endTime - startTime) + " milliseconds");
+
+        long timeSeconds = TimeUnit.MILLISECONDS.toSeconds((endTime - startTime));
+        Log.d(Globalconstant.TAG, "That took " + timeSeconds + " seconds");
+        long timeminuts = TimeUnit.MILLISECONDS.toMinutes((endTime - startTime));
+        Log.d(Globalconstant.TAG, "That took " + timeminuts + " minutes");
+
+
 
 
 

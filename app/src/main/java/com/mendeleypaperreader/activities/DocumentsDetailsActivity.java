@@ -956,7 +956,7 @@ public class DocumentsDetailsActivity extends Activity {
 
     private void syncData() {
 
-        new SyncDataAsync(DocumentsDetailsActivity.this, DocumentsDetailsActivity.this).execute();
+        new SyncDataAsync(DocumentsDetailsActivity.this).execute();
     }
 
 
@@ -991,6 +991,17 @@ public class DocumentsDetailsActivity extends Activity {
         getApplicationContext().startActivity(browserIntent);
 
     }
+
+
+
+    public void onStop() {
+        super.onStop();
+
+       cursorDetails.close();
+       cursorFile.close();
+
+    }
+    
 
 
     //AsyncTask to download DATA from server
@@ -1088,7 +1099,8 @@ public class DocumentsDetailsActivity extends Activity {
                         // set the message to be sent when this dialog is canceled
                         Message newMsg = Message.obtain(this, MESSAGE_DOWNLOAD_CANCELED);
                         progressDialog.setCancelMessage(newMsg);
-                        progressDialog.show();
+                        if (!isFinishing())
+                            progressDialog.show();
                     }
                     break;
                                     
@@ -1123,7 +1135,8 @@ public class DocumentsDetailsActivity extends Activity {
                         Message newMsg = Message.obtain(this, MESSAGE_DOWNLOAD_CANCELED);
                         progressDialog.setCancelMessage(newMsg);
                         progressDialog.setCancelable(true);
-                        progressDialog.show();
+                        if (!isFinishing())
+                            progressDialog.show();
                     }
                     break;
                             
