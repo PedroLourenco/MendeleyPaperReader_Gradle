@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="19.0.0"><source path="/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/19.0.0/assets"/></dataSet><dataSet config="main"><source path="/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/assets"/></dataSet><dataSet config="release"><source path="/Users/pedro/Downloads/MendeleyPaperReader/app/src/release/assets"/></dataSet></merger>

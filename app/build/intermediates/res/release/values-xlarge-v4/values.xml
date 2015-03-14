@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/19.0.0/res/values-xlarge/values.xml -->
+    <eat-comment/>
+    <bool name="abc_action_bar_expanded_action_views_exclusive">false</bool>
+    <!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/values-xlarge/bool.xml -->
+    <eat-comment/>
+    <bool name="portrait_only">false</bool>
+    <!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/19.0.0/res/values-xlarge/values.xml -->
+    <eat-comment/>
+    <dimen name="abc_action_bar_default_height">56dip</dimen>
+    <dimen name="abc_action_bar_icon_vertical_padding">4dip</dimen>
+    <dimen name="abc_action_bar_subtitle_bottom_margin">9dip</dimen>
+    <dimen name="abc_action_bar_subtitle_text_size">14dp</dimen>
+    <dimen name="abc_action_bar_subtitle_top_margin">-3dp</dimen>
+    <dimen name="abc_action_bar_title_text_size">18dp</dimen>
+    <dimen name="abc_action_button_min_width">64dip</dimen>
+    <dimen name="abc_search_view_text_min_width">192dip</dimen>
+    <!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/values-xlarge/dimens.xml -->
+    <eat-comment/>
+    <dimen name="activity_horizontal_margin">64dp</dimen>
+    <dimen name="authors_size">17sp</dimen>
+    <dimen name="button_auth_margin_bottom">10dp</dimen>
+    <dimen name="button_height">30dp</dimen>
+    <dimen name="button_margin">550dp</dimen>
+    <dimen name="button_new_account_margin_bottom">25dp</dimen>
+    <dimen name="button_text_size">20sp</dimen>
+    <dimen name="doc_details">18sp</dimen>
+    <dimen name="doc_title_size">19sp</dimen>
+    <dimen name="folder_text_size">25sp</dimen>
+    <dimen name="marginTop">17dp</dimen>
+    <dimen name="padingRight">25dp</dimen>
+    <dimen name="source_size">16sp</dimen>
+    <dimen name="title_size">60sp</dimen>
+    <!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/19.0.0/res/values-xlarge/values.xml -->
+    <eat-comment/>
+    <integer name="abc_max_action_buttons">5</integer>
+</resources>

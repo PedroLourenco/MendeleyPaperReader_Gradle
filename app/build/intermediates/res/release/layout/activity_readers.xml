@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    
+    <TextView
+        android:id="@+id/readers"
+    	android:layout_width="fill_parent"   
+    	android:layout_height="wrap_content"  
+    	android:paddingTop="@dimen/doc_type_paddingTop"  
+    	android:paddingBottom="@dimen/doc_type_paddingBottom"  
+    	android:paddingLeft="@dimen/doc_type_paddingLeft"
+    	android:background="@drawable/gradient_bg_list"
+    	style="?android:attr/windowTitleStyle"
+    	android:text="READERS" /> 
+    	
+    <TextView
+        android:id="@+id/readersTotal"
+    	android:layout_width="fill_parent"   
+    	android:layout_height="wrap_content"
+    	android:paddingTop="@dimen/doc_type_paddingTop"  
+    	android:paddingBottom="@dimen/doc_type_paddingBottom"  
+    	android:paddingLeft="@dimen/doc_type_paddingLeft"  
+    	android:layout_below="@+id/readers"
+    	android:text="Total:"/>
+
+    <TextView
+        android:id="@+id/readersValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/readersTotal"
+        android:layout_alignBottom="@+id/readersTotal"
+        android:layout_alignParentRight="true"
+        android:paddingTop="@dimen/doc_type_paddingTop"  
+    	android:paddingBottom="@dimen/doc_type_paddingBottom"  
+    	android:paddingRight="@dimen/doc_type_paddingLeft"/>
+    
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:layout_below="@+id/readersTotal"
+        android:listSelector="@android:color/transparent" 
+		android:cacheColorHint="@android:color/transparent">
+
+    </ListView>
+     
+</RelativeLayout><!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/layout/activity_readers.xml -->

@@ -1,0 +1,72 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.mendeleypaperreader.activities.SettingsActivity">
+
+    <TextView
+        android:id="@+id/textViewUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/user"
+        android:textStyle="bold"
+        android:padding="@dimen/pading"/>
+
+    <TextView
+        android:id="@+id/textViewProfileName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/textViewUser"
+        android:layout_toRightOf="@+id/textViewUser"
+        android:padding="@dimen/pading" />
+
+
+    <RelativeLayout
+        android:id="@+id/layoutSync"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewUser"
+        android:background="#e1ddcf"
+        android:padding="@dimen/marginTop">
+
+        <TextView
+            android:id="@+id/textViewSync"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/syncOption" />
+
+
+    </RelativeLayout>
+
+    <CheckBox
+        android:id="@+id/checkBoxSyncOnLoad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layoutSync"
+        android:text="@string/syncOnLoadCheckBox"
+        android:onClick="itemClicked"/>
+
+    <RelativeLayout
+        android:id="@+id/layoutSyncHelp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/checkBoxSyncOnLoad"
+        android:background="#e1ddcf"
+        android:padding="@dimen/marginTop">
+
+        <TextView
+            android:id="@+id/textViewSyncHelp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/syncOnLoadCheckBoxHelp" />
+
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
+<!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/layout/activity_settings.xml -->

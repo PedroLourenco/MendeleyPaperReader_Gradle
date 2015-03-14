@@ -1,0 +1,13 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+    
+    <TextView 
+    android:id="@+id/abstractDescription"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="@dimen/doc_title_size"
+    android:padding="@dimen/pading" />
+
+</ScrollView><!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/layout/activity_abstract_description.xml -->

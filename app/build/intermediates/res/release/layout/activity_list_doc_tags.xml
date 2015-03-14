@@ -1,0 +1,41 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.mendeleypaperreader.activities.ListDocTagsActivity">
+
+    <TextView
+        android:id="@+id/docTag"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/doc_type_paddingTop"
+        android:paddingBottom="@dimen/doc_type_paddingBottom"
+        android:paddingLeft="@dimen/doc_type_paddingLeft"
+        android:background="@drawable/gradient_bg_list"
+        style="?android:attr/windowTitleStyle" />
+
+    <TextView
+        android:id="@+id/docTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/doc_type_paddingTop"
+        android:paddingBottom="@dimen/doc_type_paddingBottom"
+        android:paddingLeft="@dimen/doc_type_paddingLeft"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:layout_below="@+id/docTag"/>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_below="@+id/docTitle"
+        style="@style/Divider"/>
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/divider">
+    </ListView>
+
+
+</RelativeLayout><!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/layout/activity_list_doc_tags.xml -->
