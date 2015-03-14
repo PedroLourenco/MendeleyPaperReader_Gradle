@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+ <item android:state_pressed="true" >
+     <shape android:shape="rectangle"  >
+         <corners android:radius="3dip" />
+         <stroke android:width="1dip" 
+             	 android:color="#950e1a" />
+         <gradient android:angle="-90" 
+             	   android:startColor="#950E1A" 
+             	   android:endColor="#9f2630"  />            
+     </shape>
+ </item>
+<item >
+    <shape android:shape="rectangle"  >
+         <corners android:radius="3dip" />
+         <stroke android:width="1dip" android:color="#950e1a" />
+         <gradient android:angle="-90" android:startColor="#9f2630" android:endColor="#bf6e75" />            
+     </shape>
+ </item>
+</selector><!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/drawable-hdpi/createaccount_button_shape.xml -->

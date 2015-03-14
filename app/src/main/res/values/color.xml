@@ -1,0 +1,16 @@
+<resources>
+    <color name="colorButtonNormal">#E8EAF6</color>
+    <color name="colorControlHighligh">#9FA8DA</color>
+    <color name="list_pressed_start">#9FA8DA</color>
+    <color name="list_pressed_end">#7986CB</color>
+
+    <color name="list_header">#5C6BC0</color>
+    <color name="actionBar">#3F51B5</color>
+    <color name="actionBarTextColor">#E0E0E0</color>
+
+
+
+
+
+
+</resources>

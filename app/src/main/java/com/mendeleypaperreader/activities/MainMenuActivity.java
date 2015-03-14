@@ -1,23 +1,22 @@
 package com.mendeleypaperreader.activities;
 
 
-import java.util.Calendar;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.app.Activity;
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.jsonParser.SyncDataAsync;
@@ -25,6 +24,12 @@ import com.mendeleypaperreader.sessionManager.GetAccessToken;
 import com.mendeleypaperreader.sessionManager.SessionManager;
 import com.mendeleypaperreader.utl.ConnectionDetector;
 import com.mendeleypaperreader.utl.Globalconstant;
+import com.mendeleypaperreader.utl.TypefaceSpan;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Calendar;
 
 /**
  * @author PedroLourenco (pdrolourenco@gmail.com)
@@ -40,6 +45,7 @@ public class MainMenuActivity extends FragmentActivity {
     private static String code;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +53,24 @@ public class MainMenuActivity extends FragmentActivity {
         setContentView(R.layout.activity_main_menu);
         session = new SessionManager(getApplicationContext());
 
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+
+            actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
+            
+        }
+
+        SpannableString s = new SpannableString("Paper Reader");
+        TypefaceSpan tf = new TypefaceSpan(this, "Roboto-Bold.ttf");
+        
+        s.setSpan(tf, 0, s.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        // Update the action bar title with the TypefaceSpan instance
+
+        if (actionBar != null) 
+            actionBar.setTitle(s);
+        
         //Start upload data from server
         String db_uploded_flag = session.LoadPreference("IS_DB_CREATED");
         if (!db_uploded_flag.equals("YES")) {
@@ -78,6 +102,7 @@ public class MainMenuActivity extends FragmentActivity {
         return false;
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
@@ -96,6 +121,7 @@ public class MainMenuActivity extends FragmentActivity {
             case R.id.menu_About:
                 Intent i_about = new Intent(getApplicationContext(), AboutActivity.class);
                 startActivity(i_about);
+                overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
                 return true;
             case R.id.menu_logout:
                 showDialog();
@@ -106,7 +132,14 @@ public class MainMenuActivity extends FragmentActivity {
             case R.id.menu_settings:
                 Intent i_settings = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivity(i_settings);
+                overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
                 return true;
+            // up button
+            case android.R.id.home:
+                //finish();
+                //overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -202,7 +235,7 @@ public class MainMenuActivity extends FragmentActivity {
                     syncData();
 
                     if (Globalconstant.LOG) {
-                        Log.d("refresh_token - Token Access", token);
+
                         Log.d("refresh_token - Expire", expire);
                         Log.d("refresh_token - Refresh", refresh);
                         Log.d("expires_on", json.getString("exwpires_on"));

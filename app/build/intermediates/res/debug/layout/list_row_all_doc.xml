@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:id="@+id/thumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/list_image"
+            android:layout_width="@dimen/image_size2"
+            android:layout_height="@dimen/image_size2"
+            android:layout_marginTop="@dimen/pading" />
+            <!--  android:src="@drawable/alldocuments" />-->
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/image_size"
+            android:orientation="horizontal"
+            android:padding="@dimen/pading" >
+
+            <TextView
+                android:id="@+id/Doctitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:text=""
+                android:textSize="@dimen/doc_title_size"
+                android:textStyle="bold"
+                android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/authors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/Doctitle"
+                android:ellipsize="end"
+                android:lines="1"
+                android:maxLines="1"
+                android:text=""
+                android:textSize="@dimen/authors_size" 
+                android:textColor="#000080" />
+
+            <TextView
+                android:id="@+id/data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/authors"
+                android:text=""
+                android:textSize="@dimen/authors_size" 
+ 				android:textColor="#5d5d5d" />
+            
+        </RelativeLayout>
+    </LinearLayout>
+
+   
+
+    <ImageView
+        android:layout_width="@dimen/image_size"
+        android:layout_height="@dimen/image_size"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:padding="@dimen/pading"
+        android:src="@drawable/arrow" />
+
+</RelativeLayout><!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/layout/list_row_all_doc.xml -->

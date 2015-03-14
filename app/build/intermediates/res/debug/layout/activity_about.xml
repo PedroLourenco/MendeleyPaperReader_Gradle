@@ -1,0 +1,93 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/marginTop"
+            android:contentDescription="@string/app_logo"
+            android:src="@drawable/icon_mendeley48_48" />
+
+        <TextView
+            android:id="@+id/about_msg_about_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView1"
+            android:padding="@dimen/pading"
+            android:gravity="center"
+            android:text="@string/about_msg_about"
+            android:textStyle="italic" >
+        </TextView>
+
+        <ScrollView
+            android:id="@+id/scrollView1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/about_current_version_text"
+            android:layout_below="@+id/about_msg_about_text"
+            android:layout_gravity="center"
+            android:background="#e1ddcf"
+            android:layout_marginLeft="@dimen/padingRight"
+            android:layout_marginRight="@dimen/padingRight"
+            android:padding="@dimen/pading" >
+
+           
+                <TextView
+                    android:id="@+id/about_version3_text"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/pading"
+                    android:text="@string/about_bugfix" />
+             
+        </ScrollView>
+
+            <TextView
+                android:id="@+id/about_web_link_text"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="9dp"
+                android:gravity="center"
+                android:text="@string/about_web_link"
+                android:textColor="#87847c"
+                android:textStyle="italic" />
+
+            <TextView
+                android:id="@+id/about_email_value"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="40dp"
+                android:gravity="center"
+                android:textStyle="italic"
+                android:layout_above="@+id/about_web_link_text" />
+
+            <TextView
+                android:id="@+id/about_current_version_text"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"                
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:gravity="center"
+                android:text="@string/about_current_version"
+                android:layout_marginBottom="60dp"
+                android:textColor="#87847c"
+                android:textStyle="italic"
+                android:layout_above="@+id/about_email_value" />
+
+        </RelativeLayout>
+    
+
+</RelativeLayout><!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/layout/activity_about.xml -->

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/values-small-port/bool.xml -->
+    <eat-comment/>
+    <bool name="portrait_only">true</bool>
+    <!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/values-small-port/dimens.xml -->
+    <eat-comment/>
+    <dimen name="activity_horizontal_margin">64dp</dimen>
+    <dimen name="authors_size">12sp</dimen>
+    <dimen name="button_auth_margin_bottom">5dp</dimen>
+    <dimen name="button_height">20dp</dimen>
+    <dimen name="button_margin">100dp</dimen>
+    <dimen name="button_new_account_margin_bottom">20dp</dimen>
+    <dimen name="button_text_size">10sp</dimen>
+    <dimen name="doc_details">13sp</dimen>
+    <dimen name="doc_title_size">14sp</dimen>
+    <dimen name="folder_text_size">10sp</dimen>
+    <dimen name="image_size">30dip</dimen>
+    <dimen name="marginTop">8dp</dimen>
+    <dimen name="pading">8dp</dimen>
+    <dimen name="padingRight">8dp</dimen>
+    <dimen name="source_size">11sp</dimen>
+    <dimen name="title_size">20sp</dimen>
+    <!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/values-small-port/styles.xml -->
+    <eat-comment/>
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+    <style name="FullHeightDialog" parent="android:style/Theme.Dialog">
+   		<item name="android:windowNoTitle">true</item>
+  	</style>
+</resources>

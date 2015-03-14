@@ -3,9 +3,22 @@ package com.mendeleypaperreader.jsonParser;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,14 +32,23 @@ import com.mendeleypaperreader.utl.GetDataBaseInformation;
 import com.mendeleypaperreader.utl.Globalconstant;
 import com.mendeleypaperreader.utl.JSONParser;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author PedroLourenco (pdrolourenco@gmail.com)
@@ -38,13 +60,15 @@ public class LoadData {
     private Context context;
     private static String access_token;
     private GetDataBaseInformation getDataBaseInformation;
+    RequestQueue queue;
+    private Request.Priority mpriority = Request.Priority.HIGH;
 
     public LoadData(Context context) {
         this.context = context;
 
         SessionManager session = new SessionManager(this.context);
         access_token = session.LoadPreference("access_token");
-
+        queue = Volley.newRequestQueue(this.context);
         getDataBaseInformation = new GetDataBaseInformation(this.context);
 
     }
@@ -78,7 +102,6 @@ public class LoadData {
             String url = Globalconstant.get_docs_in_groups.replace("#groupId#", groups.getString(groups.getColumnIndex(DatabaseOpenHelper._ID)));
 
             getUserLibrary(url + access_token);
-
         }
 
         groups.close();
@@ -98,6 +121,9 @@ public class LoadData {
 
 
     }
+
+
+    
 
 
     public void getNotes() {
@@ -174,7 +200,7 @@ public class LoadData {
             }
 
         }
-        //Insert data on table groups
+        //Insert data on table notes
         valuesArray = new ContentValues[valueList.size()];
         valueList.toArray(valuesArray);
 
@@ -186,7 +212,7 @@ public class LoadData {
     }
 
 
-    public void getGroups(String url) {
+    public void getUserGroups(String url) {
 
 
         List<ContentValues> valueList = new ArrayList<ContentValues>();
@@ -325,7 +351,8 @@ public class LoadData {
     }
 
 
-    public void getFolders(String url) {
+
+    public void getUserFolders(String url) {
 
         List<ContentValues> valueList = new ArrayList<ContentValues>();
 
@@ -397,8 +424,8 @@ public class LoadData {
     }
 
 
-    public void getUserLibrary(String url) {
 
+    public void getUserLibrary(String url) {
 
         JSONParser jParser = new JSONParser();
         String docTitle, docId;
@@ -570,6 +597,7 @@ public class LoadData {
                             authors += author_name + ",";
                             values.put(DatabaseOpenHelper.AUTHORS, authors.substring(0, authors.length() - 1));
 
+                            
                             authors_values.put(DatabaseOpenHelper.DOC_DETAILS_ID, temp.get("id").asText());
                             authors_values.put(DatabaseOpenHelper.AUTHOR_NAME, author_name);
 
@@ -649,7 +677,8 @@ public class LoadData {
         if (Globalconstant.LOG)
             Log.d(Globalconstant.TAG, "getGROUPS- LOAD DATA");
 
-        String[] projection = new String[]{DatabaseOpenHelper.FOLDER_ID};
+
+        String[] projection = new String[]{DatabaseOpenHelper.FOLDER_ID, DatabaseOpenHelper.FOLDER_NAME};
         Uri uri = MyContentProvider.CONTENT_URI_FOLDERS;
 
 
@@ -657,12 +686,16 @@ public class LoadData {
 
 
     }
+    
 
-    public void getDocsInFolder() {
+    
+
+    public void getUserDocsInFolders() {
 
         Cursor cursorFolderId = getFoldersId();
-        while (cursorFolderId.moveToNext()) {
 
+        while (cursorFolderId.moveToNext()) {
+            
             getDocsFolder(cursorFolderId.getString(cursorFolderId.getColumnIndex(DatabaseOpenHelper.FOLDER_ID)));
         }
 
@@ -904,4 +937,5 @@ public class LoadData {
             e.printStackTrace();
         }
     }
+
 }

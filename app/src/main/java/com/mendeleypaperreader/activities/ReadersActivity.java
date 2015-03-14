@@ -1,12 +1,17 @@
 package com.mendeleypaperreader.activities;
 
 
+import android.app.ActionBar;
 import android.app.ListActivity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.mendeleypaperreader.R;
@@ -14,6 +19,7 @@ import com.mendeleypaperreader.adapter.ListTitleAdapter;
 import com.mendeleypaperreader.adapter.MergeAdapter;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
+import com.mendeleypaperreader.utl.TypefaceSpan;
 
 public class ReadersActivity extends ListActivity {
 
@@ -26,8 +32,23 @@ public class ReadersActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_readers);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
 
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+
+            SpannableString s = new SpannableString(getResources().getString(R.string.app_name));
+            TypefaceSpan tf = new TypefaceSpan(this, "Roboto-Bold.ttf");
+
+            s.setSpan(tf, 0, s.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            // Update the action bar title with the TypefaceSpan instance
+
+            actionBar.setTitle(s);
+        }
+        
         TextView redersValue = (TextView) findViewById(R.id.readersValue);
         redersValue.setText(getCounterValue());
 
@@ -83,6 +104,40 @@ public class ReadersActivity extends ListActivity {
     protected void onDestroy() {
         super.onDestroy();
         cursorAcademicStatus.close();
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        // finish() is called in super: we only override this method to be able to override the transition
+        super.onBackPressed();
+
+        overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    //ActionBar Menu Options
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+
+            // up button
+            case android.R.id.home:
+                finish();
+                overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
+                return true;
+
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }

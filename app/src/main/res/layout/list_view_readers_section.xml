@@ -6,5 +6,5 @@
     android:paddingTop="@dimen/doc_type_paddingTop"  
     android:paddingBottom="@dimen/doc_type_paddingBottom"  
     android:paddingLeft="@dimen/doc_type_paddingLeft" 
-    android:background="#cccccc"
-    android:textColor="#ffffff" /> 
+    android:background="@color/list_header"
+    android:textColor="@color/actionBarTextColor"/>

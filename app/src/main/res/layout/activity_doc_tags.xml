@@ -5,7 +5,7 @@
     tools:context="com.mendeleypaperreader.activities.DocTagsActivity">
 
     <TextView
-        android:id="@+id/docTag"
+        android:id="@+id/tag_doc_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/doc_type_paddingTop"
@@ -15,7 +15,7 @@
         style="?android:attr/windowTitleStyle" />
 
     <TextView
-        android:id="@+id/docTitle"
+        android:id="@+id/tag_doc_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/doc_type_paddingTop"
@@ -23,18 +23,19 @@
         android:paddingLeft="@dimen/doc_type_paddingLeft"
         android:maxLines="2"
         android:ellipsize="end"
-        android:layout_below="@+id/docTag"/>
+        android:layout_below="@+id/tag_doc_text"/>
 
     <View
         android:id="@+id/divider"
-        android:layout_below="@+id/docTitle"
+        android:layout_below="@+id/tag_doc_title"
         style="@style/Divider"/>
 
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/divider">
+        android:layout_below="@+id/divider"
+        android:listSelector="@drawable/ripple">
     </ListView>
 
 

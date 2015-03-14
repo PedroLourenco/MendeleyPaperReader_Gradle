@@ -3,11 +3,12 @@ package com.mendeleypaperreader.activities;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.pm.ActivityInfo;
+import android.app.ActionBar;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,6 +21,7 @@ import com.mendeleypaperreader.sessionManager.GetAccessToken;
 import com.mendeleypaperreader.sessionManager.SessionManager;
 import com.mendeleypaperreader.utl.ConnectionDetector;
 import com.mendeleypaperreader.utl.Globalconstant;
+import com.mendeleypaperreader.utl.TypefaceSpan;
 
 /**
  * This activity displays the details using a MainMenuActivityFragmentDetails. This activity is started
@@ -41,7 +43,23 @@ public class DetailsActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+            SpannableString s = new SpannableString(getResources().getString(R.string.app_name));
+            TypefaceSpan tf = new TypefaceSpan(this, "Roboto-Bold.ttf");
+
+            s.setSpan(tf, 0, s.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            // Update the action bar title with the TypefaceSpan instance
+
+            actionBar.setTitle(s);
+        }
+
 
         session = new SessionManager(DetailsActivity.this);
 
@@ -57,6 +75,17 @@ public class DetailsActivity extends FragmentActivity {
     }
 
 
+
+
+    @Override
+    public void onBackPressed() {
+        // finish() is called in super: we only override this method to be able to override the transition
+        super.onBackPressed();
+
+        overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
+    }
+    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
@@ -67,6 +96,8 @@ public class DetailsActivity extends FragmentActivity {
     }
 
 
+
+
     //ActionBar Menu Options
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -74,6 +105,12 @@ public class DetailsActivity extends FragmentActivity {
             case R.id.menu_refresh:
                 refreshToken();
                 return true;
+            // up button
+            case android.R.id.home:
+                finish();
+                overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
+                return true;
+
 
             default:
                 return super.onOptionsItemSelected(item);

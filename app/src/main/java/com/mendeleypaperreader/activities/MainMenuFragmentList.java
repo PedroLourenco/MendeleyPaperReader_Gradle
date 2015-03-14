@@ -3,10 +3,11 @@ package com.mendeleypaperreader.activities;
 import java.util.Arrays;
 import java.util.List;
 
-import android.app.FragmentTransaction;
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -15,6 +16,8 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,6 +37,8 @@ import com.mendeleypaperreader.adapter.MergeAdapter;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.utl.Globalconstant;
+import com.mendeleypaperreader.utl.RobotoRegularFontHelper;
+import com.mendeleypaperreader.utl.TypefaceSpan;
 
 /**
  * Classname MainMenuFragmentList
@@ -42,19 +47,21 @@ import com.mendeleypaperreader.utl.Globalconstant;
  * @date July 8, 2014
  */
 
-public class MainMenuFragmentList extends ListFragment implements LoaderCallbacks<Cursor> {
+public class MainMenuFragmentList extends ListFragment implements  LoaderCallbacks<Cursor> {
 
 
     boolean mDualPane;
     int mCurCheckPosition = 0;
-    SimpleCursorAdapter foldersAdapter;
-    SimpleCursorAdapter groupsAdapter;
+    CustomListSimpleCursorAdapter foldersAdapter;
+    CustomListSimpleCursorAdapter groupsAdapter;
     private String description;
     private int foldersCount;
     CustomAdapterLibrary lAdapter;
     private static final int FOLDERS_LOADER = 0;
     private static final int GROUPS_LOADER = 1;
     SearchView searchView;
+    MainMenuActivityFragmentDetails details;
+
 
 
     Integer[] imageId = {R.drawable.alldocuments, R.drawable.clock, R.drawable.starim, R.drawable.person, R.drawable.empty_trash};
@@ -63,7 +70,22 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        setHasOptionsMenu(true);
+        ActionBar actionBar = getActivity().getActionBar();
+        if (actionBar != null) {
+            
+            setHasOptionsMenu(true);
+                    
+            SpannableString s = new SpannableString(getResources().getString(R.string.app_name));
+            TypefaceSpan tf = new TypefaceSpan(getActivity(), "Roboto-Bold.ttf");
+
+            s.setSpan(tf, 0, s.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            // Update the action bar title with the TypefaceSpan instance
+
+            actionBar.setTitle(s);
+        }
+        ;
 
         // Use a custom adapter so we can have something more than the just the text view filled in.
         lAdapter = new CustomAdapterLibrary(getActivity(), R.id.title, Arrays.asList(Globalconstant.MYLIBRARY));
@@ -73,9 +95,11 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 
         String[] groupsDataColumns = {"_id"}; //column DatabaseOpenHelper.GROUP_NAME
 
-        foldersAdapter = new SimpleCursorAdapter(getActivity().getApplicationContext(), R.layout.list_row_with_image, null, foldersDataColumns, folderViewIDs, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        //foldersAdapter = new SimpleCursorAdapter(getActivity().getApplicationContext(), R.layout.list_row_with_image, null, foldersDataColumns, folderViewIDs, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
-        groupsAdapter = new SimpleCursorAdapter(getActivity().getApplicationContext(), R.layout.list_row_with_image_groups, null, groupsDataColumns, folderViewIDs, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        foldersAdapter = new CustomListSimpleCursorAdapter(getActivity().getApplicationContext(), R.layout.list_row_with_image,null,foldersDataColumns,folderViewIDs,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        
+        groupsAdapter = new CustomListSimpleCursorAdapter(getActivity().getApplicationContext(), R.layout.list_row_with_image_groups, null, groupsDataColumns, folderViewIDs, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
         // Add section to list and merge two adatpers
         MergeAdapter mergeAdapter = new MergeAdapter();
@@ -120,7 +144,7 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
        searchView = (SearchView) menu.findItem(R.id.grid_default_search).getActionView();
-        searchView.setOnQueryTextListener(queryListener);
+       searchView.setOnQueryTextListener(queryListener);
     }
 
 
@@ -187,13 +211,10 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 
         searchView.setQuery("", false);
 
+        v.setSelected(true);
 
-        if (Globalconstant.LOG) {
-            Log.d(Globalconstant.TAG, "mDualPane  FOLDERS:" + mDualPane);
-            Log.d(Globalconstant.TAG, "mDualPane  position:" + position);
-            Log.d(Globalconstant.TAG, "Folder Count: " + foldersCount);
-        }
-
+        // change the background color of the selected element
+        l.setSelector(R.drawable.ripple);
 
         // position <= 5 - fixed folders
         if (position > 0 && position < 5) {
@@ -225,27 +246,27 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 
 
         if (mDualPane) {
-
-            if (Globalconstant.LOG)
-                Log.d(Globalconstant.TAG, "mDualPane: " + mDualPane);
-
             // We can display everything in-place with fragments, so update
             // the list to highlight the selected item and show the data.
             getListView().setItemChecked(index, true);
 
             // Check what fragment is currently shown, replace if needed.
-            MainMenuActivityFragmentDetails details = (MainMenuActivityFragmentDetails)
+             details = (MainMenuActivityFragmentDetails)
                     getFragmentManager().findFragmentById(R.id.details);
 
+
             if (details == null || details.getShownIndex() != index) {
+
+
                 // Make new fragment to show this selection.
                 details = MainMenuActivityFragmentDetails.newInstance(index, description, foldersCount);
 
                 // Execute a transaction, replacing any existing fragment
                 // with this one inside the frame.
                 android.support.v4.app.FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.setCustomAnimations(R.anim.activity_back_in, R.anim.activity_back_out, R.anim.activity_in, R.anim.activity_out);
                 ft.replace(R.id.details, details);
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                ft.addToBackStack(null);
                 ft.commit();
             }
 
@@ -260,9 +281,13 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
             intent.putExtra("foldersCount", foldersCount);
             intent.putExtra("searchActivity", "false");   //parametro enviado para definir se a searchView vem do DetailsActivity
             startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+
         }
     }
 
+
+    
 
     @Override
     public Loader<Cursor> onCreateLoader(int loaderID, Bundle args) {
@@ -335,10 +360,15 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
 
     public void onResume() {
         super.onResume();
+
         // Restart loader so that it refreshes displayed items according to database
         getLoaderManager().restartLoader(FOLDERS_LOADER, null, this);
         getLoaderManager().restartLoader(GROUPS_LOADER, null, this);
+        
+        
     }
+
+
 
 
     /**
@@ -347,6 +377,7 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
     private class CustomAdapterLibrary extends ArrayAdapter<String> {
 
         private Context mContext;
+        private Typeface roboto;
 
         /**
          * Constructor
@@ -355,7 +386,13 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
         public CustomAdapterLibrary(Context context, int textViewResourceId, List<String> items) {
             super(context, textViewResourceId, items);
             mContext = context;
+
+            roboto = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Regular.ttf");
+
         }
+
+       
+
 
         /**
          * getView
@@ -366,14 +403,18 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
         public View getView(int position, View convertView, ViewGroup parent) {
 
             View v = convertView;
+
             if (v == null) {
                 LayoutInflater vi = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 v = vi.inflate(R.layout.list_row_with_image, null, true);
             }
 
+            
             View itemView = v;
-
+            itemView.setSelected(true);
             TextView txtTitle = (TextView) itemView.findViewById(R.id.title);
+            txtTitle.setTypeface(roboto);
+            
             ImageView imageView = (ImageView) itemView.findViewById(R.id.list_image);
             txtTitle.setText(Globalconstant.MYLIBRARY[position]);
 
@@ -382,7 +423,32 @@ public class MainMenuFragmentList extends ListFragment implements LoaderCallback
             return itemView;
         }
 
+
+
     }
+
+    private class CustomListSimpleCursorAdapter extends SimpleCursorAdapter
+    {
+
+        public CustomListSimpleCursorAdapter(final Context context, final int layout, final Cursor c, final String[] from, final int[] to, final int flags) {
+            super(context, layout, c, from, to, flags);
+
+        }
+
+
+
+        @Override
+        public void bindView(final View view, final Context context, final Cursor cursor) {
+            super.bindView(view, context, cursor);
+
+            final TextView tvTitle = (TextView) view.findViewById(R.id.title);
+
+            RobotoRegularFontHelper.applyFont(context, tvTitle);
+
+        }
+    }
+    
+    
 }
 
 

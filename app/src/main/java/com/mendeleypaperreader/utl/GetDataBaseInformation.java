@@ -30,9 +30,15 @@ public class GetDataBaseInformation {
         Uri uri = MyContentProvider.CONTENT_URI_PROFILE;
 
         Cursor cursorProfiel = mContext.getContentResolver().query(uri, projection, selection, null, null);
-        cursorProfiel.moveToPosition(0);
+        //cursorProfiel.moveToPosition(0);
 
-        return cursorProfiel.getString(cursorProfiel.getColumnIndex(DatabaseOpenHelper._ID));
+        if( cursorProfiel != null && cursorProfiel.moveToFirst() ) {
+            return cursorProfiel.getString(cursorProfiel.getColumnIndex(DatabaseOpenHelper._ID));
+        }else{
+            return "";
+            
+        }
+        
 
     }
 

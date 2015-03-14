@@ -7,6 +7,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ActionBar;
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -28,6 +29,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils.TruncateAt;
 import android.util.Log;
 import android.util.TypedValue;
@@ -51,6 +54,9 @@ import com.mendeleypaperreader.utl.ConnectionDetector;
 import com.mendeleypaperreader.utl.DownloaderThread;
 import com.mendeleypaperreader.utl.GetDataBaseInformation;
 import com.mendeleypaperreader.utl.Globalconstant;
+import com.mendeleypaperreader.utl.RobotoBoldFontHelper;
+import com.mendeleypaperreader.utl.RobotoRegularFontHelper;
+import com.mendeleypaperreader.utl.TypefaceSpan;
 
 /**
  * @author PedroLourenco (pdrolourenco@gmail.com)
@@ -89,7 +95,21 @@ public class DocumentsDetailsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_documents_details);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+            SpannableString s = new SpannableString(getResources().getString(R.string.app_name));
+            TypefaceSpan tf = new TypefaceSpan(this, "Roboto-Bold.ttf");
+
+            s.setSpan(tf, 0, s.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            // Update the action bar title with the TypefaceSpan instance
+
+            actionBar.setTitle(s);
+        }
 
         final ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
 
@@ -107,6 +127,16 @@ public class DocumentsDetailsActivity extends Activity {
         getDataBaseInformation = new GetDataBaseInformation(getApplicationContext());
 
 
+        RobotoRegularFontHelper.applyFont(DocumentsDetailsActivity.this, doc_abstract);
+        RobotoRegularFontHelper.applyFont(DocumentsDetailsActivity.this, doc_url);
+        RobotoRegularFontHelper.applyFont(DocumentsDetailsActivity.this, doc_pmid);
+        RobotoRegularFontHelper.applyFont(DocumentsDetailsActivity.this, doc_issn);
+        RobotoRegularFontHelper.applyFont(DocumentsDetailsActivity.this, doc_catalog);
+        RobotoRegularFontHelper.applyFont(DocumentsDetailsActivity.this, readerCounterValue);
+        RobotoRegularFontHelper.applyFont(DocumentsDetailsActivity.this, doc_tags);
+        RobotoRegularFontHelper.applyFont(DocumentsDetailsActivity.this, docNotes);
+        
+        
         docId = getDocId();
 
         //Get to populate activity
@@ -117,9 +147,10 @@ public class DocumentsDetailsActivity extends Activity {
         OnClickListener click_on_abstract = new OnClickListener() {
 
             public void onClick(View v) {
-                Intent abstract_intent = new Intent(getApplicationContext(), AbstractDescriptionActivity.class);
+                Intent abstract_intent = new Intent(DocumentsDetailsActivity.this, AbstractDescriptionActivity.class);
                 abstract_intent.putExtra("abstract", mAbstract);
                 startActivity(abstract_intent);
+                overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
             }
         };
 
@@ -137,6 +168,7 @@ public class DocumentsDetailsActivity extends Activity {
                 Intent notesIntent = new Intent(getApplicationContext(), AbstractDescriptionActivity.class);
                 notesIntent.putExtra("abstract", notes);
                 startActivity(notesIntent);
+                overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
             }
         };
 
@@ -156,6 +188,8 @@ public class DocumentsDetailsActivity extends Activity {
                 tag_intent.putExtra("DOC_TITLE", doc_title);
                 tag_intent.putExtra("DOC_ID", docId);
                 startActivity(tag_intent);
+                overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+                
             }
         };
 
@@ -173,12 +207,14 @@ public class DocumentsDetailsActivity extends Activity {
                 readersIntent.putExtra("DOC_ID", docId);
                 readersIntent.putExtra("READER_VALUE", readerValue);
                 startActivity(readersIntent);
+                overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
             }
         };
 
         if (!readerValue.equals("0"))
             readerCounterValue.setOnClickListener(click_on_readers);
 
+        
 
         //onclick on url link
         OnClickListener click_on_url = new OnClickListener() {
@@ -317,6 +353,19 @@ public class DocumentsDetailsActivity extends Activity {
     }
 
 
+
+
+
+    @Override
+    public void onBackPressed() {
+        // finish() is called in super: we only override this method to be able to override the transition
+        super.onBackPressed();
+
+        overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
+    }
+
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
@@ -333,6 +382,11 @@ public class DocumentsDetailsActivity extends Activity {
             case R.id.menu_refresh:
                 isToSync = true;
                 refreshToken();
+                return true;
+            // up button
+            case android.R.id.home:
+                finish();
+                overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
                 return true;
 
 
@@ -415,6 +469,7 @@ public class DocumentsDetailsActivity extends Activity {
         relativeLayout.setBackgroundColor(Color.parseColor("#e5e5e5"));
 
         TextView doc_type = (TextView) findViewById(R.id.docype);
+        RobotoRegularFontHelper.applyFont(DocumentsDetailsActivity.this, doc_type);
         String doc_types = cursor.getString(cursor.getColumnIndex("_id"));
 
         if (doc_types.length() > 0) {
@@ -439,7 +494,7 @@ public class DocumentsDetailsActivity extends Activity {
         doc_title = cursor.getString(cursor.getColumnIndex(DatabaseOpenHelper.TITLE));
         doc_tilte.setText(doc_title);
         doc_tilte.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
-        doc_tilte.setTypeface(null, Typeface.BOLD);
+        RobotoBoldFontHelper.applyFont(DocumentsDetailsActivity.this, doc_tilte);
         doc_tilte.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
 
         RelativeLayout.LayoutParams layout_doc_tilte = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -454,6 +509,7 @@ public class DocumentsDetailsActivity extends Activity {
         doc_authors_text = cursor.getString(cursor.getColumnIndex(DatabaseOpenHelper.AUTHORS));
         doc_authors.setText(doc_authors_text);
         doc_authors.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
+        RobotoRegularFontHelper.applyFont(DocumentsDetailsActivity.this, doc_authors);
         doc_authors.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
         doc_authors.setTextColor(Color.parseColor("#000080"));
         RelativeLayout.LayoutParams layout_doc_authors = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -467,8 +523,8 @@ public class DocumentsDetailsActivity extends Activity {
         doc_source.setId(5);
         doc_source_text = cursor.getString(cursor.getColumnIndex(DatabaseOpenHelper.SOURCE));
         doc_source.setText(doc_source_text);
-        doc_source.setTypeface(null, Typeface.BOLD);
         doc_source.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
+        RobotoBoldFontHelper.applyFont(DocumentsDetailsActivity.this, doc_source);
         doc_source.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
         RelativeLayout.LayoutParams layout_doc_source = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         layout_doc_source.addRule(RelativeLayout.BELOW, doc_authors.getId());
@@ -479,7 +535,7 @@ public class DocumentsDetailsActivity extends Activity {
         //Document Year
         TextView doc_year = new TextView(this);
         doc_year.setId(6);
-
+        RobotoRegularFontHelper.applyFont(DocumentsDetailsActivity.this, doc_year);
         String aux_year = cursor.getString(cursor.getColumnIndex(DatabaseOpenHelper.YEAR));
         String aux_volume = cursor.getString(cursor.getColumnIndex(DatabaseOpenHelper.VOLUME));
         String aux_pages = cursor.getString(cursor.getColumnIndex(DatabaseOpenHelper.PAGES));
@@ -571,7 +627,7 @@ public class DocumentsDetailsActivity extends Activity {
         TextView doc_tag_title = new TextView(this);
         doc_tag_title.setId(11);
         doc_tag_title.setText(getResources().getString(R.string.tags));
-        doc_tag_title.setTypeface(null, Typeface.BOLD);
+        RobotoBoldFontHelper.applyFont(DocumentsDetailsActivity.this, doc_tag_title);
         doc_tag_title.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
         doc_tag_title.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
 
@@ -604,7 +660,7 @@ public class DocumentsDetailsActivity extends Activity {
         TextView doc_note_title = new TextView(this);
         doc_note_title.setId(13);
         doc_note_title.setText(getResources().getString(R.string.notes));
-        doc_note_title.setTypeface(null, Typeface.BOLD);
+        RobotoBoldFontHelper.applyFont(DocumentsDetailsActivity.this, doc_note_title);
         doc_note_title.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
         doc_note_title.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
         RelativeLayout.LayoutParams layout_doc_note_title = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -646,7 +702,7 @@ public class DocumentsDetailsActivity extends Activity {
 
             //Document Catalog IDS
             doc_catalog_title.setId(15);
-            doc_catalog_title.setTypeface(null, Typeface.BOLD);
+            RobotoBoldFontHelper.applyFont(DocumentsDetailsActivity.this, doc_catalog_title);
             doc_catalog_title.setText(getResources().getString(R.string.catalog_ids));
             doc_catalog_title.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
             doc_catalog_title.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
@@ -760,7 +816,7 @@ public class DocumentsDetailsActivity extends Activity {
         t_doc_url = cursor.getString(cursor.getColumnIndex(DatabaseOpenHelper.WEBSITE));
 
         TextView doc_url_title = new TextView(this);
-
+        RobotoBoldFontHelper.applyFont(DocumentsDetailsActivity.this, doc_url_title);
         RelativeLayout.LayoutParams layout_doc_url_title;
         RelativeLayout.LayoutParams layout_doc_url;
         RelativeLayout.LayoutParams layout_reader_count;
@@ -775,7 +831,6 @@ public class DocumentsDetailsActivity extends Activity {
 
             //Document URL Title
             doc_url_title.setId(22);
-            doc_url_title.setTypeface(null, Typeface.BOLD);
             doc_url_title.setText(getResources().getString(R.string.urls));
             doc_url_title.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
             doc_url_title.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
@@ -820,6 +875,7 @@ public class DocumentsDetailsActivity extends Activity {
         TextView readerCounter = new TextView(this);
 
         readerCounter.setId(24);
+        RobotoRegularFontHelper.applyFont(DocumentsDetailsActivity.this, readerCounter);
         readerCounter.setTextSize(TypedValue.COMPLEX_UNIT_SP, getResources().getDimensionPixelSize(R.dimen.doc_details));
         readerCounter.setPadding(getResources().getDimensionPixelOffset(R.dimen.doc_type_paddingLeft), 0, 0, 0);
         layout_reader_count = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);

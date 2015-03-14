@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/values-sw600dp-xhdpi/bool.xml -->
+    <eat-comment/>
+    <bool name="portrait_only">false</bool>
+    <!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/values-sw600dp-xhdpi/dimens.xml -->
+    <eat-comment/>
+    <dimen name="activity_horizontal_margin">64dp</dimen>
+    <dimen name="authors_size">15sp</dimen>
+    <dimen name="button_auth_margin_bottom">10dp</dimen>
+    <dimen name="button_height">25dp</dimen>
+    <dimen name="button_margin">200dp</dimen>
+    <dimen name="button_new_account_margin_bottom">25dp</dimen>
+    <dimen name="button_text_size">15sp</dimen>
+    <dimen name="doc_details">10sp</dimen>
+    <dimen name="doc_title_size">17sp</dimen>
+    <dimen name="folder_text_size">15sp</dimen>
+    <dimen name="image_size">30dip</dimen>
+    <dimen name="marginTop">13dp</dimen>
+    <dimen name="pading">8dp</dimen>
+    <dimen name="padingRight">27dp</dimen>
+    <dimen name="source_size">14sp</dimen>
+    <dimen name="title_size">50sp</dimen>
+</resources>

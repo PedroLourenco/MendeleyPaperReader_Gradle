@@ -131,10 +131,16 @@ public class MyContentProvider extends ContentProvider {
         int numInserted = 0;
         switch (sURIMatcher.match(uri)) {
             case ALLDOCS:
+
+
+                
                 db.beginTransaction();
                 try {
 
                     for (ContentValues values : allValues) {
+
+
+                        
                         long row = db.insertOrThrow(DatabaseOpenHelper.TABLE_DOCUMENT_DETAILS, null, values);
 
                         if (row <= 0) {
@@ -154,10 +160,12 @@ public class MyContentProvider extends ContentProvider {
 
             case ALL_DOC_AUTHORS:
 
+
                 db.beginTransaction();
                 try {
 
                     for (ContentValues values : allValues) {
+
                         long row = db.insertOrThrow(DatabaseOpenHelper.TABLE_AUTHORS, null, values);
 
                         if (row <= 0) {
@@ -170,12 +178,14 @@ public class MyContentProvider extends ContentProvider {
 
                 } finally {
                     db.endTransaction();
+                    
                 }
                 
 
                 break;
 
             case ALL_CATALOG_DOCS:
+
                 
                 db.beginTransaction();
                 try {
@@ -197,6 +207,8 @@ public class MyContentProvider extends ContentProvider {
                 
                 break;
             case ALL_FOLDERS_DOCS:
+
+
 
                 db.beginTransaction();
                 try {
@@ -220,6 +232,8 @@ public class MyContentProvider extends ContentProvider {
 
             case ALL_FOLDERS:
 
+
+
                 db.beginTransaction();
                 try {
 
@@ -241,6 +255,8 @@ public class MyContentProvider extends ContentProvider {
                 break;
 
             case ALL_FILES:
+
+
 
                 db.beginTransaction();
                 try {
@@ -264,6 +280,8 @@ public class MyContentProvider extends ContentProvider {
                 break;
             case ALL_GROUPS:
 
+
+
                 db.beginTransaction();
                 try {
 
@@ -285,6 +303,8 @@ public class MyContentProvider extends ContentProvider {
                 break;
 
             case ALL_DOC_NOTES:
+
+
 
                 db.beginTransaction();
                 try {
@@ -308,6 +328,7 @@ public class MyContentProvider extends ContentProvider {
 
             case ALL_DOC_TAGS:
 
+
                 db.beginTransaction();
                 try {
 
@@ -329,6 +350,8 @@ public class MyContentProvider extends ContentProvider {
                 break;
 
             case ALL_ACADEMIC_DOCS:
+
+
 
                 db.beginTransaction();
                 try {

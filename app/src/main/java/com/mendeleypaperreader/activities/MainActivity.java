@@ -1,10 +1,5 @@
 package com.mendeleypaperreader.activities;
 
-import java.util.Calendar;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -15,16 +10,20 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mendeleypaperreader.R;
@@ -32,6 +31,12 @@ import com.mendeleypaperreader.sessionManager.GetAccessToken;
 import com.mendeleypaperreader.sessionManager.SessionManager;
 import com.mendeleypaperreader.utl.ConnectionDetector;
 import com.mendeleypaperreader.utl.Globalconstant;
+import com.mendeleypaperreader.utl.TypefaceSpan;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Calendar;
 
 /**
  * @author PedroLourenco (pdrolourenco@gmail.com)
@@ -51,10 +56,12 @@ public class MainActivity extends Activity {
     SessionManager session;
 
     WebView web;
-    Button auth;
+    Button btAuth;
     SharedPreferences pref;
 
-    // TextView Access;
+    Typeface robotoBold;
+    Typeface roboto;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +71,6 @@ public class MainActivity extends Activity {
         if (getResources().getBoolean(R.bool.portrait_only)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         } else {
-
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
 
@@ -88,6 +94,12 @@ public class MainActivity extends Activity {
         }
 
 
+
+         robotoBold = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Bold.ttf");
+
+        TextView tvTitle = (TextView) findViewById(R.id.title);
+        tvTitle.setTypeface(robotoBold);
+
         // check internet connection
         final ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
 
@@ -101,8 +113,9 @@ public class MainActivity extends Activity {
         }
 
         // Click on "Sign in" Button and make login
-        auth = (Button) findViewById(R.id.auth);
-        auth.setOnClickListener(new View.OnClickListener() {
+        btAuth = (Button) findViewById(R.id.auth);
+        btAuth.setTypeface(roboto);
+        btAuth.setOnClickListener(new View.OnClickListener() {
             Dialog auth_dialog;
 
             @Override
@@ -134,8 +147,6 @@ public class MainActivity extends Activity {
                                 Uri uri = Uri.parse(url);
                                 authCode = uri.getQueryParameter("code");
 
-                                if (Globalconstant.LOG)
-                                    Log.i(Globalconstant.TAG, "CODE : " + authCode);
                                 authComplete = true;
                                 resultIntent.putExtra("code", authCode);
                                 MainActivity.this.setResult(Activity.RESULT_OK, resultIntent);
@@ -150,8 +161,7 @@ public class MainActivity extends Activity {
                                 //Toast.makeText(getApplicationContext(), "Authorization Code is: " + authCode, Toast.LENGTH_SHORT).show();
                             } else if (url.contains("error=access_denied")) {
 
-                                if (Globalconstant.LOG)
-                                    Log.i(Globalconstant.TAG, "ACCESS_DENIED_HERE");
+
                                 resultIntent.putExtra("code", authCode);
                                 authComplete = true;
                                 setResult(Activity.RESULT_CANCELED, resultIntent);
@@ -162,17 +172,15 @@ public class MainActivity extends Activity {
                     auth_dialog.show();
                     auth_dialog.setCancelable(true);
                 } else {
-
-                    if (Globalconstant.LOG)
-                        Log.w(Globalconstant.TAG, "NO INTERNET");
                     showDialog();
                 }
             }
         });
 
         // New Account Button
-        Button newAccount = (Button) findViewById(R.id.NewAccount);
-        newAccount.setOnClickListener(new OnClickListener() {
+        Button btNewAccount = (Button) findViewById(R.id.NewAccount);
+        btNewAccount.setTypeface(roboto);
+        btNewAccount.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
 
                 if (isInternetPresent) {
@@ -200,8 +208,13 @@ public class MainActivity extends Activity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
+            SpannableString ss1=  new SpannableString(getResources().getString(R.string.contacting_mendeley));
+            TypefaceSpan tf = new TypefaceSpan(MainActivity.this, "Roboto-Regular.ttf");
+            ss1.setSpan(tf, 0, ss1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
             pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setMessage(getResources().getString(R.string.contacting_mendeley));
+            pDialog.setMessage(ss1);
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
 
@@ -272,8 +285,21 @@ public class MainActivity extends Activity {
     public void showDialog() {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle(getResources().getString(R.string.no_network_connection));
-        builder.setMessage(getResources().getString(R.string.check_internet_connection)).setPositiveButton(getResources().getString(R.string.wifi_settings),
+
+        SpannableString ssTitle = new SpannableString(getResources().getString(R.string.no_network_connection));
+        SpannableString ssWifiMessage = new SpannableString(getResources().getString(R.string.check_internet_connection));
+        SpannableString ss3gMessage = new SpannableString(getResources().getString(R.string.settings_3G));
+        SpannableString ssCancel = new SpannableString(getResources().getString(R.string.cancel));
+        TypefaceSpan tf = new TypefaceSpan(MainActivity.this, "Roboto-Regular.ttf");
+        ssTitle.setSpan(tf, 0, ssTitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ssWifiMessage.setSpan(tf, 0, ssWifiMessage.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss3gMessage.setSpan(tf, 0, ss3gMessage.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ssCancel.setSpan(tf, 0, ssCancel.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+
+
+        builder.setTitle(ssTitle);
+        builder.setMessage(ssWifiMessage).setPositiveButton(getResources().getString(R.string.wifi_settings),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,
                                         int which) {
@@ -284,7 +310,7 @@ public class MainActivity extends Activity {
                     }
                 });
 
-        builder.setNeutralButton(getResources().getString(R.string.settings_3G),
+        builder.setNeutralButton(ss3gMessage,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -294,13 +320,16 @@ public class MainActivity extends Activity {
                     }
                 });
         // on pressing cancel button
-        builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(ssCancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
+
+
         // show dialog
         builder.show();
+
     }
 }
