@@ -3,9 +3,22 @@ package com.mendeleypaperreader.jsonParser;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,13 +32,23 @@ import com.mendeleypaperreader.utl.GetDataBaseInformation;
 import com.mendeleypaperreader.utl.Globalconstant;
 import com.mendeleypaperreader.utl.JSONParser;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author PedroLourenco (pdrolourenco@gmail.com)
@@ -37,13 +60,15 @@ public class LoadData {
     private Context context;
     private static String access_token;
     private GetDataBaseInformation getDataBaseInformation;
+    RequestQueue queue;
+    private Request.Priority mpriority = Request.Priority.HIGH;
 
     public LoadData(Context context) {
         this.context = context;
 
         SessionManager session = new SessionManager(this.context);
         access_token = session.LoadPreference("access_token");
-
+        queue = Volley.newRequestQueue(this.context);
         getDataBaseInformation = new GetDataBaseInformation(this.context);
 
     }
@@ -66,7 +91,6 @@ public class LoadData {
 
         }
     }
-    
 
 
     public void getGroupDocs() {
@@ -78,10 +102,9 @@ public class LoadData {
             String url = Globalconstant.get_docs_in_groups.replace("#groupId#", groups.getString(groups.getColumnIndex(DatabaseOpenHelper._ID)));
 
             getUserLibrary(url + access_token);
-
         }
 
-
+        groups.close();
     }
 
 
@@ -100,83 +123,101 @@ public class LoadData {
     }
 
 
-    public void getDocNotes() {
+    
+
+
+    public void getNotes() {
+
+        ContentValues[] valuesArray;
+
+        List<ContentValues> valueList = new ArrayList<ContentValues>();
+        List<InputStream> link = new ArrayList<InputStream>();
+
 
         Cursor cursorDocId = getDocId();
-        ObjectMapper mapper = new ObjectMapper();
+
         while (cursorDocId.moveToNext()) {
 
-            String url = Globalconstant.get_docs_notes.replace("#docId#", cursorDocId.getString(cursorDocId.getColumnIndex(DatabaseOpenHelper._ID)));
-
-            getNotes(url + access_token);
-        }
-
-    }
+            String url = Globalconstant.get_docs_notes2 + cursorDocId.getString(cursorDocId.getColumnIndex(DatabaseOpenHelper._ID)) + "&limit=200&access_token=" + access_token;
 
 
-    private void getNotes(String url) {
-
-        ContentValues note_values = new ContentValues();
-
-        JSONParser jParser = new JSONParser();
-        ObjectMapper mapper = new ObjectMapper();
-        JsonFactory factory = mapper.getFactory();
-        List<InputStream> link = new ArrayList<InputStream>();
-        link = jParser.getJACKSONFromUrl(url, true);
-
-        try {
-            for (InputStream oneItem : link) {
-                JsonParser jp = factory.createParser(oneItem);
-                JsonNode rootNode = mapper.readTree(jp);
-
-                Iterator<JsonNode> ite = rootNode.iterator();
-
-                while (ite.hasNext()) {
-                    JsonNode temp = ite.next();
+            JSONParser jParser = new JSONParser();
+            ObjectMapper mapper = new ObjectMapper();
+            JsonFactory factory = mapper.getFactory();
 
 
-                    if (temp.has(DatabaseOpenHelper.NOTE_ID)) {
+            link = jParser.getJACKSONFromUrl(url, true);
 
-                        note_values.put(DatabaseOpenHelper.NOTE_ID, temp.get(DatabaseOpenHelper.NOTE_ID).asText());
-                    }
+            try {
+                for (InputStream oneItem : link) {
+                    JsonParser jp = factory.createParser(oneItem);
 
-                    if (temp.has(DatabaseOpenHelper.TYPE)) {
+                    JsonNode rootNode = mapper.readTree(jp);
 
-                        String noteType = temp.get(DatabaseOpenHelper.TYPE).asText();
+                    Iterator<JsonNode> ite = rootNode.iterator();
 
-                        if (!noteType.equals("note")) {
-                            break;
+                    while (ite.hasNext()) {
+                        JsonNode temp = ite.next();
+
+                        ContentValues note_values = new ContentValues();
+
+                        if (temp.has(DatabaseOpenHelper.TYPE)) {
+
+                            String noteType = temp.get(DatabaseOpenHelper.TYPE).asText();
+
+                            if (!noteType.equals("note")) {
+                                break;
+                            }
+
+                            note_values.put(DatabaseOpenHelper.TYPE, noteType);
                         }
 
-                        note_values.put(DatabaseOpenHelper.TYPE, noteType);
-                    }
-                    if (temp.has(DatabaseOpenHelper.TEXT)) {
 
-                        note_values.put(DatabaseOpenHelper.TEXT, temp.get(DatabaseOpenHelper.TEXT).asText().replace("<br/>", " "));
-                    }
-                    if (temp.has(DatabaseOpenHelper.DOCUMENT_ID)) {
+                        if (temp.has(DatabaseOpenHelper.NOTE_ID)) {
 
-                        note_values.put(DatabaseOpenHelper.DOCUMENT_ID, temp.get(DatabaseOpenHelper.DOCUMENT_ID).asText());
-                    }
-                    Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_DOC_NOTES, note_values);
+                            note_values.put(DatabaseOpenHelper.NOTE_ID, temp.get(DatabaseOpenHelper.NOTE_ID).asText());
+                        }
 
+
+                        if (temp.has(DatabaseOpenHelper.TEXT)) {
+
+                            note_values.put(DatabaseOpenHelper.TEXT, temp.get(DatabaseOpenHelper.TEXT).asText().replace("<br/>", " "));
+                        }
+                        if (temp.has(DatabaseOpenHelper.DOCUMENT_ID)) {
+
+                            note_values.put(DatabaseOpenHelper.DOCUMENT_ID, temp.get(DatabaseOpenHelper.DOCUMENT_ID).asText());
+                        }
+
+                        valueList.add(note_values);
+                    }
+
+                    jp.close();
                 }
 
-                jp.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        //Insert data on table notes
+        valuesArray = new ContentValues[valueList.size()];
+        valueList.toArray(valuesArray);
 
+        context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_DOC_NOTES, valuesArray);
+
+
+        cursorDocId.close();
 
     }
 
 
-    public void getGroups(String url) {
+    public void getUserGroups(String url) {
 
-        ContentValues values = new ContentValues();
+
+        List<ContentValues> valueList = new ArrayList<ContentValues>();
+
+        ContentValues[] valuesArray;
 
         JSONParser jParser = new JSONParser();
         ObjectMapper mapper = new ObjectMapper();
@@ -193,6 +234,8 @@ public class LoadData {
 
                 while (ite.hasNext()) {
                     JsonNode temp = ite.next();
+
+                    ContentValues values = new ContentValues();
 
                     if (temp.has(DatabaseOpenHelper.NAME)) {
                         values.put(DatabaseOpenHelper.GROUPS_NAME, temp.get(DatabaseOpenHelper.NAME).asText());
@@ -201,12 +244,17 @@ public class LoadData {
                     if (temp.has(DatabaseOpenHelper.ID)) {
                         values.put(DatabaseOpenHelper._ID, temp.get(DatabaseOpenHelper.ID).asText());
                     }
-                    Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_GROUPS, values);
-
+                    // Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_GROUPS, values);
+                    valueList.add(values);
                 }
 
                 jp.close();
             }
+
+            //Insert data on table groups
+            valuesArray = new ContentValues[valueList.size()];
+            valueList.toArray(valuesArray);
+            context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_GROUPS, valuesArray);
 
 
         } catch (Exception e) {
@@ -234,7 +282,10 @@ public class LoadData {
 
     public void getFiles(String url) {
 
-        ContentValues values = new ContentValues();
+
+        List<ContentValues> valueList = new ArrayList<ContentValues>();
+
+        ContentValues[] valuesArray;
 
         JSONParser jParser = new JSONParser();
         ObjectMapper mapper = new ObjectMapper();
@@ -251,6 +302,8 @@ public class LoadData {
 
                 while (ite.hasNext()) {
                     JsonNode temp = ite.next();
+
+                    ContentValues values = new ContentValues();
 
                     if (temp.has(DatabaseOpenHelper.ID)) {
                         values.put(DatabaseOpenHelper.FILE_ID, temp.get(DatabaseOpenHelper.ID).asText());
@@ -279,12 +332,16 @@ public class LoadData {
                         values.put(DatabaseOpenHelper.FILE_FILEHASH, "");
                     }
 
-                    Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_FILES, values);
-
+                    valueList.add(values);
                 }
 
                 jp.close();
             }
+
+            //Insert data on table files
+            valuesArray = new ContentValues[valueList.size()];
+            valueList.toArray(valuesArray);
+            context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_FILES, valuesArray);
 
 
         } catch (Exception e) {
@@ -294,9 +351,12 @@ public class LoadData {
     }
 
 
-    public void getFolders(String url) {
 
-        ContentValues values = new ContentValues();
+    public void getUserFolders(String url) {
+
+        List<ContentValues> valueList = new ArrayList<ContentValues>();
+
+        ContentValues[] valuesArray;
 
         JSONParser jParser = new JSONParser();
         ObjectMapper mapper = new ObjectMapper();
@@ -313,6 +373,8 @@ public class LoadData {
 
                 while (ite.hasNext()) {
                     JsonNode temp = ite.next();
+
+                    ContentValues values = new ContentValues();
 
                     if (temp.has(DatabaseOpenHelper.ID)) {
                         values.put(DatabaseOpenHelper.FOLDER_ID, temp.get(DatabaseOpenHelper.ID).asText());
@@ -341,12 +403,17 @@ public class LoadData {
                         values.put(DatabaseOpenHelper.FOLDER_GROUP, "");
                     }
 
-                    Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_FOLDERS, values);
-                    getDocsInFolder(temp.get(DatabaseOpenHelper.ID).asText());
+                    valueList.add(values);
+
                 }
 
                 jp.close();
             }
+
+            //Insert data on table Folders
+            valuesArray = new ContentValues[valueList.size()];
+            valueList.toArray(valuesArray);
+            context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_FOLDERS, valuesArray);
 
 
         } catch (Exception e) {
@@ -357,13 +424,17 @@ public class LoadData {
     }
 
 
+
     public void getUserLibrary(String url) {
 
-        ContentValues values = new ContentValues();
-        ContentValues authors_values = new ContentValues();
-        ContentValues tagsValues = new ContentValues();
         JSONParser jParser = new JSONParser();
         String docTitle, docId;
+
+        List<ContentValues> valueList = new ArrayList<ContentValues>();
+        List<ContentValues> authorsValuesList = new ArrayList<ContentValues>();
+        List<ContentValues> tagValueList = new ArrayList<ContentValues>();
+
+        ContentValues[] mValueArray, authorsValuesArray, tagsValuesArray;
 
         List<InputStream> link = new ArrayList<InputStream>();
 
@@ -378,14 +449,17 @@ public class LoadData {
 
                 JsonParser jp = factory.createParser(oneItem);
                 JsonNode rootNode = mapper.readTree(jp);
-
                 Iterator<JsonNode> ite = rootNode.iterator();
                 while (ite.hasNext()) {
-
                     JsonNode temp = ite.next();
 
 
+                    ContentValues values = new ContentValues();
+
+
                     if (temp.has(DatabaseOpenHelper.ID)) {
+
+
                         docId = temp.get(DatabaseOpenHelper.ID).asText();
                         values.put(DatabaseOpenHelper._ID, docId);
                     }
@@ -422,12 +496,16 @@ public class LoadData {
                         String tags = "";
                         while (tagIterator.hasNext()) {
 
+                            ContentValues tagsValues = new ContentValues();
+
                             String tagName = tagIterator.next().asText();
                             tags += tagName + ",";
                             tagsValues.put(DatabaseOpenHelper._ID, temp.get(DatabaseOpenHelper.ID).asText());
                             tagsValues.put(DatabaseOpenHelper.TAG_NAME, tagName);
-                            Uri uriTag = context.getContentResolver().insert(MyContentProvider.CONTENT_URI_DOC_TAGS, tagsValues);
+                            //Uri uriTag = context.getContentResolver().insert(MyContentProvider.CONTENT_URI_DOC_TAGS, tagsValues);
                             values.put(DatabaseOpenHelper.TAGS, tags.substring(0, tags.length() - 1));
+
+                            tagValueList.add(tagsValues);
                         }
 
                     } else {
@@ -496,6 +574,7 @@ public class LoadData {
                         while (authorsIterator.hasNext()) {
 
                             JsonNode author = authorsIterator.next();
+                            ContentValues authors_values = new ContentValues();
 
                             if (author.has(DatabaseOpenHelper.PROFILE_FIRST_NAME)) {
                                 aux_forenamed = author.get(DatabaseOpenHelper.PROFILE_FIRST_NAME).asText();
@@ -518,12 +597,15 @@ public class LoadData {
                             authors += author_name + ",";
                             values.put(DatabaseOpenHelper.AUTHORS, authors.substring(0, authors.length() - 1));
 
+                            
                             authors_values.put(DatabaseOpenHelper.DOC_DETAILS_ID, temp.get("id").asText());
                             authors_values.put(DatabaseOpenHelper.AUTHOR_NAME, author_name);
 
-                            Uri uri_authors = context.getContentResolver().insert(MyContentProvider.CONTENT_URI_AUTHORS, authors_values);
+                            authorsValuesList.add(authors_values);
 
                         }
+
+
                     } else {
                         values.put(DatabaseOpenHelper.AUTHORS, "");
                     }
@@ -543,7 +625,7 @@ public class LoadData {
 
                         while (identifierIterator.hasNext()) {
 
-                            Map.Entry<String, JsonNode> entry = identifierIterator.next();
+                            Entry<String, JsonNode> entry = identifierIterator.next();
 
                             values.put(entry.getKey(), entry.getValue().asText());
                         }
@@ -557,11 +639,31 @@ public class LoadData {
                         values.put(DatabaseOpenHelper.DOI, "");
                     }
 
-                    Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_DOC_DETAILS, values);
+
+                    valueList.add(values);
 
                 }
+
+
                 jp.close();
             }
+
+
+            //Insert data on table Document_details
+            mValueArray = new ContentValues[valueList.size()];
+            valueList.toArray(mValueArray);
+            this.context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_DOC_DETAILS, mValueArray);
+
+            //Insert data on table Authors
+            authorsValuesArray = new ContentValues[authorsValuesList.size()];
+            authorsValuesList.toArray(authorsValuesArray);
+            context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_AUTHORS, authorsValuesArray);
+
+            //Insert data on table Tags
+            tagsValuesArray = new ContentValues[tagValueList.size()];
+            tagValueList.toArray(tagsValuesArray);
+            context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_DOC_TAGS, tagsValuesArray);
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -570,17 +672,56 @@ public class LoadData {
     }
 
 
-    private void getDocsInFolder(String folderId) {
+    private Cursor getFoldersId() {
 
-        ContentValues values = new ContentValues();
+        if (Globalconstant.LOG)
+            Log.d(Globalconstant.TAG, "getGROUPS- LOAD DATA");
+
+
+        String[] projection = new String[]{DatabaseOpenHelper.FOLDER_ID, DatabaseOpenHelper.FOLDER_NAME};
+        Uri uri = MyContentProvider.CONTENT_URI_FOLDERS;
+
+
+        return this.context.getContentResolver().query(uri, projection, null, null, null);
+
+
+    }
+    
+
+    
+
+    public void getUserDocsInFolders() {
+
+        Cursor cursorFolderId = getFoldersId();
+
+        while (cursorFolderId.moveToNext()) {
+            
+            getDocsFolder(cursorFolderId.getString(cursorFolderId.getColumnIndex(DatabaseOpenHelper.FOLDER_ID)));
+        }
+
+        cursorFolderId.close();
+
+    }
+
+
+    private void getDocsFolder(String folderId) {
+
 
         String auxurl = Globalconstant.get_docs_in_folders;
         String url = auxurl.replace("id", folderId) + access_token;
+
+
+        List<ContentValues> valueList = new ArrayList<ContentValues>();
+
+        ContentValues[] valuesArray;
+
 
         JSONParser jParser = new JSONParser();
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory factory = mapper.getFactory();
         List<InputStream> link = new ArrayList<InputStream>();
+
+
         link = jParser.getJACKSONFromUrl(url, true);
 
 
@@ -594,20 +735,24 @@ public class LoadData {
                 while (ite.hasNext()) {
                     JsonNode temp = ite.next();
 
+
                     if (temp.has(DatabaseOpenHelper.ID)) {
+                        ContentValues values = new ContentValues();
 
                         values.put(DatabaseOpenHelper.FOLDER_ID, folderId);
                         values.put(DatabaseOpenHelper.DOC_DETAILS_ID, temp.get(DatabaseOpenHelper.ID).asText());
+                        valueList.add(values);
 
-                    } else {
-                        values.put(DatabaseOpenHelper.FOLDER_ID, "");
-                        values.put(DatabaseOpenHelper.DOC_DETAILS_ID, "");
                     }
-                    Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_FOLDERS_DOCS, values);
-
                 }
                 jp.close();
             }
+
+            //Insert data on table Folders_doc
+            valuesArray = new ContentValues[valueList.size()];
+            valueList.toArray(valuesArray);
+            context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_FOLDERS_DOCS, valuesArray);
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -636,11 +781,14 @@ public class LoadData {
     public void getCatalogId() {
 
         ContentValues values = new ContentValues();
-        ContentValues values1 = new ContentValues();
-        ContentValues academic_docs_values = new ContentValues();
+
+        List<ContentValues> valueList = new ArrayList<ContentValues>();
+
+        ContentValues[] valuesArray;
+
         Cursor cursorDocs;
         String urlfilter = null;
-        boolean toProcess = true;
+        boolean toProcess = false;
         Uri uri_ = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
 
         cursorDocs = getDocInfo();
@@ -649,50 +797,42 @@ public class LoadData {
 
             String docId = cursorDocs.getString(cursorDocs.getColumnIndex(DatabaseOpenHelper._ID));
             String auxPmid = cursorDocs.getString(cursorDocs.getColumnIndex(DatabaseOpenHelper.PMID));
-            String pmid = URLEncoder.encode(auxPmid);
             String auxDoi = cursorDocs.getString(cursorDocs.getColumnIndex(DatabaseOpenHelper.DOI));
-            String doi = URLEncoder.encode(auxDoi);
             String auxIssn = cursorDocs.getString(cursorDocs.getColumnIndex(DatabaseOpenHelper.ISSN));
-            String issn = URLEncoder.encode(auxIssn);
             String auxIsbn = cursorDocs.getString(cursorDocs.getColumnIndex(DatabaseOpenHelper.ISBN));
-            String isbn = URLEncoder.encode(auxIsbn);
             String auxScopus = cursorDocs.getString(cursorDocs.getColumnIndex(DatabaseOpenHelper.SCOPUS));
-            String scopus = URLEncoder.encode(auxScopus);
             String auxArxiv = cursorDocs.getString(cursorDocs.getColumnIndex(DatabaseOpenHelper.ARXIV));
-            String arxiv = URLEncoder.encode(auxArxiv);
-
             String where = DatabaseOpenHelper._ID + " = '" + docId + "'";
-            String where2 = DatabaseOpenHelper._ID + " = '" + docId + "' and " + DatabaseOpenHelper.READER_COUNT + " IS NULL";
-            String where3 = DatabaseOpenHelper._ID + " = '" + docId + "' and " + DatabaseOpenHelper.WEBSITE + " IS NULL";
 
 
-            if (!pmid.isEmpty()) {
-                toProcess = true;
-                urlfilter = "pmid=" + pmid;
-            } else if (!doi.isEmpty()) {
-                toProcess = true;
-                urlfilter = "doi=" + doi;
-            } else if (!issn.isEmpty()) {
-                toProcess = true;
-                urlfilter = "issn=" + issn;
-            } else if (!isbn.isEmpty()) {
-                toProcess = true;
-                urlfilter = "isbn=" + isbn;
-            } else if (!scopus.isEmpty()) {
-                toProcess = true;
-                urlfilter = "scopus=" + scopus;
-            } else if (!arxiv.isEmpty()) {
-                toProcess = true;
-                urlfilter = "arxiv=" + arxiv;
-            } else {
-                toProcess = false;
-                //update table
-                values.put(DatabaseOpenHelper.READER_COUNT, "0");
-                this.context.getContentResolver().update(uri_, values, where, null);
+            try {
+                if (!auxPmid.isEmpty()) {
+                    toProcess = true;
+                    urlfilter = "pmid=" + URLEncoder.encode(auxPmid, "UTF-8");
+                } else if (!auxDoi.isEmpty()) {
+                    toProcess = true;
+                    urlfilter = "doi=" + URLEncoder.encode(auxDoi, "UTF-8");
+                } else if (!auxIssn.isEmpty()) {
+                    toProcess = true;
+                    urlfilter = "issn=" + URLEncoder.encode(auxIssn, "UTF-8");
+                } else if (!auxIsbn.isEmpty()) {
+                    toProcess = true;
+                    urlfilter = "isbn=" + URLEncoder.encode(auxIsbn, "UTF-8");
+                } else if (!auxScopus.isEmpty()) {
+                    toProcess = true;
+                    urlfilter = "scopus=" + URLEncoder.encode(auxScopus, "UTF-8");
+                } else if (!auxArxiv.isEmpty()) {
+                    toProcess = true;
+                    urlfilter = "arxiv=" + URLEncoder.encode(auxArxiv, "UTF-8");
+                }
+
+            } catch (UnsupportedEncodingException uee) {
+                Log.d(Globalconstant.TAG, "encode " + uee);
             }
 
 
             if (toProcess) {
+                toProcess = false;
 
                 String url = Globalconstant.get_catalog_url + urlfilter + "&view=stats&access_token=" + access_token;
 
@@ -735,28 +875,35 @@ public class LoadData {
 
                                 while (identifierIterator.hasNext()) {
 
+                                    ContentValues academic_docs_values = new ContentValues();
+
                                     Map.Entry<String, JsonNode> entry = identifierIterator.next();
 
                                     academic_docs_values.put(DatabaseOpenHelper.DOC_DETAILS_ID, docId);
                                     academic_docs_values.put(DatabaseOpenHelper.STATUS, entry.getKey());
                                     academic_docs_values.put(DatabaseOpenHelper.COUNT, entry.getValue().asText());
-                                    Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_ACADEMIC_DOCS, academic_docs_values);
+
+                                    valueList.add(academic_docs_values);
                                 }
+
+
                             }
                         }
 
                     }
 
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            values.put(DatabaseOpenHelper.READER_COUNT, "0");
-            values1.put(DatabaseOpenHelper.WEBSITE, "");
-            this.context.getContentResolver().update(uri_, values, where2, null);
-            this.context.getContentResolver().update(uri_, values1, where3, null);
-
         }
+        //Insert data on table Academic_status
+        valuesArray = new ContentValues[valueList.size()];
+        valueList.toArray(valuesArray);
+        context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_ACADEMIC_DOCS, valuesArray);
+
+        cursorDocs.close();
     }
 
 
@@ -767,7 +914,7 @@ public class LoadData {
         JSONParser jParser = new JSONParser();
         ObjectMapper mapper = new ObjectMapper();
         List<InputStream> link = new ArrayList<InputStream>();
-        link = jParser.getJACKSONFromUrl(url, true);
+        link = jParser.getJACKSONFromUrl(url, false);
 
         try {
 
@@ -790,4 +937,5 @@ public class LoadData {
             e.printStackTrace();
         }
     }
+
 }

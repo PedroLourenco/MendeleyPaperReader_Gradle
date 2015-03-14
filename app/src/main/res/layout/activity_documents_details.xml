@@ -63,19 +63,19 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="#e5e5e5" >
+    android:background="@color/list_header" >
 
 
     <TextView
         android:id="@+id/docype"
-        style="?android:attr/windowTitleStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/gradient_bg_list"
+        android:background=  "@color/list_header"
         android:paddingBottom="@dimen/doc_type_paddingBottom"
         android:paddingLeft="@dimen/doc_type_paddingLeft"
         android:paddingTop="@dimen/doc_type_paddingTop"
         android:maxLines="1"
+        android:textColor="@color/actionBarTextColor"
         android:ellipsize="end"/>
 
 </RelativeLayout>

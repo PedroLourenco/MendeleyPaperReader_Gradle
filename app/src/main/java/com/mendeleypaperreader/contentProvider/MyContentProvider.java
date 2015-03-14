@@ -124,6 +124,266 @@ public class MyContentProvider extends ContentProvider {
     }
 
 
+
+    @Override
+    public int bulkInsert(Uri uri, ContentValues[] allValues) {
+        SQLiteDatabase db = db_helper.getWritableDatabase();
+        int numInserted = 0;
+        switch (sURIMatcher.match(uri)) {
+            case ALLDOCS:
+
+
+                
+                db.beginTransaction();
+                try {
+
+                    for (ContentValues values : allValues) {
+
+
+                        
+                        long row = db.insertOrThrow(DatabaseOpenHelper.TABLE_DOCUMENT_DETAILS, null, values);
+
+                        if (row <= 0) {
+                            throw new SQLException("Failed to insert row into " + uri);
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    numInserted = allValues.length;
+
+                } finally {
+                    db.endTransaction();
+                }
+
+
+                break;
+
+            case ALL_DOC_AUTHORS:
+
+
+                db.beginTransaction();
+                try {
+
+                    for (ContentValues values : allValues) {
+
+                        long row = db.insertOrThrow(DatabaseOpenHelper.TABLE_AUTHORS, null, values);
+
+                        if (row <= 0) {
+                            throw new SQLException("Failed to insert row into " + uri);
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    numInserted = allValues.length;
+
+                } finally {
+                    db.endTransaction();
+                    
+                }
+                
+
+                break;
+
+            case ALL_CATALOG_DOCS:
+
+                
+                db.beginTransaction();
+                try {
+
+                    for (ContentValues values : allValues) {
+                        long row = db.insertOrThrow(DatabaseOpenHelper.TABLE_CATALOG_DOCS, null, values);
+
+                        if (row <= 0) {
+                            throw new SQLException("Failed to insert row into " + uri);
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    numInserted = allValues.length;
+
+                } finally {
+                    db.endTransaction();
+                }
+                
+                break;
+            case ALL_FOLDERS_DOCS:
+
+
+
+                db.beginTransaction();
+                try {
+
+                    for (ContentValues values : allValues) {
+                        long row = db.insertOrThrow(DatabaseOpenHelper.TABLE_FOLDERS_DOCS, null, values);
+
+                        if (row <= 0) {
+                            throw new SQLException("Failed to insert row into " + uri);
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    numInserted = allValues.length;
+
+                } finally {
+                    db.endTransaction();
+                }
+
+                break;
+
+            case ALL_FOLDERS:
+
+
+
+                db.beginTransaction();
+                try {
+
+                    for (ContentValues values : allValues) {
+                        long row = db.insertOrThrow(DatabaseOpenHelper.TABLE_FOLDERS, null, values);
+
+                        if (row <= 0) {
+                            throw new SQLException("Failed to insert row into " + uri);
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    numInserted = allValues.length;
+
+                } finally {
+                    db.endTransaction();
+                }
+
+                break;
+
+            case ALL_FILES:
+
+
+
+                db.beginTransaction();
+                try {
+
+                    for (ContentValues values : allValues) {
+                        long row = db.insertOrThrow(DatabaseOpenHelper.TABLE_FILES, null, values);
+
+                        if (row <= 0) {
+                            throw new SQLException("Failed to insert row into " + uri);
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    numInserted = allValues.length;
+
+                } finally {
+                    db.endTransaction();
+                }
+                
+
+                break;
+            case ALL_GROUPS:
+
+
+
+                db.beginTransaction();
+                try {
+
+                    for (ContentValues values : allValues) {
+                        long row = db.insertOrThrow(DatabaseOpenHelper.TABLE_GROUPS, null, values);
+
+                        if (row <= 0) {
+                            throw new SQLException("Failed to insert row into " + uri);
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    numInserted = allValues.length;
+
+                } finally {
+                    db.endTransaction();
+                }
+
+                break;
+
+            case ALL_DOC_NOTES:
+
+
+
+                db.beginTransaction();
+                try {
+
+                    for (ContentValues values : allValues) {
+                        long row = db.insertOrThrow(DatabaseOpenHelper.TABLE_DOC_NOTES, null, values);
+
+                        if (row <= 0) {
+                            throw new SQLException("Failed to insert row into " + uri);
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    numInserted = allValues.length;
+
+                } finally {
+                    db.endTransaction();
+                }
+
+                break;
+
+            case ALL_DOC_TAGS:
+
+
+                db.beginTransaction();
+                try {
+
+                    for (ContentValues values : allValues) {
+                        long row = db.insertOrThrow(DatabaseOpenHelper.TABLE_DOC_TAGS, null, values);
+
+                        if (row <= 0) {
+                            throw new SQLException("Failed to insert row into " + uri);
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    numInserted = allValues.length;
+
+                } finally {
+                    db.endTransaction();
+                }
+
+                break;
+
+            case ALL_ACADEMIC_DOCS:
+
+
+
+                db.beginTransaction();
+                try {
+
+                    for (ContentValues values : allValues) {
+                        long row = db.insertOrThrow(DatabaseOpenHelper.TABLE_ACADEMIC_STATUS_DOCS, null, values);
+
+                        if (row <= 0) {
+                            throw new SQLException("Failed to insert row into " + uri);
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                    getContext().getContentResolver().notifyChange(uri, null);
+                    numInserted = allValues.length;
+
+                } finally {
+                    db.endTransaction();
+                }
+
+                break;
+            // ...
+            default:
+                throw new IllegalArgumentException("Unknown URI " + uri);
+        }
+        return numInserted;
+    }
+
+
+
+
+
+
     @Override
     public Uri insert(Uri uri, ContentValues values) {
 
@@ -131,18 +391,7 @@ public class MyContentProvider extends ContentProvider {
 
 
         switch (sURIMatcher.match(uri)) {
-            case ALLDOCS:
 
-                long row = db.insert(DatabaseOpenHelper.TABLE_DOCUMENT_DETAILS, null, values);
-
-                // If record is added successfully
-                if (row > 0) {
-                    Uri newUri = ContentUris.withAppendedId(CONTENT_URI_DOC_DETAILS, row);
-                    getContext().getContentResolver().notifyChange(newUri, null);
-                    return newUri;
-                }
-
-                break;
 
             case ALL_DOC_AUTHORS:
 
@@ -446,6 +695,7 @@ public class MyContentProvider extends ContentProvider {
         count = db.delete(DatabaseOpenHelper.TABLE_DOCUMENT_DETAILS, selection, selectionArgs);
         count = count + db.delete(DatabaseOpenHelper.TABLE_AUTHORS, selection, selectionArgs);
         count = count + db.delete(DatabaseOpenHelper.TABLE_FOLDERS, selection, selectionArgs);
+        count = count + db.delete(DatabaseOpenHelper.TABLE_FOLDERS_DOCS, selection, selectionArgs);
         count = count + db.delete(DatabaseOpenHelper.TABLE_FILES, selection, selectionArgs);
         count = count + db.delete(DatabaseOpenHelper.TABLE_PROFILE, selection, selectionArgs);
         count = count + db.delete(DatabaseOpenHelper.TABLE_ACADEMIC_STATUS_DOCS, selection, selectionArgs);

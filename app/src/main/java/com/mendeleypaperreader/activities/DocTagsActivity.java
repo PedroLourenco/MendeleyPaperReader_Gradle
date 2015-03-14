@@ -1,6 +1,8 @@
 package com.mendeleypaperreader.activities;
 
+import android.app.ActionBar;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
@@ -8,9 +10,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,12 +23,14 @@ import android.widget.TextView;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
-import com.mendeleypaperreader.utl.Globalconstant;
+import com.mendeleypaperreader.utl.RobotoBoldFontHelper;
+import com.mendeleypaperreader.utl.RobotoRegularFontHelper;
+import com.mendeleypaperreader.utl.TypefaceSpan;
 
 public class DocTagsActivity extends ListActivity {
 
     private Cursor cursorDocTags;
-    SimpleCursorAdapter adapterDocTags;
+    CustomListSimpleCursorAdapter adapterDocTags;
 
 
     @Override
@@ -31,27 +38,44 @@ public class DocTagsActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_doc_tags);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+            SpannableString s = new SpannableString(getResources().getString(R.string.app_name));
+            TypefaceSpan tf = new TypefaceSpan(this, "Roboto-Bold.ttf");
+
+            s.setSpan(tf, 0, s.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            // Update the action bar title with the TypefaceSpan instance
+
+            actionBar.setTitle(s);
+        }
 
         cursorDocTags = getDocTags();
 
-        TextView tag = (TextView) findViewById(R.id.docTag);
-        tag.setText("Tags");
-        TextView docTagTitle = (TextView) findViewById(R.id.docTitle);
-        docTagTitle.setText(getDocTitle());
+        TextView tvTag = (TextView) findViewById(R.id.tag_doc_text);
+        RobotoRegularFontHelper.applyFont(getApplicationContext(), tvTag);
+        tvTag.setText("Tags");
+        
+        TextView tvDocTagTitle = (TextView) findViewById(R.id.tag_doc_title);
+        RobotoRegularFontHelper.applyFont(getApplicationContext(), tvDocTagTitle);
+        tvDocTagTitle.setText(getDocTitle());
 
 
         String text = getResources().getString(R.string.list_title) + "  " + getDocTitle();
         SpannableStringBuilder builder = new SpannableStringBuilder(text);
 
         builder.setSpan(new StyleSpan(Typeface.BOLD), 0, 5, 0);
-        docTagTitle.setText(builder);
+        tvDocTagTitle.setText(builder);
 
 
 
         String[] dataColumnsTags = {"_id"};
         int[] viewDocTags = {R.id.tagName};   //criar nova lista para as tags com um novo icon
-        adapterDocTags = new SimpleCursorAdapter(getApplicationContext(), R.layout.list_row_with_image_tag, cursorDocTags, dataColumnsTags, viewDocTags, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        adapterDocTags = new CustomListSimpleCursorAdapter(getApplicationContext(), R.layout.list_row_with_image_tag, cursorDocTags, dataColumnsTags, viewDocTags, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
         setListAdapter(adapterDocTags);
 
@@ -101,10 +125,65 @@ public class DocTagsActivity extends ListActivity {
         Intent listDocTag = new Intent(getApplicationContext(), ListDocTagsActivity.class);
         listDocTag.putExtra("TAG_NAME", description);
         startActivity(listDocTag);
-        // Otherwise we need to launch a new activity to display
-        // the dialog fragment with selected text.
-
+        overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+        
 
     }
+
+
+
+    @Override
+    public void onBackPressed() {
+        // finish() is called in super: we only override this method to be able to override the transition
+        super.onBackPressed();
+
+        overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    //ActionBar Menu Options
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+
+            // up button
+            case android.R.id.home:
+                finish();
+                overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
+                return true;
+
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private class CustomListSimpleCursorAdapter extends SimpleCursorAdapter
+    {
+
+        public CustomListSimpleCursorAdapter(final Context context, final int layout, final Cursor c, final String[] from, final int[] to, final int flags) {
+            super(context, layout, c, from, to, flags);
+
+        }
+
+
+
+        @Override
+        public void bindView(final View view, final Context context, final Cursor cursor) {
+            super.bindView(view, context, cursor);
+
+            final TextView tvTagName = (TextView) view.findViewById(R.id.tagName);
+            RobotoBoldFontHelper.applyFont(context, tvTagName);
+
+        }
+    }
+
 
 }

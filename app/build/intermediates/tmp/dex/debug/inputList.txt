@@ -1,0 +1,10 @@
+/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/classes/debug
+/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/support-annotations-20.0.0-b47c7c94487aee9614f34cd860a76103f3cf87bb.jar
+/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/jackson-annotations-2.4.0-d87718e01c720db7bbff3248fcda22c75f026e4e.jar
+/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/classes-b4d5eafe51b4a02562914f44da0b8e9bf32ae9bd.jar
+/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/internal_impl-20.0.0-e2bc82d2c12f0a5e5d4f9cf0a40f7272d15b3d19.jar
+/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/robotium-solo-5.2.1-f1442d744b89bdc9bfea37de2202a6fef4625b94.jar
+/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/jackson-core-2.4.1.1-b788df8cecf44cc4b1edd0d6ae274aa682532fce.jar
+/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/classes-fe7f3e0a8694a467db8e0f33c561f8c0ebef6e79.jar
+/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/classes-8ed2d9848154a1000909f3cc86db5be62a84d3cc.jar
+/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/jackson-databind-2.2.4-fc6c16facfa00a0fa0e7694687b26467837b024d.jar

@@ -1,6 +1,8 @@
 package com.mendeleypaperreader.activities;
 
 
+import android.app.ActionBar;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
@@ -13,6 +15,8 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +32,9 @@ import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.utl.Globalconstant;
+import com.mendeleypaperreader.utl.RobotoBoldFontHelper;
+import com.mendeleypaperreader.utl.RobotoRegularFontHelper;
+import com.mendeleypaperreader.utl.TypefaceSpan;
 
 /**
  * @author PedroLourenco (pdrolourenco@gmail.com)
@@ -36,7 +43,7 @@ import com.mendeleypaperreader.utl.Globalconstant;
 public class MainMenuActivityFragmentDetails extends ListFragment implements LoaderCallbacks<Cursor> {
 
     boolean mDualPane;
-    SimpleCursorAdapter mAdapter;
+    CustomListSimpleCursorAdapter mAdapter;
     TextView title;
     SearchView searchView;
     private static final int DETAILS_LOADER = 2;
@@ -45,10 +52,26 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        setHasOptionsMenu(true);
+
+        ActionBar actionBar = getActivity().getActionBar();
+        if (actionBar != null) {
+            
+            setHasOptionsMenu(true);
+
+            SpannableString s = new SpannableString(getResources().getString(R.string.app_name));
+            TypefaceSpan tf = new TypefaceSpan(getActivity(), "Roboto-Bold.ttf");
+
+            s.setSpan(tf, 0, s.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            // Update the action bar title with the TypefaceSpan instance
+
+            actionBar.setTitle(s);
+        }
     }
 
 
+    
     public static MainMenuActivityFragmentDetails newInstance(int index, String description, int foldersCount) {
         MainMenuActivityFragmentDetails f = new MainMenuActivityFragmentDetails();
 
@@ -78,23 +101,19 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
 
         int index = getShownIndex();
 
-
         String description = getShownDescription();
-
-        if (Globalconstant.LOG) {
-            Log.d(Globalconstant.TAG, "Description Details: " + description);
-            Log.d(Globalconstant.TAG, "index Details: " + index);
-        }
 
         View view = inflater.inflate(R.layout.activity_main_menu_details, container, false);
         ListView lv = (ListView) view.findViewById(android.R.id.list);
+        
 
         title = (TextView) view.findViewById(R.id.detailTitle);
-        title.setTypeface(null, Typeface.BOLD);
+        RobotoRegularFontHelper.applyFont(getActivity(), title);
+
         title.setText(description);
         String[] dataColumns = {"_id", DatabaseOpenHelper.AUTHORS, "data"};
         int[] viewIDs = {R.id.Doctitle, R.id.authors, R.id.data};
-        mAdapter = new SimpleCursorAdapter(getActivity(), R.layout.list_row_all_doc, null, dataColumns, viewIDs, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        mAdapter = new CustomListSimpleCursorAdapter(getActivity(), R.layout.list_row_all_doc, null, dataColumns, viewIDs, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
         lv.setAdapter(mAdapter);
 
@@ -220,6 +239,8 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
 
+        v.setSelected(false);
+        
         if (Globalconstant.LOG)
             Log.d(Globalconstant.TAG, "position: " + position);
 
@@ -242,6 +263,10 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
         Intent doc_details = new Intent(getActivity().getApplicationContext(), DocumentsDetailsActivity.class);
         doc_details.putExtra("DOC_ID", doc_id);
         startActivity(doc_details);
+        getActivity().overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+
+
+
 
     }
 
@@ -276,6 +301,8 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
             getLoaderManager().restartLoader(DETAILS_LOADER, null, this);
         }
     }
+
+
 
 
     @Override
@@ -346,7 +373,7 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
 
             title.setText(getShownDescription());
             projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
-            selection = DatabaseOpenHelper.GROUP_ID + " in (select _id from " + DatabaseOpenHelper.TABLE_GROUPS + " where " + DatabaseOpenHelper.GROUPS_NAME + " =  '" + groupName + "')";  // + DatabaseOpenHelper.TABLE_FOLDERS + " where " + DatabaseOpenHelper.FOLDER_NAME + " = '" + folderName + "'))";
+            selection = DatabaseOpenHelper.GROUP_ID + " in (select _id from " + DatabaseOpenHelper.TABLE_GROUPS + " where " + DatabaseOpenHelper.GROUPS_NAME + " =  '" + groupName + "')";
 
             uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
         }
@@ -380,6 +407,36 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
             mAdapter.swapCursor(null);
         }
     }
+
+
+    private class CustomListSimpleCursorAdapter extends SimpleCursorAdapter
+    {
+
+        public CustomListSimpleCursorAdapter(final Context context, final int layout, final Cursor c, final String[] from, final int[] to, final int flags) {
+            super(context, layout, c, from, to, flags);
+
+        }
+
+
+
+        @Override
+        public void bindView(final View view, final Context context, final Cursor cursor) {
+            super.bindView(view, context, cursor);
+
+            final TextView tvDocTitle = (TextView) view.findViewById(R.id.Doctitle);
+            final TextView tvAuthors = (TextView) view.findViewById(R.id.authors);
+            final TextView tvData = (TextView) view.findViewById(R.id.data);
+
+            RobotoBoldFontHelper.applyFont(context, tvDocTitle);
+            RobotoRegularFontHelper.applyFont(context, tvAuthors);
+            RobotoRegularFontHelper.applyFont(context, tvData);
+
+        }
+    }
+
+
+
+
 
 
 }

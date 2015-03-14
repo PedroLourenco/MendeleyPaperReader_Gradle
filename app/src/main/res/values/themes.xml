@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ActionBar styles -->
+    <style name="MyActionBar"
+        parent="android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/actionBar</item>
+        <item name="android:displayOptions">showHome|homeAsUp|showTitle</item>
+        <item name="displayOptions">showHome|homeAsUp|showTitle</item>
+        <item name="android:icon">@android:color/transparent</item>
+        <item name="android:titleTextStyle">@style/myTheme.ActionBar.Text</item>
+        <item name="android:actionDropDownStyle">@style/MyDropDownListView</item>
+        <item name="android:popupMenuStyle">@style/MyPopupMenu</item>
+        <item name="android:listChoiceIndicatorMultiple">@drawable/list_item_bg_pressed</item>
+        <item name="android:listChoiceIndicatorSingle">@drawable/list_item_bg_pressed</item>
+
+    </style>
+    
+    <!-- the theme applied to the application or activity -->
+    <style name="CustomActionBarTheme"
+        parent="Theme.AppCompat.Light">
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <item name="android:actionMenuTextColor">@color/actionBarTextColor</item>
+    </style>
+
+
+    <style name="myTheme.ActionBar.Text" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/actionBarTextColor</item>
+    </style>
+
+
+    <!-- style the items within the overflow menu -->
+    <style name="MyDropDownListView" parent="android:style/Widget.Holo.ListView.DropDown">
+        <item name="android:listSelector">@drawable/list_item_bg_pressed</item>
+        <item name="android:listChoiceIndicatorMultiple">@drawable/list_item_bg_pressed</item>
+        <item name="android:listChoiceIndicatorSingle">@drawable/list_item_bg_pressed</item>
+    </style>
+
+    <!-- style the overflow menu -->
+    <style name="MyPopupMenu" parent="android:style/Widget.Holo.Light.ListPopupWindow">
+        <item name="android:popupBackground">@drawable/list_item_bg_pressed</item>
+    </style>
+    
+
+
+
+
+
+
+
+
+
+
+
+</resources>

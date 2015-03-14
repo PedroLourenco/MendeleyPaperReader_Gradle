@@ -24,16 +24,17 @@ public class Globalconstant {
     //API URLs
 
     public final static String get_docs_notes = "https://mix.mendeley.com/annotations?document_id=#docId#&limit=200&access_token=";
+    public final static String get_docs_notes2 = "https://mix.mendeley.com/annotations?document_id=";
     public final static String get_docs_in_groups = "https://mix.mendeley.com/documents?group_id=#groupId#&view=all&limit=400&access_token=";
-    public static String get_groups_url = "https://mix.mendeley.com/groups?access_token=";
+    public static String get_groups_url = "https://mix.mendeley.com/groups?limit=400&access_token=";
     public static String get_catalog_url = "https://mix.mendeley.com/catalog?";
     public static String get_metadata_url = "https://mix.mendeley.com/metadata";
     public static String get_catalod_id_url = "https://mix.mendeley.com/catalog/doc_id?view=all&access_token=";
     public static String get_user_library_url = "https://mix.mendeley.com/documents?view=all&limit=400&access_token=";
     public static String get_docs_in_folders = "https://mix.mendeley.com/folders/id/documents?access_token=";
     public static String get_docs_ann = "https://mix.mendeley.com/annotations/?document_id=doc_id&access_token=";
-    public static String get_user_folders_url = "https://mix.mendeley.com/folders?access_token=";
-    public static String get_files = "https://mix.mendeley.com/files?access_token=";
+    public static String get_user_folders_url = "https://mix.mendeley.com/folders?limit=400&access_token=";
+    public static String get_files = "https://mix.mendeley.com/files?limit=400&access_token=";
     public static String get_files_by_doc_id = "https://mix.mendeley.com/files/file_id?access_token=";
     public static String get_profile = "https://mix.mendeley.com/profiles/me?access_token=";
 
