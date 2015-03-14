@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mendeleypaperreader"
-    android:versionCode="9"
-    android:versionName="0.5.0" >
+    android:versionCode="10"
+    android:versionName="0.6.0" >
 
     <uses-sdk
         android:minSdkVersion="12"
@@ -13,8 +13,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
 
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
     <application
         android:allowBackup="true"
         android:icon="@drawable/paper_reader_512_512"
@@ -23,7 +21,9 @@
         <activity
             android:name="com.mendeleypaperreader.activities.MainActivity"
             android:label="@string/app_name"
-            android:noHistory="true" >
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoTitleBar" >
+>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,44 +32,52 @@
         </activity>
         <activity
             android:name="com.mendeleypaperreader.activities.MainMenuActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/CustomActionBarTheme" >
         </activity>
         <activity
             android:name="com.mendeleypaperreader.activities.DetailsActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:parentActivityName="com.mendeleypaperreader.activities.MainMenuActivity" >
+            android:parentActivityName="com.mendeleypaperreader.activities.MainMenuActivity"
+            android:theme="@style/CustomActionBarTheme" >
         </activity>
         <activity
             android:name="com.mendeleypaperreader.activities.DocumentsDetailsActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:parentActivityName="com.mendeleypaperreader.activities.DetailsActivity" >
+            android:parentActivityName="com.mendeleypaperreader.activities.DetailsActivity"
+            android:theme="@style/CustomActionBarTheme" >
         </activity>
         <activity
             android:name="com.mendeleypaperreader.activities.AbstractDescriptionActivity"
             android:label="@string/app_name"
-            android:parentActivityName="com.mendeleypaperreader.activities.DocumentsDetailsActivity" >
+            android:parentActivityName="com.mendeleypaperreader.activities.DocumentsDetailsActivity"
+            android:theme="@style/CustomActionBarTheme" >
         </activity>
         <activity
             android:name="com.mendeleypaperreader.activities.AboutActivity"
             android:label="@string/app_name"
-            android:parentActivityName="com.mendeleypaperreader.activities.MainMenuActivity" >
+            android:parentActivityName="com.mendeleypaperreader.activities.MainMenuActivity"
+            android:theme="@style/CustomActionBarTheme" >
         </activity>
         <activity
             android:name="com.mendeleypaperreader.activities.ReadersActivity"
             android:label="@string/app_name"
-            android:parentActivityName="com.mendeleypaperreader.activities.DocumentsDetailsActivity" >
+            android:parentActivityName="com.mendeleypaperreader.activities.DocumentsDetailsActivity"
+            android:theme="@style/CustomActionBarTheme" >
         </activity>
         <activity
             android:name="com.mendeleypaperreader.activities.DocTagsActivity"
             android:label="@string/app_name"
-            android:parentActivityName="com.mendeleypaperreader.activities.DocumentsDetailsActivity" >
+            android:parentActivityName="com.mendeleypaperreader.activities.DocumentsDetailsActivity"
+            android:theme="@style/CustomActionBarTheme" >
         </activity>
         <activity
             android:name="com.mendeleypaperreader.activities.ListDocTagsActivity"
             android:label="@string/app_name"
-            android:parentActivityName="com.mendeleypaperreader.activities.DocumentsDetailsActivity" >
+            android:parentActivityName="com.mendeleypaperreader.activities.DocumentsDetailsActivity"
+            android:theme="@style/CustomActionBarTheme" >
         </activity>
 
         <provider
@@ -80,8 +88,8 @@
         <activity
             android:name="com.mendeleypaperreader.activities.SettingsActivity"
             android:label="@string/app_name"
-            android:parentActivityName="com.mendeleypaperreader.activities.MainMenuActivity" >
->
+            android:parentActivityName="com.mendeleypaperreader.activities.MainMenuActivity"
+            android:theme="@style/CustomActionBarTheme" >
         </activity>
     </application>
 

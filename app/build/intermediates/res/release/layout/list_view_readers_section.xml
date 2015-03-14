@@ -6,5 +6,5 @@
     android:paddingTop="@dimen/doc_type_paddingTop"  
     android:paddingBottom="@dimen/doc_type_paddingBottom"  
     android:paddingLeft="@dimen/doc_type_paddingLeft" 
-    android:background="#cccccc"
-    android:textColor="#ffffff" /> <!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/layout/list_view_readers_section.xml -->
+    android:background="@color/list_header"
+    android:textColor="@color/actionBarTextColor"/><!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/layout/list_view_readers_section.xml -->

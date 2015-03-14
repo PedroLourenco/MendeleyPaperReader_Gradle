@@ -7,5 +7,7 @@
     android:paddingBottom="@dimen/doc_type_paddingBottom"  
     android:paddingLeft="@dimen/doc_type_paddingLeft"
     android:textSize="@dimen/folder_text_size"
-    android:background="@drawable/gradient_bg_list"
-    style="?android:attr/windowTitleStyle" /> <!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/layout/listview_section_header.xml -->
+    android:background=  "@color/list_header"
+    android:textColor="@color/actionBarTextColor"/>
+
+<!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/layout/listview_section_header.xml -->

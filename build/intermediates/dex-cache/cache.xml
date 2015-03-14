@@ -16,18 +16,18 @@
         <dex dex="/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/jackson-databind-2.2.4-fc6c16facfa00a0fa0e7694687b26467837b024d.jar" />
     </item>
     <item
-        jar="/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/20.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.1"
-        sha1="f21927d22fe31889ecce94dd697a2e75b137e0ef">
-        <dex dex="/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/classes-fe7f3e0a8694a467db8e0f33c561f8c0ebef6e79.jar" />
-    </item>
-    <item
         jar="/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/exploded-aar/com.mcxiaoke.volley/library/1.0.12/classes.jar"
         jumboMode="false"
         revision="21.1.1"
         sha1="4be3383885b480392f220647dcd515df5a841f37">
         <dex dex="/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/classes-b4d5eafe51b4a02562914f44da0b8e9bf32ae9bd.jar" />
+    </item>
+    <item
+        jar="/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/20.0.0/classes.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="f21927d22fe31889ecce94dd697a2e75b137e0ef">
+        <dex dex="/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/debug/classes-fe7f3e0a8694a467db8e0f33c561f8c0ebef6e79.jar" />
     </item>
     <item
         jar="/Users/pedro/Downloads/MendeleyPaperReader/app/libs/robotium-solo-5.2.1.jar"

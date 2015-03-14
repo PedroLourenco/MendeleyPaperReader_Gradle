@@ -10,15 +10,16 @@
     	android:layout_height="wrap_content"  
     	android:paddingTop="@dimen/doc_type_paddingTop"  
     	android:paddingBottom="@dimen/doc_type_paddingBottom"  
-    	android:paddingLeft="@dimen/doc_type_paddingLeft" 
-    	android:background="@drawable/gradient_bg_list"
-    	style="?android:attr/windowTitleStyle" /> 
+    	android:paddingLeft="@dimen/doc_type_paddingLeft"
+        android:background=  "@color/list_header"
+        android:textColor="@color/actionBarTextColor"/>
     
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" 
-        android:layout_below="@+id/detailTitle">
+        android:layout_below="@+id/detailTitle"
+        android:listSelector="@drawable/ripple">
 
     </ListView>
     
