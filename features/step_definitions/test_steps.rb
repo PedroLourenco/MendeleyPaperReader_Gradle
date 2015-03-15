@@ -3,7 +3,7 @@ require 'calabash-android/calabash_steps'
 
 
 Given(/^I wait for the Sign in button to appear$/) do
-  wait_for( timeout: 30 ) { query("button id:'auth'").length > 0 }
+  #wait_for( timeout: 30 ) { query("button id:'auth'").length > 0 }
   touch query("button id:'auth'")
 
 end
