@@ -3,7 +3,7 @@ require 'calabash-android/calabash_steps'
 
 
 Given(/^I wait for the Sign in button to appear$/) do
-  touch "button text:'Sign in'"
+  touch query("button id:'auth'")
 
 end
 
@@ -76,12 +76,12 @@ end
 
 
 Then(/^I check the checkBox "([^"]*)"$/) do |arg|
-  touch "CheckBox id:'checkBoxSyncOnLoad'"
+  touch "CheckBox id:'settings_checkBox_sync_on_load'"
 end
 
 
 Then(/^I confirm that the checkBox "([^"]*)" are checked$/) do |arg|
-  'true' == query("CheckBox id:'checkBoxSyncOnLoad'",:isChecked)
+  'true' == query("CheckBox id:'settings_checkBox_sync_on_load'",:isChecked)
 
 end
 
@@ -112,7 +112,7 @@ Then(/^I confirm that the file has not been downloaded$/) do
 end
 
 Then(/^I uncheckBox checkbox "([^"]*)"$/) do |arg|
-  touch "CheckBox id:'checkBoxSyncOnLoad'"
+  touch "CheckBox id:'settings_checkBox_sync_on_load'"
 end
 
 Then(/^I sleep for (\d+) seconds$/) do |time|
@@ -120,9 +120,15 @@ Then(/^I sleep for (\d+) seconds$/) do |time|
 end
 
 Then(/^I validate if it's the right activity \- AboutActivity$/) do
-  wait_for(timeout: 60) { 1 == query("TextView id:'msg_about'").length}
+  wait_for(timeout: 20) { 1 == query("TextView id:'about_msg_about_text'").length}
 end
 
 Then(/^I search for "([^"]*)"$/) do |text|
   wait_for(timeout: 60) { 1 == query("TextView text:'#{text}'").length}
+end
+
+
+Then(/^I press back button$/) do
+
+  system "#{default_device.adb_command} shell input keyevent KEYCODE_BACK"
 end
