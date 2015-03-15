@@ -4,8 +4,8 @@ Feature: Test settings functionality
 Scenario: As a logged in user test checkBox "sync on load"
 Given I wait for the Sign in button to appear
 Then I wait for the Mendeley oauth login page
-Then I enter "amoleirinho@ipatimup.pt" into the "username" input field
-Then I enter "Xooopica82" into the "password" input field
+Then I enter "pdrolourenco@gmail.com" into the "username" input field
+Then I enter "000000" into the "password" input field
 Then I touch "Authorize"
 Then I wait for the "Contacting Mendeley ..." progress dialog to close
 Then I wait for the "Sync data..." progress dialog to close
@@ -28,8 +28,8 @@ Then I uncheckBox checkbox "settings_checkBox_sync_on_load"
 Scenario: As a logged in user sync files on load
 Given I wait for the Sign in button to appear
 Then I wait for the Mendeley oauth login page
-Then I enter "amoleirinho@ipatimup.pt" into the "username" input field
-Then I enter "Xooopica82" into the "password" input field
+Then I enter "pdrolourenco@gmail.com" into the "username" input field
+Then I enter "000000" into the "password" input field
 Then I touch "Authorize"
 Then I wait for the "Contacting Mendeley ..." progress dialog to close
 Then I wait for the "Sync data..." progress dialog to close
