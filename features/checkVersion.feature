@@ -14,5 +14,5 @@ Feature: Check version off APP
     Then I see Menu list
     Then I touch on "About" button
     Then I validate if it's the right activity - AboutActivity
-    Then I search for "Version 0.5.0"
+    Then I search for "Version 0.5.1"
 
