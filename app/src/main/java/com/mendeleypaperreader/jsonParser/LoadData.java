@@ -3,22 +3,9 @@ package com.mendeleypaperreader.jsonParser;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -32,23 +19,14 @@ import com.mendeleypaperreader.utl.GetDataBaseInformation;
 import com.mendeleypaperreader.utl.Globalconstant;
 import com.mendeleypaperreader.utl.JSONParser;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author PedroLourenco (pdrolourenco@gmail.com)
@@ -60,15 +38,13 @@ public class LoadData {
     private Context context;
     private static String access_token;
     private GetDataBaseInformation getDataBaseInformation;
-    RequestQueue queue;
-    private Request.Priority mpriority = Request.Priority.HIGH;
 
     public LoadData(Context context) {
         this.context = context;
 
         SessionManager session = new SessionManager(this.context);
         access_token = session.LoadPreference("access_token");
-        queue = Volley.newRequestQueue(this.context);
+
         getDataBaseInformation = new GetDataBaseInformation(this.context);
 
     }
