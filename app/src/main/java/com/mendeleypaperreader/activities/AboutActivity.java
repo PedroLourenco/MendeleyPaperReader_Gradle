@@ -2,7 +2,10 @@ package com.mendeleypaperreader.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,7 +19,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
+
+import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.mendeleypaperreader.R;
+import com.mendeleypaperreader.ServiceProvider.DataService;
+import com.mendeleypaperreader.sessionManager.SessionManager;
+import com.mendeleypaperreader.utl.Globalconstant;
 import com.mendeleypaperreader.utl.RobotoRegularFontHelper;
 import com.mendeleypaperreader.utl.TypefaceSpan;
 
@@ -29,29 +37,32 @@ import com.mendeleypaperreader.utl.TypefaceSpan;
 
 public class AboutActivity extends Activity {
 
+    private Float progress;
+    private NumberProgressBar progressBar;
+    private SessionManager session;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
-
-
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
 
-
             SpannableString s = new SpannableString("Paper Reader");
             TypefaceSpan tf = new TypefaceSpan(this, "Roboto-Bold.ttf");
 
-            s.setSpan(tf, 0, s.length(),
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            s.setSpan(tf, 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             // Update the action bar title with the TypefaceSpan instance
 
             actionBar.setTitle(s);
         }
+
+        session = new SessionManager(getApplicationContext());
+
+
         
         TextView msg_about = (TextView) findViewById(R.id.about_msg_about_text);
         TextView txt_version3 = (TextView) findViewById(R.id.about_version3_text);
@@ -78,7 +89,11 @@ public class AboutActivity extends Activity {
         redSpannable.setSpan(new ForegroundColorSpan(Color.GRAY), 0, e_mail.length(), 0);
         builder.append(redSpannable);
 
-        
+        progressBar = (NumberProgressBar) findViewById(R.id.progress_bar);
+        if(DataService.serviceState) {
+            progressBar.setProgress(View.VISIBLE);
+            progressBar.setProgress(session.LoadPreferenceInt("progress"));
+        }
 
         
         
@@ -142,6 +157,62 @@ public class AboutActivity extends Activity {
                 return super.onOptionsItemSelected(item);
         }
     }
-    
-    
+
+
+    public void onPause()
+    {
+        super.onPause();
+
+        if(DataService.serviceState) {
+            unregisterReceiver(mReceiver);
+        }
+    }
+
+
+    public void onResume()
+    {
+        super.onResume();
+        if(DataService.serviceState) {
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(session.LoadPreferenceInt("progress"));
+
+            IntentFilter mIntentFilter = new IntentFilter();
+            mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
+            mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
+            mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
+
+            registerReceiver(mReceiver, mIntentFilter);
+
+            if(session.LoadPreferenceInt("progress") == 100) {
+                progressBar.setVisibility(View.GONE);
+                DataService.serviceState = false;
+            }
+        }
+
+    }
+
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Globalconstant.mBroadcastIntegerAction)) {
+
+                progress = intent.getFloatExtra("Progress", 0);
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(progress.intValue());
+                session.savePreferencesInt("progress", progress.intValue());
+
+            }
+
+            if(progressBar.getProgress() == 100) {
+                progressBar.setVisibility(View.GONE);
+                DataService.serviceState = false;
+            }
+
+        }
+    };
+
+
+
+
 }

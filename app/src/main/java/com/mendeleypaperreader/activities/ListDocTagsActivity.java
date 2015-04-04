@@ -2,8 +2,10 @@ package com.mendeleypaperreader.activities;
 
 import android.app.ActionBar;
 import android.app.ListActivity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -20,9 +22,14 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.mendeleypaperreader.R;
+import com.mendeleypaperreader.ServiceProvider.DataService;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
+import com.mendeleypaperreader.jsonParser.SyncDataAsync;
+import com.mendeleypaperreader.sessionManager.SessionManager;
+import com.mendeleypaperreader.utl.Globalconstant;
 import com.mendeleypaperreader.utl.RobotoBoldFontHelper;
 import com.mendeleypaperreader.utl.RobotoRegularFontHelper;
 import com.mendeleypaperreader.utl.TypefaceSpan;
@@ -31,8 +38,9 @@ public class ListDocTagsActivity extends ListActivity {
 
     private Cursor cursorDocTags;
     CustomListSimpleCursorAdapter adapterDocTags;
-    
-
+    private Float progress;
+    private NumberProgressBar progressBar;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +66,13 @@ public class ListDocTagsActivity extends ListActivity {
             actionBar.setTitle(s);
         }
 
+        sessionManager = new SessionManager(getApplicationContext());
+
+        progressBar = (NumberProgressBar) findViewById(R.id.progress_bar);
+        if(DataService.serviceState) {
+            progressBar.setProgress(View.VISIBLE);
+            progressBar.setProgress(sessionManager.LoadPreferenceInt("progress"));
+        }
         cursorDocTags = getDocTags();
 
         TextView tag = (TextView) findViewById(R.id.docTag);
@@ -170,6 +185,64 @@ public class ListDocTagsActivity extends ListActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
+
+    public void onPause()
+    {
+        super.onPause();
+
+        if(DataService.serviceState) {
+            unregisterReceiver(mReceiver);
+        }
+    }
+
+
+    public void onResume()
+    {
+        super.onResume();
+        if(DataService.serviceState) {
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(sessionManager.LoadPreferenceInt("progress"));
+
+            IntentFilter mIntentFilter = new IntentFilter();
+            mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
+            mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
+            mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
+
+            registerReceiver(mReceiver, mIntentFilter);
+
+            if(sessionManager.LoadPreferenceInt("progress") == 100) {
+                progressBar.setVisibility(View.GONE);
+                DataService.serviceState = false;
+            }
+        }
+
+    }
+
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Globalconstant.mBroadcastIntegerAction)) {
+
+                progress = intent.getFloatExtra("Progress", 0);
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(progress.intValue());
+                sessionManager.savePreferencesInt("progress", progress.intValue());
+
+            }
+
+            if(progressBar.getProgress() == 100) {
+                progressBar.setVisibility(View.GONE);
+                DataService.serviceState = false;
+            }
+
+        }
+    };
+
+
+
 
 
     private class CustomListSimpleCursorAdapter extends SimpleCursorAdapter

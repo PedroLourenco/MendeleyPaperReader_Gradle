@@ -42,6 +42,12 @@ public class SessionManager {
         editor.commit();
 
     }
+    public void savePreferencesInt(String key, Integer value) {
+
+        editor.putInt(key, value);
+        editor.commit();
+
+    }
 
 
     /**
@@ -52,6 +58,12 @@ public class SessionManager {
     public String LoadPreference(String Key) {
 
         return pref.getString(Key, "");
+
+    }
+
+    public Integer LoadPreferenceInt(String Key) {
+
+        return pref.getInt(Key, 0);
 
     }
 

@@ -2,11 +2,15 @@ package com.mendeleypaperreader.activities;
 
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -22,19 +26,30 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.mendeleypaperreader.R;
+import com.mendeleypaperreader.ServiceProvider.DataService;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
+import com.mendeleypaperreader.sessionManager.GetAccessToken;
+import com.mendeleypaperreader.sessionManager.SessionManager;
+import com.mendeleypaperreader.utl.ConnectionDetector;
 import com.mendeleypaperreader.utl.Globalconstant;
 import com.mendeleypaperreader.utl.RobotoBoldFontHelper;
 import com.mendeleypaperreader.utl.RobotoRegularFontHelper;
 import com.mendeleypaperreader.utl.TypefaceSpan;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Calendar;
 
 /**
  * @author PedroLourenco (pdrolourenco@gmail.com)
@@ -47,6 +62,14 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
     TextView title;
     SearchView searchView;
     private static final int DETAILS_LOADER = 2;
+
+    private SessionManager session;
+    private IntentFilter mIntentFilter;
+    private NumberProgressBar progressBar;
+    private Intent serviceIntent;
+    private Float progress;
+    private static String code;
+    private static String refresh_token;
 
 
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -68,6 +91,8 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
 
             actionBar.setTitle(s);
         }
+
+        session = new SessionManager(getActivity().getApplicationContext());
     }
 
 
@@ -99,13 +124,34 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
             return null;
         }
 
+        View detailsFrame = getActivity().findViewById(R.id.details);
+        mDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
+
         int index = getShownIndex();
 
         String description = getShownDescription();
 
         View view = inflater.inflate(R.layout.activity_main_menu_details, container, false);
         ListView lv = (ListView) view.findViewById(android.R.id.list);
-        
+
+            //progressBar = (NumberProgressBar) view.findViewById(R.id.progress_bar_land);
+            if(mDualPane) {
+                progressBar = (NumberProgressBar) getActivity().findViewById(R.id.progress_bar_land);
+                //progressBar.setVisibility(View.GONE);
+            }else{
+            progressBar = (NumberProgressBar) view.findViewById(R.id.progress_bar);
+            //progressBar.setVisibility(View.GONE);
+            }
+
+        if(DataService.serviceState) {
+            session = new SessionManager(getActivity().getApplicationContext());
+
+            //if(progressBar != null) {
+
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(session.LoadPreferenceInt("progress"));
+            //}
+        }
 
         title = (TextView) view.findViewById(R.id.detailTitle);
         RobotoRegularFontHelper.applyFont(getActivity(), title);
@@ -172,15 +218,24 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
+
         String query = getQuery();
 
         View detailsFrame = getActivity().findViewById(R.id.details);
         mDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
 
-        searchView = (SearchView) menu.findItem(R.id.grid_default_search).getActionView();
+        if(mDualPane) {
+
+            inflater.inflate(R.menu.main_menu_activity_actions, menu);
+            searchView = (SearchView) menu.findItem(R.id.main_grid_default_search).getActionView();
+        }else {
+            inflater.inflate(R.menu.action_bar_search, menu);
+            searchView = (SearchView) menu.findItem(R.id.frag_grid_default_search).getActionView();
+        }
+
 
         //chamado quando a action search vem da activity principal
-        if (!mDualPane && getSearchActivity().equals("true")) {
+        if (getSearchActivity().equals("true")) {
 
             searchView.setFocusable(true);
             searchView.setIconified(false);
@@ -198,6 +253,98 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
         }
 
     }
+
+
+    //ActionBar Menu Options
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+
+        switch (item.getItemId()) {
+            case R.id.menu_About:
+                Intent i_about = new Intent(getActivity().getApplicationContext(), AboutActivity.class);
+                startActivity(i_about);
+                getActivity().overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+                return true;
+            case R.id.menu_logout:
+                showDialog();
+                return true;
+            case R.id.frag_menu_refresh:
+                if(!Globalconstant.isTaskRunning)
+                    refreshToken();
+                return true;
+            case R.id.menu_settings:
+                Intent i_settings = new Intent(getActivity().getApplicationContext(), SettingsActivity.class);
+                startActivity(i_settings);
+                getActivity().overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+
+    public void syncData() {
+
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
+        mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
+        mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
+
+        getActivity().registerReceiver(mReceiver, mIntentFilter);
+
+        serviceIntent = new Intent(getActivity(), DataService.class);
+        serviceIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        getActivity().startService(serviceIntent);
+    }
+
+
+    private void refreshToken() {
+
+        // check internet connection
+
+        Boolean isInternetPresent;
+        ConnectionDetector connectionDetector = new ConnectionDetector(getActivity().getApplicationContext());
+
+        isInternetPresent = connectionDetector.isConnectingToInternet();
+
+        if (isInternetPresent) {
+            getActivity().getContentResolver().delete(MyContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
+            new ProgressTask().execute();
+        } else {
+            connectionDetector.showDialog(getActivity(), ConnectionDetector.DEFAULT_DIALOG);
+        }
+    }
+
+
+    public void showDialog() {
+        // Use the Builder class for convenient dialog construction
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                getActivity().getApplicationContext());
+        builder.setTitle(getResources().getString(R.string.log_out));
+        builder.setMessage(getResources().getString(R.string.warning))
+                .setPositiveButton(getResources().getString(R.string.word_ok), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        session.deleteAllPreferences();
+                        getActivity().getContentResolver().delete(MyContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
+                        getActivity().finish();
+                    }
+                });
+
+        // on pressing cancel button
+        builder.setNegativeButton(getResources().getString(R.string.cancel),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        // show dialog
+        builder.show();
+    }
+
 
 
     public int getShownIndex() {
@@ -244,6 +391,7 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
         if (Globalconstant.LOG)
             Log.d(Globalconstant.TAG, "position: " + position);
 
+
         searchView.setQuery("", false);
         //cursor with My Library information
         Cursor c = mAdapter.getCursor();
@@ -286,7 +434,21 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
     }
 
 
-    public void onResume() {
+    public void onPause()
+    {
+        super.onPause();
+        //if(DataService.serviceState && mDualPane) {
+        //        getActivity().unregisterReceiver(mReceiver);
+        //}
+
+        if(mDualPane) {
+            NumberProgressBar progressBarDual = (NumberProgressBar) getActivity().findViewById(R.id.progress_bar);
+            progressBarDual.setVisibility(View.GONE);
+
+        }
+    }
+
+    public void onResume(){
         super.onResume();
 
         // Restart loader so that it refreshes displayed items according to database
@@ -300,9 +462,54 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
                 Log.d(Globalconstant.TAG, "mDualPane");
             getLoaderManager().restartLoader(DETAILS_LOADER, null, this);
         }
+
+        if(DataService.serviceState) {
+            if(progressBar != null) {
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(session.LoadPreferenceInt("progress"));
+            }
+            mIntentFilter = new IntentFilter();
+            mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
+            mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
+            mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
+
+            getActivity().registerReceiver(mReceiver, mIntentFilter);
+
+            if(session.LoadPreferenceInt("progress") == 100) {
+                progressBar.setVisibility(View.GONE);
+                DataService.serviceState = false;
+            }
+
+        }
+
     }
 
 
+
+
+
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent.getAction().equals(Globalconstant.mBroadcastIntegerAction)) {
+
+                progress = intent.getFloatExtra("Progress", 0);
+                if(progressBar != null) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    progressBar.setProgress(progress.intValue());
+                    session.savePreferencesInt("progress", progress.intValue());
+                }
+            }
+
+            if(progressBar != null && progressBar.getProgress() == 100) {
+                progressBar.setVisibility(View.GONE);
+                DataService.serviceState = false;
+            }
+
+        }
+    };
 
 
     @Override
@@ -434,6 +641,65 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
         }
     }
 
+
+
+
+
+
+//AsyncTask to download DATA from server
+
+    class ProgressTask extends AsyncTask<String, Integer, JSONObject> {
+
+
+        protected void onPreExecute() {
+            code = session.LoadPreference("Code");
+            refresh_token = session.LoadPreference("refresh_token");
+        }
+
+
+        protected void onPostExecute(final JSONObject json) {
+
+            if (json != null) {
+                try {
+                    String token = json.getString("access_token");
+                    String expire = json.getString("expires_in");
+                    String refresh = json.getString("refresh_token");
+
+
+                    // Save access token in shared preferences
+                    session.savePreferences("access_token", json.getString("access_token"));
+                    session.savePreferences("expires_in", json.getString("expires_in"));
+                    session.savePreferences("refresh_token", json.getString("refresh_token"));
+
+                    Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
+                    calendar.add(Calendar.SECOND, 3600);
+                    session.savePreferences("expires_on", calendar.getTime().toString());
+
+                    //Get data from server
+                    syncData();
+
+                    if (Globalconstant.LOG) {
+
+                        Log.d("refresh_token - Expire", expire);
+                        Log.d("refresh_token - Refresh", refresh);
+                        Log.d("expires_on", json.getString("exwpires_on"));
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+        protected JSONObject doInBackground(final String... args) {
+
+            GetAccessToken jParser = new GetAccessToken();
+
+            return jParser.refresh_token(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, Globalconstant.GRANT_TYPE, refresh_token);
+
+        }
+    }
 
 
 

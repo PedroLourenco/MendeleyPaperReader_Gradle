@@ -81,10 +81,6 @@
             android:theme="@style/CustomActionBarTheme">
         </activity>
 
-        <provider
-            android:name=".contentProvider.MyContentProvider"
-            android:authorities="com.android.mendeleypaperreader.utl.MyContentProvider"
-            android:exported="false" />
 
         <activity
             android:name=".activities.SettingsActivity"
@@ -92,6 +88,18 @@
             android:parentActivityName=".activities.MainMenuActivity"
             android:theme="@style/CustomActionBarTheme">
         </activity>
+
+        <!--Provider declared in manifest -->
+        <provider
+            android:name=".contentProvider.MyContentProvider"
+            android:authorities="com.android.mendeleypaperreader.utl.MyContentProvider"
+            android:exported="false" />
+
+        <!--Service declared in manifest -->
+        <service android:name="com.mendeleypaperreader.ServiceProvider.DataService"
+            />
+
+
     </application>
 
 </manifest>

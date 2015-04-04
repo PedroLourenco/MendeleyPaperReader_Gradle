@@ -1,13 +1,15 @@
 package com.mendeleypaperreader.activities;
 
-import java.util.Arrays;
-import java.util.List;
-
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -23,6 +25,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -31,14 +34,26 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.mendeleypaperreader.R;
+import com.mendeleypaperreader.ServiceProvider.DataService;
 import com.mendeleypaperreader.adapter.ListTitleAdapter;
 import com.mendeleypaperreader.adapter.MergeAdapter;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
+import com.mendeleypaperreader.sessionManager.GetAccessToken;
+import com.mendeleypaperreader.sessionManager.SessionManager;
+import com.mendeleypaperreader.utl.ConnectionDetector;
 import com.mendeleypaperreader.utl.Globalconstant;
 import com.mendeleypaperreader.utl.RobotoRegularFontHelper;
 import com.mendeleypaperreader.utl.TypefaceSpan;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * Classname MainMenuFragmentList
@@ -61,6 +76,13 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
     private static final int GROUPS_LOADER = 1;
     SearchView searchView;
     MainMenuActivityFragmentDetails details;
+    private NumberProgressBar progressBar;
+
+    private IntentFilter mIntentFilter;
+    private Float progress;
+    private static String code;
+    private static String refresh_token;
+    private SessionManager session;
 
 
 
@@ -85,7 +107,9 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
 
             actionBar.setTitle(s);
         }
-        ;
+
+
+        session = new SessionManager(getActivity().getApplicationContext());
 
         // Use a custom adapter so we can have something more than the just the text view filled in.
         lAdapter = new CustomAdapterLibrary(getActivity(), R.id.title, Arrays.asList(Globalconstant.MYLIBRARY));
@@ -125,7 +149,17 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
         // fragment directly in the containing UI.
         View detailsFrame = getActivity().findViewById(R.id.details);
 
+        //if(Globalconstant.isTaskRunning) {
+        //    NumberProgressBar progressBar = (NumberProgressBar) detailsFrame.findViewById(R.id.progress_bar);
+        //    progressBar.setProgress(SyncDataAsync.progressBarValue);
+        //}
+
+
+
         mDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
+
+
+
 
         if (savedInstanceState != null) {
             // Restore last state for checked position.
@@ -133,18 +167,100 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
         }
 
         if (mDualPane) {
+
+            progressBar = (NumberProgressBar) getActivity().findViewById(R.id.progress_bar_land);
+            if(DataService.serviceState) {
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(session.LoadPreferenceInt("progress"));
+            }
+
             // In dual-pane mode, the list view highlights the selected item.
             getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
             // Make sure our UI is in the correct state.
             showDetails(mCurCheckPosition, description, foldersCount);
+        }else{
+            progressBar = (NumberProgressBar) getActivity().findViewById(R.id.progress_bar);
+            if(DataService.serviceState) {
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(session.LoadPreferenceInt("progress"));
+            }
         }
+
     }
+
 
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-       searchView = (SearchView) menu.findItem(R.id.grid_default_search).getActionView();
-       searchView.setOnQueryTextListener(queryListener);
+
+
+
+        if (!mDualPane) {
+           inflater.inflate(R.menu.main_menu_activity_actions, menu);
+            searchView = (SearchView) menu.findItem(R.id.main_grid_default_search).getActionView();
+            searchView.setOnQueryTextListener(queryListener);
+
+        }
+    }
+
+
+
+
+
+    //ActionBar Menu Options
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+
+        switch (item.getItemId()) {
+            case R.id.menu_About:
+                Intent i_about = new Intent(getActivity().getApplicationContext(), AboutActivity.class);
+                startActivity(i_about);
+                getActivity().overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+                return true;
+            case R.id.menu_logout:
+                showDialog();
+                return true;
+            case R.id.main_menu_refresh:
+                if(!Globalconstant.isTaskRunning)
+                    refreshToken();
+                return true;
+            case R.id.menu_settings:
+                Intent i_settings = new Intent(getActivity().getApplicationContext(), SettingsActivity.class);
+                startActivity(i_settings);
+                getActivity().overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+                return true;
+            // up button
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void showDialog() {
+        // Use the Builder class for convenient dialog construction
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                getActivity().getApplicationContext());
+        builder.setTitle(getResources().getString(R.string.log_out));
+        builder.setMessage(getResources().getString(R.string.warning))
+                .setPositiveButton(getResources().getString(R.string.word_ok), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        session.deleteAllPreferences();
+                        getActivity().getContentResolver().delete(MyContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
+                        getActivity().finish();
+                    }
+                });
+
+        // on pressing cancel button
+        builder.setNegativeButton(getResources().getString(R.string.cancel),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        // show dialog
+        builder.show();
     }
 
 
@@ -209,7 +325,8 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
         Cursor c = foldersAdapter.getCursor();
         foldersCount = c.getCount();
 
-        searchView.setQuery("", false);
+        if(searchView != null)
+            searchView.setQuery("", false);
 
         v.setSelected(true);
 
@@ -360,14 +477,149 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
 
     public void onResume() {
         super.onResume();
-
         // Restart loader so that it refreshes displayed items according to database
         getLoaderManager().restartLoader(FOLDERS_LOADER, null, this);
         getLoaderManager().restartLoader(GROUPS_LOADER, null, this);
+
+
+        if(DataService.serviceState && !mDualPane) {
+            progressBar.setProgress(session.LoadPreferenceInt("progress"));
+
+            mIntentFilter = new IntentFilter();
+            mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
+            mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
+            mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
+
+            getActivity().registerReceiver(mReceiver, mIntentFilter);
+
+            if(session.LoadPreferenceInt("progress") == 100) {
+                progressBar.setVisibility(View.GONE);
+                DataService.serviceState = false;
+            }
+
+        }
         
         
     }
 
+    public void onPause()
+    {
+        super.onPause();
+        if(DataService.serviceState && !mDualPane) {
+            getActivity().unregisterReceiver(mReceiver);
+        }
+    }
+
+
+    public void syncData() {
+
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
+        mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
+        mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
+
+        getActivity().registerReceiver(mReceiver, mIntentFilter);
+
+        Intent serviceIntent = new Intent(getActivity(), DataService.class);
+        //serviceIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        getActivity().startService(serviceIntent);
+    }
+
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Globalconstant.mBroadcastIntegerAction)) {
+                if(progressBar != null) {
+                    progress = intent.getFloatExtra("Progress", 0);
+                    progressBar.setVisibility(View.VISIBLE);
+                    progressBar.setProgress(progress.intValue());
+                }
+
+                if (progress != null)
+                    session.savePreferencesInt("progress", progress.intValue());
+            }
+
+            if(progressBar != null && progressBar.getProgress() == 100) {
+                progressBar.setVisibility(View.GONE);
+                DataService.serviceState = false;
+            }
+
+        }
+    };
+
+    private void refreshToken() {
+
+        // check internet connection
+
+        Boolean isInternetPresent;
+        ConnectionDetector connectionDetector = new ConnectionDetector(getActivity().getApplicationContext());
+
+        isInternetPresent = connectionDetector.isConnectingToInternet();
+
+        if (isInternetPresent) {
+            getActivity().getContentResolver().delete(MyContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
+            new ProgressTask().execute();
+        } else {
+            connectionDetector.showDialog(getActivity(), ConnectionDetector.DEFAULT_DIALOG);
+        }
+    }
+
+
+    //AsyncTask to download DATA from server
+
+    class ProgressTask extends AsyncTask<String, Integer, JSONObject> {
+
+
+        protected void onPreExecute() {
+            code = session.LoadPreference("Code");
+            refresh_token = session.LoadPreference("refresh_token");
+        }
+
+
+        protected void onPostExecute(final JSONObject json) {
+
+            if (json != null) {
+                try {
+                    String token = json.getString("access_token");
+                    String expire = json.getString("expires_in");
+                    String refresh = json.getString("refresh_token");
+
+
+                    // Save access token in shared preferences
+                    session.savePreferences("access_token", json.getString("access_token"));
+                    session.savePreferences("expires_in", json.getString("expires_in"));
+                    session.savePreferences("refresh_token", json.getString("refresh_token"));
+
+                    Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
+                    calendar.add(Calendar.SECOND, 3600);
+                    session.savePreferences("expires_on", calendar.getTime().toString());
+
+                    //Get data from server
+                    syncData();
+
+                    if (Globalconstant.LOG) {
+
+                        Log.d("refresh_token - Expire", expire);
+                        Log.d("refresh_token - Refresh", refresh);
+                        Log.d("expires_on", json.getString("exwpires_on"));
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+        protected JSONObject doInBackground(final String... args) {
+
+            GetAccessToken jParser = new GetAccessToken();
+
+            return jParser.refresh_token(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, Globalconstant.GRANT_TYPE, refresh_token);
+
+        }
+    }
 
 
 

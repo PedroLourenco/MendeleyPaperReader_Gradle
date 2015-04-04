@@ -1,27 +1,22 @@
 package com.mendeleypaperreader.activities;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.ActionBar;
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -44,7 +39,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.mendeleypaperreader.R;
+import com.mendeleypaperreader.ServiceProvider.DataService;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.jsonParser.SyncDataAsync;
@@ -57,6 +54,13 @@ import com.mendeleypaperreader.utl.Globalconstant;
 import com.mendeleypaperreader.utl.RobotoBoldFontHelper;
 import com.mendeleypaperreader.utl.RobotoRegularFontHelper;
 import com.mendeleypaperreader.utl.TypefaceSpan;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author PedroLourenco (pdrolourenco@gmail.com)
@@ -79,6 +83,10 @@ public class DocumentsDetailsActivity extends Activity {
     private ProgressDialog progressDialog;
     private DocumentsDetailsActivity thisActivity;
     private GetDataBaseInformation getDataBaseInformation;
+
+    private IntentFilter mIntentFilter;
+    private NumberProgressBar progressBar;
+
 
 
     // Used to communicate state changes in the DownloaderThread
@@ -103,12 +111,20 @@ public class DocumentsDetailsActivity extends Activity {
             SpannableString s = new SpannableString(getResources().getString(R.string.app_name));
             TypefaceSpan tf = new TypefaceSpan(this, "Roboto-Bold.ttf");
 
-            s.setSpan(tf, 0, s.length(),
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            s.setSpan(tf, 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             // Update the action bar title with the TypefaceSpan instance
 
             actionBar.setTitle(s);
+        }
+
+        session = new SessionManager(DocumentsDetailsActivity.this);
+
+         progressBar = (NumberProgressBar) findViewById(R.id.progress_bar);
+        if(DataService.serviceState) {
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(SyncDataAsync.progressBarValue);
+
         }
 
         final ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
@@ -318,7 +334,7 @@ public class DocumentsDetailsActivity extends Activity {
 
                         String flileId = cursorFile.getString(cursorFile.getColumnIndex(DatabaseOpenHelper._ID));
                         refreshToken();
-                        SessionManager session = new SessionManager(thisActivity);
+
                         String access_token = session.LoadPreference("access_token");
                         String url = Globalconstant.get_files_by_doc_id.replace("file_id", flileId) + access_token;
                         downloaderThread = new DownloaderThread(getApplicationContext(),thisActivity, url, flileId, true);
@@ -380,8 +396,11 @@ public class DocumentsDetailsActivity extends Activity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_refresh:
-                isToSync = true;
-                refreshToken();
+
+                if(!Globalconstant.isTaskRunning) {
+                    isToSync = true;
+                    refreshToken();
+                }
                 return true;
             // up button
             case android.R.id.home:
@@ -1011,9 +1030,43 @@ public class DocumentsDetailsActivity extends Activity {
 
 
     private void syncData() {
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
+        mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
+        mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
 
-        new SyncDataAsync(DocumentsDetailsActivity.this).execute();
+        registerReceiver(mReceiver, mIntentFilter);
+
+        Intent serviceIntent = new Intent(this, DataService.class);
+        serviceIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startService(serviceIntent);
+
     }
+
+
+
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Globalconstant.mBroadcastIntegerAction)) {
+
+               Float progress = intent.getFloatExtra("Progress", 0);
+               progressBar.setVisibility(View.VISIBLE);
+               progressBar.setProgress(progress.intValue());
+                session.savePreferencesInt("progress", progress.intValue());
+
+
+           }
+
+            if(progressBar.getProgress() == 100) {
+                progressBar.setVisibility(View.GONE);
+                DataService.serviceState = false;
+            }
+
+        }
+    };
+
 
 
     private void refreshToken() {
@@ -1057,7 +1110,41 @@ public class DocumentsDetailsActivity extends Activity {
        cursorFile.close();
 
     }
-    
+
+    public void onPause()
+    {
+        super.onPause();
+
+        if(DataService.serviceState) {
+                unregisterReceiver(mReceiver);
+            }
+    }
+
+
+    public void onResume()
+    {
+        super.onResume();
+        if(DataService.serviceState) {
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(session.LoadPreferenceInt("progress"));
+
+            mIntentFilter = new IntentFilter();
+            mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
+            mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
+            mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
+
+            registerReceiver(mReceiver, mIntentFilter);
+
+
+
+            if(session.LoadPreferenceInt("progress") == 100) {
+                progressBar.setVisibility(View.GONE);
+                DataService.serviceState = false;
+            }
+
+        }
+
+    }
 
 
     //AsyncTask to download DATA from server

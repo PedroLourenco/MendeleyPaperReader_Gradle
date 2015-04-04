@@ -22,8 +22,15 @@
         android:listSelector="@drawable/ripple">
 
     </ListView>
-    
-    
+
+    <include
+        android:id="@+id/progress_bar"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        layout="@layout/progress_bar"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
     
      
 </RelativeLayout>

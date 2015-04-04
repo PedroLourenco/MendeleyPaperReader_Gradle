@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/PedroLourenco/MendeleyPaperReader_Gradle.svg?branch=performanceIssues)](https://travis-ci.org/PedroLourenco/MendeleyPaperReader_Gradle)
 
 ## Overview
-Paper Reader is an unofficial Android Client for Mendeley is designed to phones and tablets. This is a beta version of Paper Reader V0.5.1.
+Paper Reader is an unofficial Android Client for Mendeley is designed to phones and tablets. This is a beta version of Paper Reader V0.6.0.
 This APP are using the new Mendeley API .
 
 ##  Features

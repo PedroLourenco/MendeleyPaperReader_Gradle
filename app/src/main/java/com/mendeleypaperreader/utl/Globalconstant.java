@@ -11,6 +11,8 @@ public class Globalconstant {
     public static final boolean LOG = false;
 
     public static String shared_file_name = "share_pref";
+    public static boolean isTaskRunning;
+    public static boolean isServiceRunnig;
 
     //Login information
     public static String CLIENT_ID = "177";
@@ -20,6 +22,13 @@ public class Globalconstant {
     public static String REDIRECT_URI = "http://localhost";
     public static String GRANT_TYPE = "refresh_token";
     public static String TOKEN_URL = "https://api-oauth2.mendeley.com/oauth/token";
+
+
+
+    public static final String mBroadcastStringAction = "com.truiton.broadcast.string";
+    public static final String mBroadcastIntegerAction = "com.truiton.broadcast.integer";
+    public static final String mBroadcastArrayListAction = "com.truiton.broadcast.arraylist";
+
 
     //API URLs
 

@@ -2,9 +2,8 @@ package com.mendeleypaperreader.activities;
 
 
 import android.app.ActionBar;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -13,7 +12,6 @@ import android.text.SpannableString;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -54,11 +52,15 @@ public class MainMenuActivity extends FragmentActivity {
         session = new SessionManager(getApplicationContext());
 
         ActionBar actionBar = getActionBar();
-        if (actionBar != null) {
 
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
-            
         }
+
+        //NumberProgressBar progressBar = (NumberProgressBar) findViewById(R.id.progress_bar);
+        //if(Globalconstant.isTaskRunning)
+         //   progressBar.setProgress(SyncDataAsync.progressBarValue);
+
 
         SpannableString s = new SpannableString("Paper Reader");
         TypefaceSpan tf = new TypefaceSpan(this, "Roboto-Bold.ttf");
@@ -102,19 +104,32 @@ public class MainMenuActivity extends FragmentActivity {
         return false;
     }
 
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu_activity_actions, menu);
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // 'Find' the menu items that should not be displayed - each Fragment's menu has been contributed at this point.
 
-        return super.onCreateOptionsMenu(menu);
+            if(menu.findItem(R.id.frag_menu_refresh) != null)
+                menu.findItem(R.id.frag_menu_refresh).setVisible(false);
+            if(menu.findItem(R.id.frag_grid_default_search) != null)
+                menu.findItem(R.id.frag_grid_default_search).setVisible(false);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
 
+    //@Override
+    //public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+      //  MenuInflater inflater = getMenuInflater();
+       // inflater.inflate(R.menu.main_menu_activity_actions, menu);
+
+        //return super.onCreateOptionsMenu(menu);
+    //}
+
+
     //ActionBar Menu Options
-    public boolean onOptionsItemSelected(MenuItem item) {
+  /* public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
 
         switch (item.getItemId()) {
@@ -123,21 +138,15 @@ public class MainMenuActivity extends FragmentActivity {
                 startActivity(i_about);
                 overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
                 return true;
-            case R.id.menu_logout:
-                showDialog();
-                return true;
+
             case R.id.menu_refresh:
-                refreshToken();
+                if(!Globalconstant.isTaskRunning)
+                    refreshToken();
                 return true;
             case R.id.menu_settings:
                 Intent i_settings = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivity(i_settings);
                 overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
-                return true;
-            // up button
-            case android.R.id.home:
-                //finish();
-                //overridePendingTransition(R.anim.activity_back_in, R.anim.activity_back_out);
                 return true;
 
             default:
@@ -145,38 +154,7 @@ public class MainMenuActivity extends FragmentActivity {
         }
     }
 
-
-	/*
-     * Show dialog to prompt user when logout button is pressed
-	 */
-
-    public void showDialog() {
-        // Use the Builder class for convenient dialog construction
-        AlertDialog.Builder builder = new AlertDialog.Builder(
-                MainMenuActivity.this);
-        builder.setTitle(getResources().getString(R.string.log_out));
-        builder.setMessage(getResources().getString(R.string.warning))
-                .setPositiveButton(getResources().getString(R.string.word_ok), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        session.deleteAllPreferences();
-                        getContentResolver().delete(MyContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
-                        finish();
-                    }
-                });
-
-        // on pressing cancel button
-        builder.setNegativeButton(getResources().getString(R.string.cancel),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-        // show dialog
-        builder.show();
-    }
-
+	*/
 
     public void syncData() {
 

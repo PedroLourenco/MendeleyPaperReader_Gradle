@@ -12,13 +12,17 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
+import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.adapter.ListTitleAdapter;
 import com.mendeleypaperreader.adapter.MergeAdapter;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
+import com.mendeleypaperreader.jsonParser.SyncDataAsync;
+import com.mendeleypaperreader.utl.Globalconstant;
 import com.mendeleypaperreader.utl.TypefaceSpan;
 
 public class ReadersActivity extends ListActivity {
@@ -47,6 +51,15 @@ public class ReadersActivity extends ListActivity {
             // Update the action bar title with the TypefaceSpan instance
 
             actionBar.setTitle(s);
+        }
+;
+        NumberProgressBar progressBar = (NumberProgressBar) findViewById(R.id.progress_bar);
+        if(Globalconstant.isTaskRunning) {
+
+            progressBar.setProgress(SyncDataAsync.progressBarValue);
+        }else{
+            progressBar.setVisibility(View.GONE);
+
         }
         
         TextView redersValue = (TextView) findViewById(R.id.readersValue);

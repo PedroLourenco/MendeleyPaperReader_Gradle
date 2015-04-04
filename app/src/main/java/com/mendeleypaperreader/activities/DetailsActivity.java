@@ -1,27 +1,26 @@
 package com.mendeleypaperreader.activities;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.ActionBar;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.SearchView;
 
+import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
-import com.mendeleypaperreader.jsonParser.SyncDataAsync;
 import com.mendeleypaperreader.sessionManager.GetAccessToken;
 import com.mendeleypaperreader.sessionManager.SessionManager;
 import com.mendeleypaperreader.utl.ConnectionDetector;
 import com.mendeleypaperreader.utl.Globalconstant;
 import com.mendeleypaperreader.utl.TypefaceSpan;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * This activity displays the details using a MainMenuActivityFragmentDetails. This activity is started
@@ -37,6 +36,11 @@ public class DetailsActivity extends FragmentActivity {
     private static SessionManager session;
     private static String code;
     private static String refresh_token;
+    private IntentFilter mIntentFilter;
+    private NumberProgressBar progressBar;
+    private Intent serviceIntent;
+    private Float progress;
+
 
 
     @Override
@@ -86,24 +90,25 @@ public class DetailsActivity extends FragmentActivity {
     }
     
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    //@Override
+    //public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.action_bar_search, menu);
+       // MenuInflater inflater = getMenuInflater();
+        //inflater.inflate(R.menu.action_bar_search, menu);
 
-        return super.onCreateOptionsMenu(menu);
-    }
+        //return super.onCreateOptionsMenu(menu);
+    //}
 
 
 
 
     //ActionBar Menu Options
-    public boolean onOptionsItemSelected(MenuItem item) {
+   public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_refresh:
-                refreshToken();
+                if(!Globalconstant.isTaskRunning)
+                    refreshToken();
                 return true;
             // up button
             case android.R.id.home:
@@ -117,15 +122,16 @@ public class DetailsActivity extends FragmentActivity {
         }
     }
 
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        SearchView searchView = (SearchView) menu.findItem(R.id.grid_default_search).getActionView();
-    }
 
-    private void syncData() {
+   // public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        new SyncDataAsync(DetailsActivity.this).execute();
-    }
+     //   SearchView searchView = (SearchView) menu.findItem(R.id.main_grid_default_search).getActionView();
+    //}
+
+
+
+
 
 
     private void refreshToken() {
@@ -170,7 +176,7 @@ public class DetailsActivity extends FragmentActivity {
                     session.savePreferences("refresh_token", json.getString("refresh_token"));
 
                     //Get data from server
-                    syncData();
+                    //syncData();
 
                 } catch (JSONException e) {
                     e.printStackTrace();

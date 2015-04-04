@@ -68,4 +68,12 @@
 
 
 
+    <include
+        android:id="@+id/progress_bar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        layout="@layout/progress_bar"
+        android:layout_alignParentBottom="true"/>
+
+
 </RelativeLayout>

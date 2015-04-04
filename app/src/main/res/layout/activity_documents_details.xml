@@ -83,7 +83,14 @@
 
 </ScrollView>
 
-
+    <include
+        android:id="@+id/progress_bar"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        layout="@layout/progress_bar"
+        android:layout_alignBottom="@+id/scrollableContents"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 
 </RelativeLayout>

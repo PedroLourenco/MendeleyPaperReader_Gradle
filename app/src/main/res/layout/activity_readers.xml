@@ -45,5 +45,14 @@
 		android:cacheColorHint="@android:color/transparent">
 
     </ListView>
+
+    <include
+        android:id="@+id/progress_bar"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        layout="@layout/progress_bar"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/readersValue"
+        android:layout_toStartOf="@+id/readersValue" />
      
 </RelativeLayout>
