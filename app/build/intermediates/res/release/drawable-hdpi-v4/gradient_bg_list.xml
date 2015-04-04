@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-  <gradient
-      android:startColor="#7986CB"
-      android:centerColor="#C5CAE9"
-      android:endColor="#7986CB"
-      android:angle="270" />
-</shape><!-- From: file:/Users/pedro/Downloads/MendeleyPaperReader/app/src/main/res/drawable-hdpi/gradient_bg_list.xml -->
