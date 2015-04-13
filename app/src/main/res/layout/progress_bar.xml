@@ -1,0 +1,6 @@
+<com.daimajia.numberprogressbar.NumberProgressBar
+    android:id="@+id/number_progress_bar"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:visibility="gone"/>
