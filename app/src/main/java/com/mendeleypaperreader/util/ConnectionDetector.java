@@ -1,4 +1,4 @@
-package com.mendeleypaperreader.utl;
+package com.mendeleypaperreader.util;
 
 import android.app.Activity;
 import android.app.AlertDialog;

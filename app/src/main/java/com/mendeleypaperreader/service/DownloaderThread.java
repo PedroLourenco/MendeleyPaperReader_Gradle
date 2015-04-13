@@ -1,4 +1,4 @@
-package com.mendeleypaperreader.utl;
+package com.mendeleypaperreader.service;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

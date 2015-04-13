@@ -1,4 +1,4 @@
-package com.mendeleypaperreader.utl;
+package com.mendeleypaperreader.util;
 
 /**
  * @author PedroLourenco (pdrolourenco@gmail.com)
@@ -12,7 +12,9 @@ public class Globalconstant {
 
     public static String shared_file_name = "share_pref";
     public static boolean isTaskRunning;
-    public static boolean isServiceRunnig;
+    public static String firstLoad;
+
+    public static boolean isFirstLoad = true;
 
     //Login information
     public static String CLIENT_ID = "177";

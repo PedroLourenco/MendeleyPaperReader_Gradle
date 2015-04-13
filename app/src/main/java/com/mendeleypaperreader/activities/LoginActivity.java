@@ -27,11 +27,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mendeleypaperreader.R;
+import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.sessionManager.GetAccessToken;
-import com.mendeleypaperreader.sessionManager.SessionManager;
-import com.mendeleypaperreader.utl.ConnectionDetector;
-import com.mendeleypaperreader.utl.Globalconstant;
-import com.mendeleypaperreader.utl.TypefaceSpan;
+import com.mendeleypaperreader.util.ConnectionDetector;
+import com.mendeleypaperreader.util.Globalconstant;
+import com.mendeleypaperreader.util.TypefaceSpan;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +43,7 @@ import java.util.Calendar;
  */
 
 
-public class MainActivity extends Activity {
+public class LoginActivity extends Activity {
 
     private static String CLIENT_ID = "177";
     // Use your own client id
@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
     private Dialog auth_dialog;
     private Boolean isInternetPresent = false;
     // Session Manager Class
-    SessionManager session;
+    Preferences session;
 
     WebView web;
     Button btAuth;
@@ -75,7 +75,7 @@ public class MainActivity extends Activity {
         }
 
         // Session Manager
-        session = new SessionManager(MainActivity.this);
+        session = new Preferences(LoginActivity.this);
 
         //delete peferences on update app
         Integer version = 1;
@@ -123,7 +123,7 @@ public class MainActivity extends Activity {
 
                 if (isInternetPresent) {
 
-                    auth_dialog = new Dialog(MainActivity.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+                    auth_dialog = new Dialog(LoginActivity.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
                     auth_dialog.setContentView(R.layout.webviewoauth);
                     web = (WebView) auth_dialog.findViewById(R.id.webview);
                     web.getSettings().setJavaScriptEnabled(true);
@@ -149,7 +149,7 @@ public class MainActivity extends Activity {
 
                                 authComplete = true;
                                 resultIntent.putExtra("code", authCode);
-                                MainActivity.this.setResult(Activity.RESULT_OK, resultIntent);
+                                LoginActivity.this.setResult(Activity.RESULT_OK, resultIntent);
                                 setResult(Activity.RESULT_CANCELED, resultIntent);
 
                                 // save access code in shared preferences
@@ -190,7 +190,7 @@ public class MainActivity extends Activity {
                     startActivity(myWebLink);
 
                 } else {
-                    connectionDetector.showDialog(MainActivity.this, ConnectionDetector.NETWORK_DIALOG);
+                    connectionDetector.showDialog(LoginActivity.this, ConnectionDetector.NETWORK_DIALOG);
                     showDialog();
                 }
             }
@@ -210,10 +210,10 @@ public class MainActivity extends Activity {
             super.onPreExecute();
 
             SpannableString ss1=  new SpannableString(getResources().getString(R.string.contacting_mendeley));
-            TypefaceSpan tf = new TypefaceSpan(MainActivity.this, "Roboto-Regular.ttf");
+            TypefaceSpan tf = new TypefaceSpan(LoginActivity.this, "Roboto-Regular.ttf");
             ss1.setSpan(tf, 0, ss1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog = new ProgressDialog(LoginActivity.this);
             pDialog.setMessage(ss1);
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
@@ -284,13 +284,13 @@ public class MainActivity extends Activity {
 
     public void showDialog() {
         // Use the Builder class for convenient dialog construction
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
 
         SpannableString ssTitle = new SpannableString(getResources().getString(R.string.no_network_connection));
         SpannableString ssWifiMessage = new SpannableString(getResources().getString(R.string.check_internet_connection));
         SpannableString ss3gMessage = new SpannableString(getResources().getString(R.string.settings_3G));
         SpannableString ssCancel = new SpannableString(getResources().getString(R.string.cancel));
-        TypefaceSpan tf = new TypefaceSpan(MainActivity.this, "Roboto-Regular.ttf");
+        TypefaceSpan tf = new TypefaceSpan(LoginActivity.this, "Roboto-Regular.ttf");
         ssTitle.setSpan(tf, 0, ssTitle.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         ssWifiMessage.setSpan(tf, 0, ssWifiMessage.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss3gMessage.setSpan(tf, 0, ss3gMessage.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -316,7 +316,7 @@ public class MainActivity extends Activity {
 
                         // Activity transfer to wifi settings
                         Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
-                        MainActivity.this.startActivity(intent);
+                        LoginActivity.this.startActivity(intent);
                     }
                 });
         // on pressing cancel button

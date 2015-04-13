@@ -1,4 +1,4 @@
-package com.mendeleypaperreader.ServiceProvider;
+package com.mendeleypaperreader.service;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -7,6 +7,7 @@ import android.util.Log;
 import com.mendeleypaperreader.jsonParser.LoadData;
 import com.mendeleypaperreader.sessionManager.SessionManager;
 import com.mendeleypaperreader.utl.Globalconstant;
+import com.mendeleypaperreader.utl.NetworkUtil;
 
 /**
  * Created by pedro on 05/04/15.
@@ -15,7 +16,8 @@ public class ServiceIntent extends IntentService {
 
 
     LoadData load;
-    public static boolean serviceState = false;
+    public static boolean serviceState;
+    private SessionManager sessionManager;
 
     public ServiceIntent() {
 
@@ -32,8 +34,8 @@ public class ServiceIntent extends IntentService {
         Log.i(Globalconstant.TAG, "In onStartCommand");
 
         load = new LoadData(getApplicationContext());
-        SessionManager session = new SessionManager(getApplicationContext());
-        String access_token = session.LoadPreference("access_token");
+        sessionManager = new SessionManager(getApplicationContext());
+        String access_token = sessionManager.LoadPreference("access_token");
 
             Intent broadcastIntent = new Intent();
 
@@ -66,6 +68,7 @@ public class ServiceIntent extends IntentService {
 
 
 
+
     }
 
     private void SendProgressBroadCast(Intent broadcastIntent, int load, int max ){
@@ -80,8 +83,18 @@ public class ServiceIntent extends IntentService {
 
     @Override
     public void onDestroy() {
-        serviceState = false;
         Log.i(Globalconstant.TAG, "In onDestroy");
+       if( NetworkUtil.getConnectivityStatus(getApplicationContext()) == 0)
+           serviceState = true;
+
+        else {
+
+           serviceState = false;
+
+           sessionManager.savePreferences("IS_DB_CREATED", "YES");
+
+       }
+
         super.onDestroy();
     }
 

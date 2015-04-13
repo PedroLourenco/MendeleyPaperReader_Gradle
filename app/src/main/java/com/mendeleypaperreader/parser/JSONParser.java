@@ -1,6 +1,8 @@
-package com.mendeleypaperreader.utl;
+package com.mendeleypaperreader.parser;
 
 import android.util.Log;
+
+import com.mendeleypaperreader.utl.Globalconstant;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

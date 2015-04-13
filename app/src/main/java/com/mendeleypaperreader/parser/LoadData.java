@@ -1,4 +1,4 @@
-package com.mendeleypaperreader.jsonParser;
+package com.mendeleypaperreader.parser;
 
 import android.content.ContentValues;
 import android.content.Context;

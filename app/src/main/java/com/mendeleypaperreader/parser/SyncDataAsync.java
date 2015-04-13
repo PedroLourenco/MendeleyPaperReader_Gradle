@@ -1,4 +1,4 @@
-package com.mendeleypaperreader.jsonParser;
+package com.mendeleypaperreader.parser;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -14,6 +14,7 @@ import android.view.View;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mendeleypaperreader.R;
+import com.mendeleypaperreader.service.ServiceIntent;
 import com.mendeleypaperreader.sessionManager.SessionManager;
 import com.mendeleypaperreader.utl.Globalconstant;
 import com.mendeleypaperreader.utl.TypefaceSpan;
@@ -60,7 +61,7 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
         progressBar.setMax(100);
         progressBar.setProgress(0);
         progressBar.setVisibility(View.VISIBLE);
-        Globalconstant.isTaskRunning = true;
+        ServiceIntent.serviceState = true;
 
         //if (!this.activity.isFinishing())
         //    dialog.show();

@@ -1,4 +1,4 @@
-package com.mendeleypaperreader.utl;
+package com.mendeleypaperreader.util;
 
 import android.content.Context;
 import android.graphics.Paint;

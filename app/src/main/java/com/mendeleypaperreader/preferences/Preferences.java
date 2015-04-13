@@ -1,10 +1,10 @@
-package com.mendeleypaperreader.sessionManager;
+package com.mendeleypaperreader.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
-public class SessionManager {
+public class Preferences {
 
 
     // Shared Preferences
@@ -24,7 +24,7 @@ public class SessionManager {
 
 
     // Constructor
-    public SessionManager(Context context) {
+    public Preferences(Context context) {
         this._context = context;
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();

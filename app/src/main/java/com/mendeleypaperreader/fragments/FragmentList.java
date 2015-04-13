@@ -1,4 +1,4 @@
-package com.mendeleypaperreader.activities;
+package com.mendeleypaperreader.fragments;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
@@ -33,10 +33,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.mendeleypaperreader.R;
-import com.mendeleypaperreader.ServiceProvider.DataService;
+import com.mendeleypaperreader.activities.AboutActivity;
+import com.mendeleypaperreader.activities.DetailsActivity;
+import com.mendeleypaperreader.activities.SettingsActivity;
+import com.mendeleypaperreader.service.ServiceIntent;
 import com.mendeleypaperreader.adapter.ListTitleAdapter;
 import com.mendeleypaperreader.adapter.MergeAdapter;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
@@ -62,20 +66,20 @@ import java.util.List;
  * @date July 8, 2014
  */
 
-public class MainMenuFragmentList extends ListFragment implements  LoaderCallbacks<Cursor> {
+public class FragmentList extends ListFragment implements  LoaderCallbacks<Cursor> {
 
 
-    boolean mDualPane;
-    int mCurCheckPosition = 0;
-    CustomListSimpleCursorAdapter foldersAdapter;
-    CustomListSimpleCursorAdapter groupsAdapter;
+    private boolean mDualPane;
+    private int mCurCheckPosition = 0;
+    private CustomListSimpleCursorAdapter foldersAdapter;
+    private CustomListSimpleCursorAdapter groupsAdapter;
     private String description;
     private int foldersCount;
-    CustomAdapterLibrary lAdapter;
+    private CustomAdapterLibrary lAdapter;
     private static final int FOLDERS_LOADER = 0;
     private static final int GROUPS_LOADER = 1;
-    SearchView searchView;
-    MainMenuActivityFragmentDetails details;
+    private SearchView searchView;
+    private FragmentDetails details;
     private NumberProgressBar progressBar;
 
     private IntentFilter mIntentFilter;
@@ -109,7 +113,19 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
         }
 
 
+
+
         session = new SessionManager(getActivity().getApplicationContext());
+
+
+
+        //Start upload data from server
+        Globalconstant.firstLoad = session.LoadPreference("IS_DB_CREATED");
+        if (Globalconstant.isFirstLoad && !Globalconstant.firstLoad.equals("YES")) {
+            Globalconstant.isFirstLoad = false;
+            getActivity().invalidateOptionsMenu();
+            //refreshToken();
+        }
 
         // Use a custom adapter so we can have something more than the just the text view filled in.
         lAdapter = new CustomAdapterLibrary(getActivity(), R.id.title, Arrays.asList(Globalconstant.MYLIBRARY));
@@ -166,10 +182,14 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
             mCurCheckPosition = savedInstanceState.getInt("curChoice", 1);
         }
 
+
+
+
+
         if (mDualPane) {
 
             progressBar = (NumberProgressBar) getActivity().findViewById(R.id.progress_bar_land);
-            if(DataService.serviceState) {
+            if(ServiceIntent.serviceState) {
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setProgress(session.LoadPreferenceInt("progress"));
             }
@@ -180,10 +200,24 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
             showDetails(mCurCheckPosition, description, foldersCount);
         }else{
             progressBar = (NumberProgressBar) getActivity().findViewById(R.id.progress_bar);
-            if(DataService.serviceState) {
+            if(ServiceIntent.serviceState) {
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setProgress(session.LoadPreferenceInt("progress"));
             }
+        }
+
+
+        if(ServiceIntent.serviceState && !mDualPane) {
+            progressBar.setProgress(session.LoadPreferenceInt("progress"));
+
+            mIntentFilter = new IntentFilter();
+            mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
+            mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
+            mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
+
+            getActivity().registerReceiver(mReceiver, mIntentFilter);
+
+
         }
 
     }
@@ -192,9 +226,6 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-
-
-
         if (!mDualPane) {
            inflater.inflate(R.menu.main_menu_activity_actions, menu);
             searchView = (SearchView) menu.findItem(R.id.main_grid_default_search).getActionView();
@@ -202,6 +233,9 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
 
         }
     }
+
+
+
 
 
 
@@ -221,8 +255,12 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
                 showDialog();
                 return true;
             case R.id.main_menu_refresh:
-                if(!Globalconstant.isTaskRunning)
+                if(!ServiceIntent.serviceState) {
                     refreshToken();
+                }else{
+                    Toast.makeText(getActivity().getApplicationContext(), "Sync in progress ", Toast.LENGTH_LONG).show();
+
+                }
                 return true;
             case R.id.menu_settings:
                 Intent i_settings = new Intent(getActivity().getApplicationContext(), SettingsActivity.class);
@@ -239,7 +277,7 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
     public void showDialog() {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(
-                getActivity().getApplicationContext());
+                getActivity());
         builder.setTitle(getResources().getString(R.string.log_out));
         builder.setMessage(getResources().getString(R.string.warning))
                 .setPositiveButton(getResources().getString(R.string.word_ok), new DialogInterface.OnClickListener() {
@@ -280,7 +318,7 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
             }
 
 
-            MainMenuActivityFragmentDetails mDetails = (MainMenuActivityFragmentDetails)
+            FragmentDetails mDetails = (FragmentDetails)
                     getFragmentManager().findFragmentById(R.id.details);
 
 
@@ -368,7 +406,7 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
             getListView().setItemChecked(index, true);
 
             // Check what fragment is currently shown, replace if needed.
-             details = (MainMenuActivityFragmentDetails)
+             details = (FragmentDetails)
                     getFragmentManager().findFragmentById(R.id.details);
 
 
@@ -376,7 +414,7 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
 
 
                 // Make new fragment to show this selection.
-                details = MainMenuActivityFragmentDetails.newInstance(index, description, foldersCount);
+                details = FragmentDetails.newInstance(index, description, foldersCount);
 
                 // Execute a transaction, replacing any existing fragment
                 // with this one inside the frame.
@@ -482,7 +520,7 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
         getLoaderManager().restartLoader(GROUPS_LOADER, null, this);
 
 
-        if(DataService.serviceState && !mDualPane) {
+        if(ServiceIntent.serviceState && !mDualPane) {
             progressBar.setProgress(session.LoadPreferenceInt("progress"));
 
             mIntentFilter = new IntentFilter();
@@ -492,22 +530,22 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
 
             getActivity().registerReceiver(mReceiver, mIntentFilter);
 
-            if(session.LoadPreferenceInt("progress") == 100) {
-                progressBar.setVisibility(View.GONE);
-                DataService.serviceState = false;
-            }
 
         }
-        
-        
+        if(session.LoadPreferenceInt("progress") == 100) {
+            progressBar.setVisibility(View.GONE);
+            //ServiceIntent.serviceState = false;
+        }
+
+
     }
 
     public void onPause()
     {
         super.onPause();
-        if(DataService.serviceState && !mDualPane) {
-            getActivity().unregisterReceiver(mReceiver);
-        }
+        //if(ServiceIntent.serviceState && !mDualPane) {
+        //    getActivity().unregisterReceiver(mReceiver);
+        //}
     }
 
 
@@ -520,7 +558,7 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
 
         getActivity().registerReceiver(mReceiver, mIntentFilter);
 
-        Intent serviceIntent = new Intent(getActivity(), DataService.class);
+        Intent serviceIntent = new Intent(getActivity(), ServiceIntent.class);
         //serviceIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         getActivity().startService(serviceIntent);
     }
@@ -542,8 +580,10 @@ public class MainMenuFragmentList extends ListFragment implements  LoaderCallbac
 
             if(progressBar != null && progressBar.getProgress() == 100) {
                 progressBar.setVisibility(View.GONE);
-                DataService.serviceState = false;
+                //ServiceIntent.serviceState = false;
             }
+
+
 
         }
     };

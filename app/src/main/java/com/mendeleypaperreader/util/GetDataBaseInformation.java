@@ -1,10 +1,10 @@
-package com.mendeleypaperreader.utl;
+package com.mendeleypaperreader.util;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
-import com.mendeleypaperreader.contentProvider.MyContentProvider;
+import com.mendeleypaperreader.Provider.ContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 
 /**
@@ -27,7 +27,7 @@ public class GetDataBaseInformation {
         String selection = null;
 
         projection = new String[]{columnName + " as _id"};
-        Uri uri = MyContentProvider.CONTENT_URI_PROFILE;
+        Uri uri = ContentProvider.CONTENT_URI_PROFILE;
 
         Cursor cursorProfiel = mContext.getContentResolver().query(uri, projection, selection, null, null);
         //cursorProfiel.moveToPosition(0);
@@ -50,7 +50,7 @@ public class GetDataBaseInformation {
         String[] projection = new String[]{DatabaseOpenHelper.FILE_ID + " as _id", DatabaseOpenHelper.FILE_NAME, DatabaseOpenHelper.FILE_MIME_TYPE, DatabaseOpenHelper.DOCUMENT_ID};
 
         String selection = null;
-        Uri uri = MyContentProvider.CONTENT_URI_FILES;
+        Uri uri = ContentProvider.CONTENT_URI_FILES;
 
         Cursor cursorFile = mContext.getContentResolver().query(uri, projection, selection, null, null);
         cursorFile.moveToPosition(0);

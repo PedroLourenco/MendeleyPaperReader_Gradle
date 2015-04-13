@@ -1,4 +1,4 @@
-package com.mendeleypaperreader.contentProvider;
+package com.mendeleypaperreader.Provider;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -9,14 +9,13 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.utl.Globalconstant;
 
-public class MyContentProvider extends ContentProvider {
+public class ContentProvider extends android.content.ContentProvider {
 
     private DatabaseOpenHelper db_helper;
 

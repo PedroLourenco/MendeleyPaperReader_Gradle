@@ -1,4 +1,4 @@
-package com.mendeleypaperreader.activities;
+package com.mendeleypaperreader.fragments;
 
 
 import android.app.ActionBar;
@@ -32,10 +32,14 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.mendeleypaperreader.R;
-import com.mendeleypaperreader.ServiceProvider.DataService;
+import com.mendeleypaperreader.activities.AboutActivity;
+import com.mendeleypaperreader.activities.DocumentsDetailsActivity;
+import com.mendeleypaperreader.activities.SettingsActivity;
+import com.mendeleypaperreader.service.ServiceIntent;
 import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.sessionManager.GetAccessToken;
@@ -55,19 +59,19 @@ import java.util.Calendar;
  * @author PedroLourenco (pdrolourenco@gmail.com)
  */
 
-public class MainMenuActivityFragmentDetails extends ListFragment implements LoaderCallbacks<Cursor> {
+public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cursor> {
 
     boolean mDualPane;
-    CustomListSimpleCursorAdapter mAdapter;
-    TextView title;
-    SearchView searchView;
+    private CustomListSimpleCursorAdapter mAdapter;
+    private TextView title;
+    private SearchView searchView;
     private static final int DETAILS_LOADER = 2;
 
     private SessionManager session;
     private IntentFilter mIntentFilter;
     private NumberProgressBar progressBar;
-    private Intent serviceIntent;
-    private Float progress;
+
+
     private static String code;
     private static String refresh_token;
 
@@ -97,8 +101,8 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
 
 
     
-    public static MainMenuActivityFragmentDetails newInstance(int index, String description, int foldersCount) {
-        MainMenuActivityFragmentDetails f = new MainMenuActivityFragmentDetails();
+    public static FragmentDetails newInstance(int index, String description, int foldersCount) {
+        FragmentDetails f = new FragmentDetails();
 
         // Supply index input as an argument.
         Bundle args = new Bundle();
@@ -134,23 +138,21 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
         View view = inflater.inflate(R.layout.activity_main_menu_details, container, false);
         ListView lv = (ListView) view.findViewById(android.R.id.list);
 
-            //progressBar = (NumberProgressBar) view.findViewById(R.id.progress_bar_land);
+
             if(mDualPane) {
                 progressBar = (NumberProgressBar) getActivity().findViewById(R.id.progress_bar_land);
-                //progressBar.setVisibility(View.GONE);
             }else{
             progressBar = (NumberProgressBar) view.findViewById(R.id.progress_bar);
-            //progressBar.setVisibility(View.GONE);
             }
 
-        if(DataService.serviceState) {
+        if(ServiceIntent.serviceState) {
             session = new SessionManager(getActivity().getApplicationContext());
 
-            //if(progressBar != null) {
+            if(progressBar != null) {
 
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setProgress(session.LoadPreferenceInt("progress"));
-            //}
+            }
         }
 
         title = (TextView) view.findViewById(R.id.detailTitle);
@@ -190,7 +192,7 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
             grid_currentQuery = newText;
 
             if (grid_currentQuery != null) {
-                getLoaderManager().restartLoader(DETAILS_LOADER, null, MainMenuActivityFragmentDetails.this);
+                getLoaderManager().restartLoader(DETAILS_LOADER, null, FragmentDetails.this);
             }
 
             return false;
@@ -212,7 +214,7 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
     public void showResults(String search) {
 
         grid_currentQuery = search;
-        getLoaderManager().restartLoader(DETAILS_LOADER, null, MainMenuActivityFragmentDetails.this);
+        getLoaderManager().restartLoader(DETAILS_LOADER, null, FragmentDetails.this);
     }
 
 
@@ -244,7 +246,7 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
             searchView.setQuery(query, false);
             grid_currentQuery = query;
 
-            getLoaderManager().restartLoader(DETAILS_LOADER, null, MainMenuActivityFragmentDetails.this);
+            getLoaderManager().restartLoader(DETAILS_LOADER, null, FragmentDetails.this);
             searchView.setOnQueryTextListener(queryListener);
         }
 
@@ -269,8 +271,13 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
                 showDialog();
                 return true;
             case R.id.frag_menu_refresh:
-                if(!Globalconstant.isTaskRunning)
+
+                if(!ServiceIntent.serviceState) {
                     refreshToken();
+                }else{
+                    Toast.makeText(getActivity().getApplicationContext(), "Sync in progress ", Toast.LENGTH_LONG).show();
+
+                }
                 return true;
             case R.id.menu_settings:
                 Intent i_settings = new Intent(getActivity().getApplicationContext(), SettingsActivity.class);
@@ -285,8 +292,7 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
 
 
 
-    public void syncData() {
-
+    private void syncData() {
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
         mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
@@ -294,9 +300,10 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
 
         getActivity().registerReceiver(mReceiver, mIntentFilter);
 
-        serviceIntent = new Intent(getActivity(), DataService.class);
-        serviceIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        Intent serviceIntent = new Intent(getActivity(), ServiceIntent.class);
+
         getActivity().startService(serviceIntent);
+
     }
 
 
@@ -437,7 +444,7 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
     public void onPause()
     {
         super.onPause();
-        //if(DataService.serviceState && mDualPane) {
+        //if(ServiceIntent.serviceState && mDualPane) {
         //        getActivity().unregisterReceiver(mReceiver);
         //}
 
@@ -446,6 +453,9 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
             progressBarDual.setVisibility(View.GONE);
 
         }
+
+
+
     }
 
     public void onResume(){
@@ -463,11 +473,21 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
             getLoaderManager().restartLoader(DETAILS_LOADER, null, this);
         }
 
-        if(DataService.serviceState) {
-            if(progressBar != null) {
-                progressBar.setVisibility(View.VISIBLE);
-                progressBar.setProgress(session.LoadPreferenceInt("progress"));
-            }
+
+        if(mDualPane) {
+            progressBar = (NumberProgressBar) getActivity().findViewById(R.id.progress_bar_land);
+
+        }else{
+            progressBar = (NumberProgressBar) getActivity().findViewById(R.id.progress_bar);
+
+        }
+
+
+
+        if(ServiceIntent.serviceState) {
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(session.LoadPreferenceInt("progress"));
+
             mIntentFilter = new IntentFilter();
             mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
             mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
@@ -475,12 +495,15 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
 
             getActivity().registerReceiver(mReceiver, mIntentFilter);
 
-            if(session.LoadPreferenceInt("progress") == 100) {
-                progressBar.setVisibility(View.GONE);
-                DataService.serviceState = false;
-            }
+        }
+        if(session.LoadPreferenceInt("progress") == 100) {
+            progressBar.setVisibility(View.GONE);
+
 
         }
+        getActivity().invalidateOptionsMenu();
+
+
 
     }
 
@@ -492,21 +515,24 @@ public class MainMenuActivityFragmentDetails extends ListFragment implements Loa
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
             if (intent.getAction().equals(Globalconstant.mBroadcastIntegerAction)) {
 
-                progress = intent.getFloatExtra("Progress", 0);
-                if(progressBar != null) {
-                    progressBar.setVisibility(View.VISIBLE);
-                    progressBar.setProgress(progress.intValue());
-                    session.savePreferencesInt("progress", progress.intValue());
-                }
+                Float progress = intent.getFloatExtra("Progress", 0);
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(progress.intValue());
+                session.savePreferencesInt("progress", progress.intValue());
+
+                getActivity().invalidateOptionsMenu();
             }
 
-            if(progressBar != null && progressBar.getProgress() == 100) {
+            if(progressBar.getProgress() == 100) {
                 progressBar.setVisibility(View.GONE);
-                DataService.serviceState = false;
+                ServiceIntent.serviceState = false;
+
+
             }
+
+
 
         }
     };
