@@ -2,32 +2,18 @@ package com.mendeleypaperreader.activities;
 
 
 import android.app.ActionBar;
-import android.content.Intent;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.mendeleypaperreader.R;
-import com.mendeleypaperreader.contentProvider.MyContentProvider;
-import com.mendeleypaperreader.jsonParser.SyncDataAsync;
-import com.mendeleypaperreader.sessionManager.GetAccessToken;
-import com.mendeleypaperreader.sessionManager.SessionManager;
-import com.mendeleypaperreader.utl.ConnectionDetector;
-import com.mendeleypaperreader.utl.Globalconstant;
-import com.mendeleypaperreader.utl.TypefaceSpan;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Calendar;
+import com.mendeleypaperreader.util.TypefaceSpan;
 
 /**
  * @author PedroLourenco (pdrolourenco@gmail.com)
@@ -37,10 +23,6 @@ public class MainMenuActivity extends FragmentActivity {
 
     private long mLastPressedTime;
     private static final int PERIOD = 2000;
-    // Session Manager Class
-    private static SessionManager session;
-    private static String refresh_token;
-    private static String code;
 
 
 
@@ -49,7 +31,6 @@ public class MainMenuActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main_menu);
-        session = new SessionManager(getApplicationContext());
 
         ActionBar actionBar = getActionBar();
 
@@ -57,9 +38,6 @@ public class MainMenuActivity extends FragmentActivity {
             actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
         }
 
-        //NumberProgressBar progressBar = (NumberProgressBar) findViewById(R.id.progress_bar);
-        //if(Globalconstant.isTaskRunning)
-         //   progressBar.setProgress(SyncDataAsync.progressBarValue);
 
 
         SpannableString s = new SpannableString("Paper Reader");
@@ -72,13 +50,7 @@ public class MainMenuActivity extends FragmentActivity {
 
         if (actionBar != null) 
             actionBar.setTitle(s);
-        
-        //Start upload data from server
-        String db_uploded_flag = session.LoadPreference("IS_DB_CREATED");
-        if (!db_uploded_flag.equals("YES")) {
 
-            refreshToken();
-        }
     }
 
 
@@ -108,24 +80,22 @@ public class MainMenuActivity extends FragmentActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             // 'Find' the menu items that should not be displayed - each Fragment's menu has been contributed at this point.
-
-            if(menu.findItem(R.id.frag_menu_refresh) != null)
+            MenuItem refreshIcon = null;
+            if(menu.findItem(R.id.frag_menu_refresh) != null) {
+                refreshIcon = menu.findItem(R.id.frag_menu_refresh);
                 menu.findItem(R.id.frag_menu_refresh).setVisible(false);
-            if(menu.findItem(R.id.frag_grid_default_search) != null)
+            }
+
+            if(menu.findItem(R.id.frag_grid_default_search) != null) {
+                refreshIcon = menu.findItem(R.id.frag_grid_default_search);
                 menu.findItem(R.id.frag_grid_default_search).setVisible(false);
+            }
+
+
         }
         return super.onPrepareOptionsMenu(menu);
     }
 
-
-    //@Override
-    //public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-      //  MenuInflater inflater = getMenuInflater();
-       // inflater.inflate(R.menu.main_menu_activity_actions, menu);
-
-        //return super.onCreateOptionsMenu(menu);
-    //}
 
 
     //ActionBar Menu Options
@@ -156,29 +126,13 @@ public class MainMenuActivity extends FragmentActivity {
 
 	*/
 
-    public void syncData() {
-
-        new SyncDataAsync(MainMenuActivity.this).execute();
-    }
 
 
-    private void refreshToken() {
 
-        // check internet connection
 
-        Boolean isInternetPresent;
-        ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
 
-        isInternetPresent = connectionDetector.isConnectingToInternet();
 
-        if (isInternetPresent) {
-            getContentResolver().delete(MyContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
-            new ProgressTask().execute();
-        } else {
-            connectionDetector.showDialog(this, ConnectionDetector.DEFAULT_DIALOG);
-        }
-    }
-
+/*
 
     //AsyncTask to download DATA from server
 
@@ -235,5 +189,5 @@ public class MainMenuActivity extends FragmentActivity {
         }
     }
 
-
+*/
 }

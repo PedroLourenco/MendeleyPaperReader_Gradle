@@ -1,6 +1,5 @@
 package com.mendeleypaperreader.Provider;
 
-import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -13,7 +12,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
-import com.mendeleypaperreader.utl.Globalconstant;
+import com.mendeleypaperreader.util.Globalconstant;
 
 public class ContentProvider extends android.content.ContentProvider {
 

@@ -36,21 +36,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
+import com.mendeleypaperreader.Provider.ContentProvider;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.activities.AboutActivity;
 import com.mendeleypaperreader.activities.DetailsActivity;
 import com.mendeleypaperreader.activities.SettingsActivity;
-import com.mendeleypaperreader.service.ServiceIntent;
 import com.mendeleypaperreader.adapter.ListTitleAdapter;
 import com.mendeleypaperreader.adapter.MergeAdapter;
-import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
+import com.mendeleypaperreader.preferences.Preferences;
+import com.mendeleypaperreader.service.RefreshTokenTask;
+import com.mendeleypaperreader.service.ServiceIntent;
 import com.mendeleypaperreader.sessionManager.GetAccessToken;
-import com.mendeleypaperreader.sessionManager.SessionManager;
-import com.mendeleypaperreader.utl.ConnectionDetector;
-import com.mendeleypaperreader.utl.Globalconstant;
-import com.mendeleypaperreader.utl.RobotoRegularFontHelper;
-import com.mendeleypaperreader.utl.TypefaceSpan;
+import com.mendeleypaperreader.util.ConnectionDetector;
+import com.mendeleypaperreader.util.DateUtil;
+import com.mendeleypaperreader.util.Globalconstant;
+import com.mendeleypaperreader.util.RobotoRegularFontHelper;
+import com.mendeleypaperreader.util.TypefaceSpan;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,7 +68,10 @@ import java.util.List;
  * @date July 8, 2014
  */
 
-public class FragmentList extends ListFragment implements  LoaderCallbacks<Cursor> {
+public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor> {
+
+    private static final String TAG = "FragmentList";
+    private static final boolean DEBUG = Globalconstant.DEBUG;
 
 
     private boolean mDualPane;
@@ -86,8 +91,7 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
     private Float progress;
     private static String code;
     private static String refresh_token;
-    private SessionManager session;
-
+    private Preferences session;
 
 
     Integer[] imageId = {R.drawable.alldocuments, R.drawable.clock, R.drawable.starim, R.drawable.person, R.drawable.empty_trash};
@@ -98,9 +102,9 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
 
         ActionBar actionBar = getActivity().getActionBar();
         if (actionBar != null) {
-            
+
             setHasOptionsMenu(true);
-                    
+
             SpannableString s = new SpannableString(getResources().getString(R.string.app_name));
             TypefaceSpan tf = new TypefaceSpan(getActivity(), "Roboto-Bold.ttf");
 
@@ -113,19 +117,32 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
         }
 
 
+        session = new Preferences(getActivity().getApplicationContext());
 
 
-        session = new SessionManager(getActivity().getApplicationContext());
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
+        mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
+        mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
 
+        getActivity().registerReceiver(mReceiver, mIntentFilter);
 
 
         //Start upload data from server
-        Globalconstant.firstLoad = session.LoadPreference("IS_DB_CREATED");
-        if (Globalconstant.isFirstLoad && !Globalconstant.firstLoad.equals("YES")) {
-            Globalconstant.isFirstLoad = false;
-            getActivity().invalidateOptionsMenu();
-            //refreshToken();
+        String firstLoad = session.LoadPreference("IS_DB_CREATED");
+
+        if (DEBUG) Log.d(FragmentList.TAG, "firstLoad: " + firstLoad);
+
+        if (!firstLoad.equals("YES")) {
+
+            if (DEBUG) Log.d(FragmentList.TAG, "First Sync");
+
+            new RefreshTokenTask(getActivity()).execute();
         }
+
+
+
+
 
         // Use a custom adapter so we can have something more than the just the text view filled in.
         lAdapter = new CustomAdapterLibrary(getActivity(), R.id.title, Arrays.asList(Globalconstant.MYLIBRARY));
@@ -137,8 +154,8 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
 
         //foldersAdapter = new SimpleCursorAdapter(getActivity().getApplicationContext(), R.layout.list_row_with_image, null, foldersDataColumns, folderViewIDs, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
-        foldersAdapter = new CustomListSimpleCursorAdapter(getActivity().getApplicationContext(), R.layout.list_row_with_image,null,foldersDataColumns,folderViewIDs,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-        
+        foldersAdapter = new CustomListSimpleCursorAdapter(getActivity().getApplicationContext(), R.layout.list_row_with_image, null, foldersDataColumns, folderViewIDs, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+
         groupsAdapter = new CustomListSimpleCursorAdapter(getActivity().getApplicationContext(), R.layout.list_row_with_image_groups, null, groupsDataColumns, folderViewIDs, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
         // Add section to list and merge two adatpers
@@ -157,8 +174,7 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
         getActivity().getSupportLoaderManager().initLoader(FOLDERS_LOADER, null, this);
         getActivity().getSupportLoaderManager().initLoader(GROUPS_LOADER, null, this);
 
-        if (Globalconstant.LOG)
-            LoaderManager.enableDebugLogging(true);
+        if (DEBUG) LoaderManager.enableDebugLogging(true);
 
 
         // Check to see if we have a frame in which to embed the details
@@ -171,10 +187,7 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
         //}
 
 
-
         mDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
-
-
 
 
         if (savedInstanceState != null) {
@@ -183,13 +196,10 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
         }
 
 
-
-
-
         if (mDualPane) {
 
             progressBar = (NumberProgressBar) getActivity().findViewById(R.id.progress_bar_land);
-            if(ServiceIntent.serviceState) {
+            if (ServiceIntent.serviceState) {
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setProgress(session.LoadPreferenceInt("progress"));
             }
@@ -198,16 +208,16 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
             getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
             // Make sure our UI is in the correct state.
             showDetails(mCurCheckPosition, description, foldersCount);
-        }else{
+        } else {
             progressBar = (NumberProgressBar) getActivity().findViewById(R.id.progress_bar);
-            if(ServiceIntent.serviceState) {
+            if (ServiceIntent.serviceState) {
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setProgress(session.LoadPreferenceInt("progress"));
             }
         }
 
 
-        if(ServiceIntent.serviceState && !mDualPane) {
+        if (ServiceIntent.serviceState && !mDualPane) {
             progressBar.setProgress(session.LoadPreferenceInt("progress"));
 
             mIntentFilter = new IntentFilter();
@@ -223,22 +233,15 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
     }
 
 
-
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         if (!mDualPane) {
-           inflater.inflate(R.menu.main_menu_activity_actions, menu);
+            inflater.inflate(R.menu.main_menu_activity_actions, menu);
             searchView = (SearchView) menu.findItem(R.id.main_grid_default_search).getActionView();
             searchView.setOnQueryTextListener(queryListener);
 
         }
     }
-
-
-
-
-
-
 
 
     //ActionBar Menu Options
@@ -255,9 +258,15 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
                 showDialog();
                 return true;
             case R.id.main_menu_refresh:
-                if(!ServiceIntent.serviceState) {
-                    refreshToken();
-                }else{
+                if (!ServiceIntent.serviceState) {
+
+                   if(DateUtil.TokenExpired(getActivity().getApplicationContext())){
+                       new RefreshTokenTask(getActivity()).execute();
+                   }else{
+                      refreshToken();
+                   }
+
+                } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Sync in progress ", Toast.LENGTH_LONG).show();
 
                 }
@@ -284,7 +293,7 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
                     public void onClick(DialogInterface dialog, int which) {
 
                         session.deleteAllPreferences();
-                        getActivity().getContentResolver().delete(MyContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
+                        getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
                         getActivity().finish();
                     }
                 });
@@ -363,7 +372,7 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
         Cursor c = foldersAdapter.getCursor();
         foldersCount = c.getCount();
 
-        if(searchView != null)
+        if (searchView != null)
             searchView.setQuery("", false);
 
         v.setSelected(true);
@@ -406,7 +415,7 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
             getListView().setItemChecked(index, true);
 
             // Check what fragment is currently shown, replace if needed.
-             details = (FragmentDetails)
+            details = (FragmentDetails)
                     getFragmentManager().findFragmentById(R.id.details);
 
 
@@ -442,8 +451,6 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
     }
 
 
-    
-
     @Override
     public Loader<Cursor> onCreateLoader(int loaderID, Bundle args) {
 
@@ -451,18 +458,16 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
             case FOLDERS_LOADER:
 
                 String[] folderProjection = {DatabaseOpenHelper.FOLDER_NAME + " as _id"};
-                if (Globalconstant.LOG)
-                    Log.d(Globalconstant.TAG, "onCreateLoader  Folders");
+                if (DEBUG) Log.d(FragmentList.TAG, "LoaderCreate Folders");
 
-                return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_FOLDERS, folderProjection, null, null, null);
+                return new CursorLoader(getActivity().getApplicationContext(), ContentProvider.CONTENT_URI_FOLDERS, folderProjection, null, null, null);
 
             case GROUPS_LOADER:
 
                 String[] groupProjection = {DatabaseOpenHelper.GROUPS_NAME + " as _id"};
-                if (Globalconstant.LOG)
-                    Log.d(Globalconstant.TAG, "onCreateLoader  Groups");
+                if (DEBUG) Log.d(FragmentList.TAG, "LoaderCreate  Groups");
 
-                return new CursorLoader(getActivity().getApplicationContext(), MyContentProvider.CONTENT_URI_GROUPS, groupProjection, null, null, null);
+                return new CursorLoader(getActivity().getApplicationContext(), ContentProvider.CONTENT_URI_GROUPS, groupProjection, null, null, null);
 
 
             default:
@@ -520,7 +525,7 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
         getLoaderManager().restartLoader(GROUPS_LOADER, null, this);
 
 
-        if(ServiceIntent.serviceState && !mDualPane) {
+        if (ServiceIntent.serviceState && !mDualPane) {
             progressBar.setProgress(session.LoadPreferenceInt("progress"));
 
             mIntentFilter = new IntentFilter();
@@ -532,7 +537,7 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
 
 
         }
-        if(session.LoadPreferenceInt("progress") == 100) {
+        if (session.LoadPreferenceInt("progress") == 100) {
             progressBar.setVisibility(View.GONE);
             //ServiceIntent.serviceState = false;
         }
@@ -540,8 +545,7 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
 
     }
 
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
         //if(ServiceIntent.serviceState && !mDualPane) {
         //    getActivity().unregisterReceiver(mReceiver);
@@ -550,17 +554,9 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
 
 
     public void syncData() {
-
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
-        mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
-        mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
-
-        getActivity().registerReceiver(mReceiver, mIntentFilter);
-
         Intent serviceIntent = new Intent(getActivity(), ServiceIntent.class);
-        //serviceIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         getActivity().startService(serviceIntent);
+
     }
 
 
@@ -568,7 +564,7 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Globalconstant.mBroadcastIntegerAction)) {
-                if(progressBar != null) {
+                if (progressBar != null) {
                     progress = intent.getFloatExtra("Progress", 0);
                     progressBar.setVisibility(View.VISIBLE);
                     progressBar.setProgress(progress.intValue());
@@ -578,11 +574,10 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
                     session.savePreferencesInt("progress", progress.intValue());
             }
 
-            if(progressBar != null && progressBar.getProgress() == 100) {
+            if (progressBar != null && progressBar.getProgress() == 100) {
                 progressBar.setVisibility(View.GONE);
-                //ServiceIntent.serviceState = false;
-            }
 
+            }
 
 
         }
@@ -598,7 +593,7 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
         isInternetPresent = connectionDetector.isConnectingToInternet();
 
         if (isInternetPresent) {
-            getActivity().getContentResolver().delete(MyContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
+            getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
             new ProgressTask().execute();
         } else {
             connectionDetector.showDialog(getActivity(), ConnectionDetector.DEFAULT_DIALOG);
@@ -638,11 +633,11 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
                     //Get data from server
                     syncData();
 
-                    if (Globalconstant.LOG) {
+                    if (DEBUG) {
 
-                        Log.d("refresh_token - Expire", expire);
-                        Log.d("refresh_token - Refresh", refresh);
-                        Log.d("expires_on", json.getString("exwpires_on"));
+                        Log.d(FragmentList.TAG, "refresh_token - Expire: " + expire);
+                        Log.d(FragmentList.TAG, "refresh_token - Refresh: " + refresh);
+                        Log.d(FragmentList.TAG, "expires_on" + json.getString("exwpires_on"));
                     }
 
                 } catch (JSONException e) {
@@ -660,7 +655,6 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
 
         }
     }
-
 
 
     /**
@@ -683,8 +677,6 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
 
         }
 
-       
-
 
         /**
          * getView
@@ -701,12 +693,12 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
                 v = vi.inflate(R.layout.list_row_with_image, null, true);
             }
 
-            
+
             View itemView = v;
             itemView.setSelected(true);
             TextView txtTitle = (TextView) itemView.findViewById(R.id.title);
             txtTitle.setTypeface(roboto);
-            
+
             ImageView imageView = (ImageView) itemView.findViewById(R.id.list_image);
             txtTitle.setText(Globalconstant.MYLIBRARY[position]);
 
@@ -716,17 +708,14 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
         }
 
 
-
     }
 
-    private class CustomListSimpleCursorAdapter extends SimpleCursorAdapter
-    {
+    private class CustomListSimpleCursorAdapter extends SimpleCursorAdapter {
 
         public CustomListSimpleCursorAdapter(final Context context, final int layout, final Cursor c, final String[] from, final int[] to, final int flags) {
             super(context, layout, c, from, to, flags);
 
         }
-
 
 
         @Override
@@ -739,8 +728,8 @@ public class FragmentList extends ListFragment implements  LoaderCallbacks<Curso
 
         }
     }
-    
-    
+
+
 }
 
 

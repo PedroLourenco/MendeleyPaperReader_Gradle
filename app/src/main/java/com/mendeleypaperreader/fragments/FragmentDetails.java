@@ -35,20 +35,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
+import com.mendeleypaperreader.Provider.ContentProvider;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.activities.AboutActivity;
 import com.mendeleypaperreader.activities.DocumentsDetailsActivity;
 import com.mendeleypaperreader.activities.SettingsActivity;
+import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.service.ServiceIntent;
-import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.sessionManager.GetAccessToken;
-import com.mendeleypaperreader.sessionManager.SessionManager;
-import com.mendeleypaperreader.utl.ConnectionDetector;
-import com.mendeleypaperreader.utl.Globalconstant;
-import com.mendeleypaperreader.utl.RobotoBoldFontHelper;
-import com.mendeleypaperreader.utl.RobotoRegularFontHelper;
-import com.mendeleypaperreader.utl.TypefaceSpan;
+import com.mendeleypaperreader.util.ConnectionDetector;
+import com.mendeleypaperreader.util.Globalconstant;
+import com.mendeleypaperreader.util.RobotoBoldFontHelper;
+import com.mendeleypaperreader.util.RobotoRegularFontHelper;
+import com.mendeleypaperreader.util.TypefaceSpan;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,13 +61,16 @@ import java.util.Calendar;
 
 public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cursor> {
 
+    private static final String TAG = "FragmentDetails";
+    private static final boolean DEBUG = Globalconstant.DEBUG;
+
     boolean mDualPane;
     private CustomListSimpleCursorAdapter mAdapter;
     private TextView title;
     private SearchView searchView;
     private static final int DETAILS_LOADER = 2;
 
-    private SessionManager session;
+    private Preferences session;
     private IntentFilter mIntentFilter;
     private NumberProgressBar progressBar;
 
@@ -82,7 +85,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
 
         ActionBar actionBar = getActivity().getActionBar();
         if (actionBar != null) {
-            
+
             setHasOptionsMenu(true);
 
             SpannableString s = new SpannableString(getResources().getString(R.string.app_name));
@@ -96,11 +99,19 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
             actionBar.setTitle(s);
         }
 
-        session = new SessionManager(getActivity().getApplicationContext());
+        session = new Preferences(getActivity().getApplicationContext());
+
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
+        mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
+        mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
+
+        getActivity().registerReceiver(mReceiver, mIntentFilter);
+
+
     }
 
 
-    
     public static FragmentDetails newInstance(int index, String description, int foldersCount) {
         FragmentDetails f = new FragmentDetails();
 
@@ -139,16 +150,16 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         ListView lv = (ListView) view.findViewById(android.R.id.list);
 
 
-            if(mDualPane) {
-                progressBar = (NumberProgressBar) getActivity().findViewById(R.id.progress_bar_land);
-            }else{
+        if (mDualPane) {
+            progressBar = (NumberProgressBar) getActivity().findViewById(R.id.progress_bar_land);
+        } else {
             progressBar = (NumberProgressBar) view.findViewById(R.id.progress_bar);
-            }
+        }
 
-        if(ServiceIntent.serviceState) {
-            session = new SessionManager(getActivity().getApplicationContext());
+        if (ServiceIntent.serviceState) {
+            session = new Preferences(getActivity().getApplicationContext());
 
-            if(progressBar != null) {
+            if (progressBar != null) {
 
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setProgress(session.LoadPreferenceInt("progress"));
@@ -165,13 +176,10 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
 
         lv.setAdapter(mAdapter);
 
-        if (Globalconstant.LOG)
-            Log.d(Globalconstant.TAG, "onCreateView  Details");
 
         getActivity().getSupportLoaderManager().initLoader(DETAILS_LOADER, null, this);
 
-        if (Globalconstant.LOG)
-            LoaderManager.enableDebugLogging(true);
+        if (DEBUG) LoaderManager.enableDebugLogging(true);
 
         return view;
 
@@ -226,11 +234,11 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         View detailsFrame = getActivity().findViewById(R.id.details);
         mDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
 
-        if(mDualPane) {
+        if (mDualPane) {
 
             inflater.inflate(R.menu.main_menu_activity_actions, menu);
             searchView = (SearchView) menu.findItem(R.id.main_grid_default_search).getActionView();
-        }else {
+        } else {
             inflater.inflate(R.menu.action_bar_search, menu);
             searchView = (SearchView) menu.findItem(R.id.frag_grid_default_search).getActionView();
         }
@@ -272,9 +280,9 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
                 return true;
             case R.id.frag_menu_refresh:
 
-                if(!ServiceIntent.serviceState) {
+                if (!ServiceIntent.serviceState) {
                     refreshToken();
-                }else{
+                } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Sync in progress ", Toast.LENGTH_LONG).show();
 
                 }
@@ -291,17 +299,9 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
     }
 
 
-
     private void syncData() {
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
-        mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
-        mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
-
-        getActivity().registerReceiver(mReceiver, mIntentFilter);
 
         Intent serviceIntent = new Intent(getActivity(), ServiceIntent.class);
-
         getActivity().startService(serviceIntent);
 
     }
@@ -317,7 +317,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         isInternetPresent = connectionDetector.isConnectingToInternet();
 
         if (isInternetPresent) {
-            getActivity().getContentResolver().delete(MyContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
+            getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
             new ProgressTask().execute();
         } else {
             connectionDetector.showDialog(getActivity(), ConnectionDetector.DEFAULT_DIALOG);
@@ -335,7 +335,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
                     public void onClick(DialogInterface dialog, int which) {
 
                         session.deleteAllPreferences();
-                        getActivity().getContentResolver().delete(MyContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
+                        getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
                         getActivity().finish();
                     }
                 });
@@ -351,7 +351,6 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         // show dialog
         builder.show();
     }
-
 
 
     public int getShownIndex() {
@@ -394,9 +393,8 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
     public void onListItemClick(ListView l, View v, int position, long id) {
 
         v.setSelected(false);
-        
-        if (Globalconstant.LOG)
-            Log.d(Globalconstant.TAG, "position: " + position);
+
+        if (DEBUG) Log.d(TAG, "Click on position: " + position);
 
 
         searchView.setQuery("", false);
@@ -410,19 +408,15 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         c1.moveToPosition(0);
         String doc_id = c1.getString(c1.getColumnIndex(DatabaseOpenHelper._ID));
 
-        if (Globalconstant.LOG) {
-            Log.d(Globalconstant.TAG, "doc_id: " + doc_id);
-            Log.d(Globalconstant.TAG, "title_description: " + title);
+        if (DEBUG) {
+            Log.d(TAG, "doc_id: " + doc_id);
+            Log.d(TAG, "title_description: " + title);
         }
 
         Intent doc_details = new Intent(getActivity().getApplicationContext(), DocumentsDetailsActivity.class);
         doc_details.putExtra("DOC_ID", doc_id);
         startActivity(doc_details);
         getActivity().overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
-
-
-
-
     }
 
 
@@ -435,56 +429,51 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         }
 
         String selection = DatabaseOpenHelper.TITLE + " = '" + doc_title + "'";
-        Uri uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
+        Uri uri = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
 
         return getActivity().getApplicationContext().getContentResolver().query(uri, projection, selection, null, null);
     }
 
 
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
         //if(ServiceIntent.serviceState && mDualPane) {
         //        getActivity().unregisterReceiver(mReceiver);
         //}
 
-        if(mDualPane) {
+        if (mDualPane) {
             NumberProgressBar progressBarDual = (NumberProgressBar) getActivity().findViewById(R.id.progress_bar);
             progressBarDual.setVisibility(View.GONE);
 
         }
 
 
-
     }
 
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
         // Restart loader so that it refreshes displayed items according to database
-        if (Globalconstant.LOG)
-            Log.d(Globalconstant.TAG, "onResume");
+        if (DEBUG) Log.d(TAG, "onResume");
 
         View detailsFrame = getActivity().findViewById(R.id.details);
         mDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
+
         if (mDualPane) {
-            if (Globalconstant.LOG)
-                Log.d(Globalconstant.TAG, "mDualPane");
             getLoaderManager().restartLoader(DETAILS_LOADER, null, this);
         }
 
 
-        if(mDualPane) {
+        if (mDualPane) {
             progressBar = (NumberProgressBar) getActivity().findViewById(R.id.progress_bar_land);
 
-        }else{
+        } else {
             progressBar = (NumberProgressBar) getActivity().findViewById(R.id.progress_bar);
 
         }
 
 
-
-        if(ServiceIntent.serviceState) {
+        if (ServiceIntent.serviceState) {
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setProgress(session.LoadPreferenceInt("progress"));
 
@@ -496,7 +485,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
             getActivity().registerReceiver(mReceiver, mIntentFilter);
 
         }
-        if(session.LoadPreferenceInt("progress") == 100) {
+        if (session.LoadPreferenceInt("progress") == 100) {
             progressBar.setVisibility(View.GONE);
 
 
@@ -504,12 +493,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         getActivity().invalidateOptionsMenu();
 
 
-
     }
-
-
-
-
 
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -525,13 +509,12 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
                 getActivity().invalidateOptionsMenu();
             }
 
-            if(progressBar.getProgress() == 100) {
+            if (progressBar.getProgress() == 100) {
                 progressBar.setVisibility(View.GONE);
                 ServiceIntent.serviceState = false;
 
 
             }
-
 
 
         }
@@ -544,44 +527,41 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         String[] projection = null;
         String selection = null;
         int index = getShownIndex();
-        if (Globalconstant.LOG) {
-            Log.d(Globalconstant.TAG, "Loader  Details");
-            Log.d(Globalconstant.TAG, "index: " + index);
-            Log.d(Globalconstant.TAG, "Folder Count: " + getFoldersCount());
 
-        }
+        if (DEBUG) Log.d(TAG, "index: " + index + "  -  " + "Folder Count: " + getFoldersCount());
+
 
         Uri uri = null;
 
         if (!TextUtils.isEmpty(grid_currentQuery)) {
             String sort = DatabaseOpenHelper.TITLE + " ASC";
             String[] grid_columns = {DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
-            uri = Uri.parse(MyContentProvider.CONTENT_URI_UNION_SEARCH + "/"+ DatabaseOpenHelper.TITLE + "/"+ DatabaseOpenHelper.AUTHORS);
-            return new CursorLoader(getActivity().getApplicationContext(), uri , grid_columns, null, new String[]{"'%" + grid_currentQuery + "%'"}, sort);
+            uri = Uri.parse(ContentProvider.CONTENT_URI_UNION_SEARCH + "/" + DatabaseOpenHelper.TITLE + "/" + DatabaseOpenHelper.AUTHORS);
+            return new CursorLoader(getActivity().getApplicationContext(), uri, grid_columns, null, new String[]{"'%" + grid_currentQuery + "%'"}, sort);
 
         } else if (index == 1) { //All doc
 
             title.setText(Globalconstant.MYLIBRARY[0]);
             projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
-            uri = MyContentProvider.CONTENT_URI_DOC_DETAILS;
+            uri = ContentProvider.CONTENT_URI_DOC_DETAILS;
         } else if (index == 2) { //added
 
             title.setText(Globalconstant.MYLIBRARY[1]);
             projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
             selection = DatabaseOpenHelper.ADDED + " >= datetime('now', 'start of month')";
-            uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
+            uri = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
         } else if (index == 3) { //Starred = true
 
             title.setText(Globalconstant.MYLIBRARY[2]);
             projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
             selection = DatabaseOpenHelper.STARRED + " = 'true'";
-            uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
+            uri = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
         } else if (index == 4) { //Authored = true
 
             title.setText(Globalconstant.MYLIBRARY[3]);
             projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
             selection = DatabaseOpenHelper.AUTHORED + " = 'true'";
-            uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
+            uri = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
         } else if (index == 5) { //Trash
 
             title.setText(Globalconstant.MYLIBRARY[4]);
@@ -596,7 +576,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
             projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
             selection = DatabaseOpenHelper._ID + " in (select doc_details_id from " + DatabaseOpenHelper.TABLE_FOLDERS_DOCS + " where " + DatabaseOpenHelper.FOLDER_ID + " in (select folder_id from " + DatabaseOpenHelper.TABLE_FOLDERS + " where " + DatabaseOpenHelper.FOLDER_NAME + " = '" + folderName + "'))";
 
-            uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
+            uri = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
         } else if (index > getFoldersCount()) {
 
             String groupName = getShownDescription();
@@ -608,7 +588,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
             projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
             selection = DatabaseOpenHelper.GROUP_ID + " in (select _id from " + DatabaseOpenHelper.TABLE_GROUPS + " where " + DatabaseOpenHelper.GROUPS_NAME + " =  '" + groupName + "')";
 
-            uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
+            uri = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
         }
 
         return new CursorLoader(getActivity().getApplicationContext(), uri, projection, selection, null, null);
@@ -619,9 +599,6 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
     @Override
     public void onLoadFinished(Loader<Cursor> arg0, Cursor cursor) {
 
-
-        if (Globalconstant.LOG)
-            Log.d(Globalconstant.TAG, "onLoadFinished  Details - count: " + cursor.getCount() + " - " + isAdded());
         if (isAdded() && !cursor.isClosed()) {
             mAdapter.changeCursor(cursor);
         } else {
@@ -632,8 +609,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
 
     @Override
     public void onLoaderReset(Loader<Cursor> arg0) {
-        if (Globalconstant.LOG)
-            Log.d(Globalconstant.TAG, "onLoaderReset  Details");
+
         if (isAdded()) {
             getLoaderManager().restartLoader(DETAILS_LOADER, null, this);
         } else {
@@ -642,14 +618,12 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
     }
 
 
-    private class CustomListSimpleCursorAdapter extends SimpleCursorAdapter
-    {
+    private class CustomListSimpleCursorAdapter extends SimpleCursorAdapter {
 
         public CustomListSimpleCursorAdapter(final Context context, final int layout, final Cursor c, final String[] from, final int[] to, final int flags) {
             super(context, layout, c, from, to, flags);
 
         }
-
 
 
         @Override
@@ -666,10 +640,6 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
 
         }
     }
-
-
-
-
 
 
 //AsyncTask to download DATA from server
@@ -726,9 +696,6 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
 
         }
     }
-
-
-
 
 
 }

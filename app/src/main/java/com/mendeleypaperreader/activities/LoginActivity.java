@@ -31,6 +31,7 @@ import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.sessionManager.GetAccessToken;
 import com.mendeleypaperreader.util.ConnectionDetector;
 import com.mendeleypaperreader.util.Globalconstant;
+import com.mendeleypaperreader.util.NetworkUtil;
 import com.mendeleypaperreader.util.TypefaceSpan;
 
 import org.json.JSONException;
@@ -94,16 +95,13 @@ public class LoginActivity extends Activity {
         }
 
 
-
-         robotoBold = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Bold.ttf");
+        robotoBold = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Bold.ttf");
 
         TextView tvTitle = (TextView) findViewById(R.id.title);
         tvTitle.setTypeface(robotoBold);
 
-        // check internet connection
-        final ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
 
-        isInternetPresent = connectionDetector.isConnectingToInternet();
+        isInternetPresent = NetworkUtil.isConnectingToInternet(getApplicationContext());
 
 
         // If logged skip login layout
@@ -190,7 +188,7 @@ public class LoginActivity extends Activity {
                     startActivity(myWebLink);
 
                 } else {
-                    connectionDetector.showDialog(LoginActivity.this, ConnectionDetector.NETWORK_DIALOG);
+                    NetworkUtil.NetWorkDialog(LoginActivity.this, ConnectionDetector.NETWORK_DIALOG);
                     showDialog();
                 }
             }
@@ -209,7 +207,7 @@ public class LoginActivity extends Activity {
         protected void onPreExecute() {
             super.onPreExecute();
 
-            SpannableString ss1=  new SpannableString(getResources().getString(R.string.contacting_mendeley));
+            SpannableString ss1 = new SpannableString(getResources().getString(R.string.contacting_mendeley));
             TypefaceSpan tf = new TypefaceSpan(LoginActivity.this, "Roboto-Regular.ttf");
             ss1.setSpan(tf, 0, ss1.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -295,7 +293,6 @@ public class LoginActivity extends Activity {
         ssWifiMessage.setSpan(tf, 0, ssWifiMessage.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss3gMessage.setSpan(tf, 0, ss3gMessage.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         ssCancel.setSpan(tf, 0, ssCancel.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
 
 
         builder.setTitle(ssTitle);

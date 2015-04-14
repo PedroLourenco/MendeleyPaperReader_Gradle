@@ -3,6 +3,10 @@ package com.mendeleypaperreader.activities;
 
 import android.app.ActionBar;
 import android.app.ListActivity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,20 +20,23 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
+import com.mendeleypaperreader.Provider.ContentProvider;
 import com.mendeleypaperreader.R;
+import com.mendeleypaperreader.preferences.Preferences;
+import com.mendeleypaperreader.service.ServiceIntent;
 import com.mendeleypaperreader.adapter.ListTitleAdapter;
 import com.mendeleypaperreader.adapter.MergeAdapter;
-import com.mendeleypaperreader.contentProvider.MyContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
-import com.mendeleypaperreader.jsonParser.SyncDataAsync;
-import com.mendeleypaperreader.utl.Globalconstant;
-import com.mendeleypaperreader.utl.TypefaceSpan;
+import com.mendeleypaperreader.parser.SyncDataAsync;
+import com.mendeleypaperreader.util.Globalconstant;
+import com.mendeleypaperreader.util.TypefaceSpan;
 
 public class ReadersActivity extends ListActivity {
 
     private Cursor cursorAcademicStatus;
-    SimpleCursorAdapter mAdapterAcademicStatus;
-
+    private SimpleCursorAdapter mAdapterAcademicStatus;
+    private NumberProgressBar progressBar;
+    private Preferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +59,11 @@ public class ReadersActivity extends ListActivity {
 
             actionBar.setTitle(s);
         }
+
+        preferences = new Preferences(getApplicationContext());
 ;
-        NumberProgressBar progressBar = (NumberProgressBar) findViewById(R.id.progress_bar);
-        if(Globalconstant.isTaskRunning) {
+        progressBar = (NumberProgressBar) findViewById(R.id.progress_bar);
+        if(ServiceIntent.serviceState) {
 
             progressBar.setProgress(SyncDataAsync.progressBarValue);
         }else{
@@ -106,7 +115,7 @@ public class ReadersActivity extends ListActivity {
         String[] projection = new String[]{DatabaseOpenHelper.STATUS + " as _id", DatabaseOpenHelper.COUNT};
         String selection = DatabaseOpenHelper.DOC_DETAILS_ID + " = '" + docId + "'";
         String orderBy = DatabaseOpenHelper.STATUS + " ASC";
-        Uri uri = Uri.parse(MyContentProvider.CONTENT_URI_ACADEMIC_DOCS + "/id");
+        Uri uri = Uri.parse(ContentProvider.CONTENT_URI_ACADEMIC_DOCS + "/id");
 
         return getApplicationContext().getContentResolver().query(uri, projection, selection, null, orderBy);
 
@@ -152,5 +161,52 @@ public class ReadersActivity extends ListActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
+
+    public void onResume()
+    {
+        super.onResume();
+        if(ServiceIntent.serviceState) {
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(preferences.LoadPreferenceInt("progress"));
+
+            IntentFilter mIntentFilter = new IntentFilter();
+            mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
+            mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
+            mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
+
+            registerReceiver(mReceiver, mIntentFilter);
+
+
+        }
+        if(preferences.LoadPreferenceInt("progress") == 100) {
+            progressBar.setVisibility(View.GONE);
+        }
+
+    }
+
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Globalconstant.mBroadcastIntegerAction)) {
+
+                Float progress = intent.getFloatExtra("Progress", 0);
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setProgress(progress.intValue());
+                preferences.savePreferencesInt("progress", progress.intValue());
+
+            }
+
+            if(progressBar.getProgress() == 100) {
+                progressBar.setVisibility(View.GONE);
+            }
+
+        }
+    };
+
+
+
 
 }

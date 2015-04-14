@@ -12,8 +12,10 @@ import com.mendeleypaperreader.util.Globalconstant;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by pedro on 12/04/15.
@@ -76,14 +78,20 @@ public class RefreshTokenTask extends AsyncTask<String, Integer, JSONObject> {
                 sharedPreferences.savePreferences("expires_in", json.getString("expires_in"));
                 sharedPreferences.savePreferences("refresh_token", json.getString("refresh_token"));
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
                 calendar.add(Calendar.SECOND, 3600);
 
-                sharedPreferences.savePreferences("expires_on", sdf.format(calendar));
+
+                Calendar calobj = Calendar.getInstance();
+                System.out.println("llllllllll: " +sdf.format(calobj.getTime()));
+
+                sharedPreferences.savePreferences("expires_on", sdf.format(calendar.getTime()));
 
                 Intent serviceIntent = new Intent(context, ServiceIntent.class);
                 context.startService(serviceIntent);
+
+
 
                 if (DEBUG) {
                     Log.d(TAG, "json: " + json.toString());

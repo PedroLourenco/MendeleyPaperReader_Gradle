@@ -23,24 +23,22 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
+import com.mendeleypaperreader.Provider.ContentProvider;
 import com.mendeleypaperreader.R;
-import com.mendeleypaperreader.ServiceProvider.DataService;
-import com.mendeleypaperreader.contentProvider.MyContentProvider;
+import com.mendeleypaperreader.preferences.Preferences;
+import com.mendeleypaperreader.service.ServiceIntent;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
-import com.mendeleypaperreader.jsonParser.SyncDataAsync;
-import com.mendeleypaperreader.sessionManager.SessionManager;
-import com.mendeleypaperreader.utl.Globalconstant;
-import com.mendeleypaperreader.utl.RobotoBoldFontHelper;
-import com.mendeleypaperreader.utl.RobotoRegularFontHelper;
-import com.mendeleypaperreader.utl.TypefaceSpan;
+import com.mendeleypaperreader.util.Globalconstant;
+import com.mendeleypaperreader.util.RobotoBoldFontHelper;
+import com.mendeleypaperreader.util.RobotoRegularFontHelper;
+import com.mendeleypaperreader.util.TypefaceSpan;
 
 public class ListDocTagsActivity extends ListActivity {
 
     private Cursor cursorDocTags;
     CustomListSimpleCursorAdapter adapterDocTags;
-    private Float progress;
     private NumberProgressBar progressBar;
-    private SessionManager sessionManager;
+    private Preferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,13 +64,16 @@ public class ListDocTagsActivity extends ListActivity {
             actionBar.setTitle(s);
         }
 
-        sessionManager = new SessionManager(getApplicationContext());
+        preferences = new Preferences(getApplicationContext());
+
 
         progressBar = (NumberProgressBar) findViewById(R.id.progress_bar);
-        if(DataService.serviceState) {
+
+        if(ServiceIntent.serviceState) {
             progressBar.setProgress(View.VISIBLE);
-            progressBar.setProgress(sessionManager.LoadPreferenceInt("progress"));
+            progressBar.setProgress(preferences.LoadPreferenceInt("progress"));
         }
+
         cursorDocTags = getDocTags();
 
         TextView tag = (TextView) findViewById(R.id.docTag);
@@ -114,7 +115,7 @@ public class ListDocTagsActivity extends ListActivity {
 
         String[] projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
         String selection = DatabaseOpenHelper._ID + " in (SELECT " + DatabaseOpenHelper._ID + " FROM " + DatabaseOpenHelper.TABLE_DOC_TAGS + " WHERE " + DatabaseOpenHelper.TAG_NAME + " = '" + docTag + "')";
-        Uri uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
+        Uri uri = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
 
         return getApplicationContext().getContentResolver().query(uri, projection, selection, null, null);
     }
@@ -147,7 +148,7 @@ public class ListDocTagsActivity extends ListActivity {
         }
 
         String selection = DatabaseOpenHelper.TITLE + " = '" + doc_title + "'";
-        Uri uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
+        Uri uri = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
 
         return getApplicationContext().getContentResolver().query(uri, projection, selection, null, null);
     }
@@ -192,7 +193,7 @@ public class ListDocTagsActivity extends ListActivity {
     {
         super.onPause();
 
-        if(DataService.serviceState) {
+        if(ServiceIntent.serviceState) {
             unregisterReceiver(mReceiver);
         }
     }
@@ -201,9 +202,9 @@ public class ListDocTagsActivity extends ListActivity {
     public void onResume()
     {
         super.onResume();
-        if(DataService.serviceState) {
+        if(ServiceIntent.serviceState) {
             progressBar.setVisibility(View.VISIBLE);
-            progressBar.setProgress(sessionManager.LoadPreferenceInt("progress"));
+            progressBar.setProgress(preferences.LoadPreferenceInt("progress"));
 
             IntentFilter mIntentFilter = new IntentFilter();
             mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
@@ -212,10 +213,10 @@ public class ListDocTagsActivity extends ListActivity {
 
             registerReceiver(mReceiver, mIntentFilter);
 
-            if(sessionManager.LoadPreferenceInt("progress") == 100) {
-                progressBar.setVisibility(View.GONE);
-                DataService.serviceState = false;
-            }
+
+        }
+        if(preferences.LoadPreferenceInt("progress") == 100) {
+            progressBar.setVisibility(View.GONE);
         }
 
     }
@@ -226,16 +227,15 @@ public class ListDocTagsActivity extends ListActivity {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Globalconstant.mBroadcastIntegerAction)) {
 
-                progress = intent.getFloatExtra("Progress", 0);
+                Float progress = intent.getFloatExtra("Progress", 0);
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setProgress(progress.intValue());
-                sessionManager.savePreferencesInt("progress", progress.intValue());
+                preferences.savePreferencesInt("progress", progress.intValue());
 
             }
 
             if(progressBar.getProgress() == 100) {
                 progressBar.setVisibility(View.GONE);
-                DataService.serviceState = false;
             }
 
         }

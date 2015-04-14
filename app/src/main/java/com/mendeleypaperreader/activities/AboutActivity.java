@@ -22,11 +22,11 @@ import android.widget.TextView.BufferType;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.mendeleypaperreader.R;
-import com.mendeleypaperreader.ServiceProvider.DataService;
-import com.mendeleypaperreader.sessionManager.SessionManager;
-import com.mendeleypaperreader.utl.Globalconstant;
-import com.mendeleypaperreader.utl.RobotoRegularFontHelper;
-import com.mendeleypaperreader.utl.TypefaceSpan;
+import com.mendeleypaperreader.preferences.Preferences;
+import com.mendeleypaperreader.service.ServiceIntent;
+import com.mendeleypaperreader.util.Globalconstant;
+import com.mendeleypaperreader.util.RobotoRegularFontHelper;
+import com.mendeleypaperreader.util.TypefaceSpan;
 
 /**
  * This class display actual version, developer contact and version history.
@@ -37,9 +37,8 @@ import com.mendeleypaperreader.utl.TypefaceSpan;
 
 public class AboutActivity extends Activity {
 
-    private Float progress;
     private NumberProgressBar progressBar;
-    private SessionManager session;
+    private Preferences session;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,9 +59,7 @@ public class AboutActivity extends Activity {
             actionBar.setTitle(s);
         }
 
-        session = new SessionManager(getApplicationContext());
-
-
+        session = new Preferences(getApplicationContext());
         
         TextView msg_about = (TextView) findViewById(R.id.about_msg_about_text);
         TextView txt_version3 = (TextView) findViewById(R.id.about_version3_text);
@@ -90,7 +87,7 @@ public class AboutActivity extends Activity {
         builder.append(redSpannable);
 
         progressBar = (NumberProgressBar) findViewById(R.id.progress_bar);
-        if(DataService.serviceState) {
+        if(ServiceIntent.serviceState) {
             progressBar.setProgress(View.VISIBLE);
             progressBar.setProgress(session.LoadPreferenceInt("progress"));
         }
@@ -163,7 +160,7 @@ public class AboutActivity extends Activity {
     {
         super.onPause();
 
-        if(DataService.serviceState) {
+        if(ServiceIntent.serviceState) {
             unregisterReceiver(mReceiver);
         }
     }
@@ -172,7 +169,7 @@ public class AboutActivity extends Activity {
     public void onResume()
     {
         super.onResume();
-        if(DataService.serviceState) {
+        if(ServiceIntent.serviceState) {
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setProgress(session.LoadPreferenceInt("progress"));
 
@@ -182,11 +179,10 @@ public class AboutActivity extends Activity {
             mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
 
             registerReceiver(mReceiver, mIntentFilter);
+        }
 
-            if(session.LoadPreferenceInt("progress") == 100) {
-                progressBar.setVisibility(View.GONE);
-                DataService.serviceState = false;
-            }
+        if(session.LoadPreferenceInt("progress") == 100) {
+            progressBar.setVisibility(View.GONE);
         }
 
     }
@@ -197,7 +193,7 @@ public class AboutActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Globalconstant.mBroadcastIntegerAction)) {
 
-                progress = intent.getFloatExtra("Progress", 0);
+                Float progress = intent.getFloatExtra("Progress", 0);
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setProgress(progress.intValue());
                 session.savePreferencesInt("progress", progress.intValue());
@@ -206,8 +202,7 @@ public class AboutActivity extends Activity {
 
             if(progressBar.getProgress() == 100) {
                 progressBar.setVisibility(View.GONE);
-                DataService.serviceState = false;
-            }
+                }
 
         }
     };

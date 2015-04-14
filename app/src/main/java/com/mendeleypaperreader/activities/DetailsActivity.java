@@ -1,8 +1,6 @@
 package com.mendeleypaperreader.activities;
 
 import android.app.ActionBar;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -10,14 +8,14 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.view.MenuItem;
 
-import com.daimajia.numberprogressbar.NumberProgressBar;
+import com.mendeleypaperreader.Provider.ContentProvider;
 import com.mendeleypaperreader.R;
-import com.mendeleypaperreader.contentProvider.MyContentProvider;
+import com.mendeleypaperreader.fragments.FragmentDetails;
+import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.sessionManager.GetAccessToken;
-import com.mendeleypaperreader.sessionManager.SessionManager;
-import com.mendeleypaperreader.utl.ConnectionDetector;
-import com.mendeleypaperreader.utl.Globalconstant;
-import com.mendeleypaperreader.utl.TypefaceSpan;
+import com.mendeleypaperreader.util.ConnectionDetector;
+import com.mendeleypaperreader.util.Globalconstant;
+import com.mendeleypaperreader.util.TypefaceSpan;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,14 +31,9 @@ import org.json.JSONObject;
 
 public class DetailsActivity extends FragmentActivity {
 
-    private static SessionManager session;
+    private static Preferences session;
     private static String code;
     private static String refresh_token;
-    private IntentFilter mIntentFilter;
-    private NumberProgressBar progressBar;
-    private Intent serviceIntent;
-    private Float progress;
-
 
 
     @Override
@@ -65,12 +58,12 @@ public class DetailsActivity extends FragmentActivity {
         }
 
 
-        session = new SessionManager(DetailsActivity.this);
+        session = new Preferences(DetailsActivity.this);
 
 
         if (savedInstanceState == null) {
             // During initial setup, plug in the details fragment.
-            MainMenuActivityFragmentDetails details = new MainMenuActivityFragmentDetails();
+            FragmentDetails details = new FragmentDetails();
             details.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction().add(android.R.id.content, details).commit();
 
@@ -90,25 +83,14 @@ public class DetailsActivity extends FragmentActivity {
     }
     
 
-    //@Override
-    //public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-       // MenuInflater inflater = getMenuInflater();
-        //inflater.inflate(R.menu.action_bar_search, menu);
-
-        //return super.onCreateOptionsMenu(menu);
-    //}
-
-
-
 
     //ActionBar Menu Options
    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_refresh:
-                if(!Globalconstant.isTaskRunning)
-                    refreshToken();
+                //if(!ServiceIntent.serviceState)
+                //    refreshToken();
                 return true;
             // up button
             case android.R.id.home:
@@ -145,7 +127,7 @@ public class DetailsActivity extends FragmentActivity {
         isInternetPresent = connectionDetector.isConnectingToInternet();
 
         if (isInternetPresent) {
-            getContentResolver().delete(MyContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
+            getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
             new ProgressTask().execute();
         } else {
             connectionDetector.showDialog(DetailsActivity.this, ConnectionDetector.DEFAULT_DIALOG);

@@ -38,6 +38,8 @@ public class DateUtil {
         }
         expiresOnDate.setTime(dateText);
 
+        if(DEBUG) Log.d(TAG, "calendar: " + calendar.getTime() + "expiresOnDate: " + expiresOnDate.getTime());
+
         if(calendar.compareTo(expiresOnDate) > 0){
             if(DEBUG) Log.d(TAG, "Token is valid.");
             return false;

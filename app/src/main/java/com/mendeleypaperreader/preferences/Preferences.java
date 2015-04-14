@@ -8,7 +8,7 @@ public class Preferences {
 
 
     // Shared Preferences
-    SharedPreferences pref;
+    SharedPreferences sharedPreferences;
 
     // Editor for Shared preferences
     Editor editor;
@@ -20,14 +20,14 @@ public class Preferences {
     int PRIVATE_MODE = 0;
 
     // Sharedpref file name
-    private static final String PREF_NAME = "MendeleyPaperReaderPREF";
+    private static final String PREF_NAME = "preferences";
 
 
     // Constructor
     public Preferences(Context context) {
         this._context = context;
-        pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
-        editor = pref.edit();
+        sharedPreferences = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
+        editor = sharedPreferences.edit();
     }
 
 
@@ -57,13 +57,13 @@ public class Preferences {
 
     public String LoadPreference(String Key) {
 
-        return pref.getString(Key, "");
+        return sharedPreferences.getString(Key, "");
 
     }
 
     public Integer LoadPreferenceInt(String Key) {
 
-        return pref.getInt(Key, 0);
+        return sharedPreferences.getInt(Key, 0);
 
     }
 

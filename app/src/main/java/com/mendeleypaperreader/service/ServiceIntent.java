@@ -4,10 +4,10 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
-import com.mendeleypaperreader.jsonParser.LoadData;
-import com.mendeleypaperreader.sessionManager.SessionManager;
-import com.mendeleypaperreader.utl.Globalconstant;
-import com.mendeleypaperreader.utl.NetworkUtil;
+import com.mendeleypaperreader.parser.LoadData;
+import com.mendeleypaperreader.preferences.Preferences;
+import com.mendeleypaperreader.util.Globalconstant;
+import com.mendeleypaperreader.util.NetworkUtil;
 
 /**
  * Created by pedro on 05/04/15.
@@ -17,7 +17,7 @@ public class ServiceIntent extends IntentService {
 
     LoadData load;
     public static boolean serviceState;
-    private SessionManager sessionManager;
+    private Preferences preferences;
 
     public ServiceIntent() {
 
@@ -34,8 +34,8 @@ public class ServiceIntent extends IntentService {
         Log.i(Globalconstant.TAG, "In onStartCommand");
 
         load = new LoadData(getApplicationContext());
-        sessionManager = new SessionManager(getApplicationContext());
-        String access_token = sessionManager.LoadPreference("access_token");
+        preferences = new Preferences(getApplicationContext());
+        String access_token = preferences.LoadPreference("access_token");
 
             Intent broadcastIntent = new Intent();
 
@@ -91,7 +91,7 @@ public class ServiceIntent extends IntentService {
 
            serviceState = false;
 
-           sessionManager.savePreferences("IS_DB_CREATED", "YES");
+           preferences.savePreferences("IS_DB_CREATED", "YES");
 
        }
 

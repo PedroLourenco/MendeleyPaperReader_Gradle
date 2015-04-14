@@ -1,5 +1,16 @@
 package com.mendeleypaperreader.service;
 
+import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Context;
+import android.net.Uri;
+import android.os.Message;
+
+import com.mendeleypaperreader.Provider.ContentProvider;
+import com.mendeleypaperreader.R;
+import com.mendeleypaperreader.activities.DocumentsDetailsActivity;
+import com.mendeleypaperreader.db.DatabaseOpenHelper;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -10,16 +21,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-
-import android.app.Activity;
-import android.content.ContentValues;
-import android.content.Context;
-import android.net.Uri;
-import android.os.Message;
-import com.mendeleypaperreader.activities.DocumentsDetailsActivity;
-import com.mendeleypaperreader.R;
-import com.mendeleypaperreader.contentProvider.MyContentProvider;
-import com.mendeleypaperreader.db.DatabaseOpenHelper;
 
 /**
  * Downloads a file in a thread. Will send messages to the
@@ -113,7 +114,7 @@ public class DownloaderThread extends Thread
 		}
 		//update table Files with filename
 		ContentValues values = new ContentValues();
-		Uri uri_ = Uri.parse(MyContentProvider.CONTENT_URI_FILES + "/id");
+		Uri uri_ = Uri.parse(ContentProvider.CONTENT_URI_FILES + "/id");
 		values.put(DatabaseOpenHelper.FILE_NAME, filename);	
 		String where = DatabaseOpenHelper.FILE_ID + " = '" + this.fileId + "'";
         mContext.getApplicationContext().getContentResolver().update(uri_, values, where, null);
@@ -210,7 +211,7 @@ public class DownloaderThread extends Thread
                     parentActivity.activityHandler.sendMessage(msg);
                 }  else{
                     ContentValues values = new ContentValues();
-                    Uri uri_ = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
+                    Uri uri_ = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
                     values.put(DatabaseOpenHelper.IS_DOWNLOAD, "YES");
                     String where = DatabaseOpenHelper._ID + " = '" + mDocId + "'";
                     mContext.getContentResolver().update(uri_, values, where, null);

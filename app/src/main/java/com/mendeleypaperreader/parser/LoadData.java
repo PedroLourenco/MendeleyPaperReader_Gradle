@@ -11,13 +11,12 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mendeleypaperreader.contentProvider.MyContentProvider;
+import com.mendeleypaperreader.Provider.ContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
-import com.mendeleypaperreader.sessionManager.SessionManager;
-import com.mendeleypaperreader.utl.DownloaderThread;
-import com.mendeleypaperreader.utl.GetDataBaseInformation;
-import com.mendeleypaperreader.utl.Globalconstant;
-import com.mendeleypaperreader.utl.JSONParser;
+import com.mendeleypaperreader.preferences.Preferences;
+import com.mendeleypaperreader.service.DownloaderThread;
+import com.mendeleypaperreader.util.GetDataBaseInformation;
+import com.mendeleypaperreader.util.Globalconstant;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -42,7 +41,7 @@ public class LoadData {
     public LoadData(Context context) {
         this.context = context;
 
-        SessionManager session = new SessionManager(this.context);
+        Preferences session = new Preferences(this.context);
         access_token = session.LoadPreference("access_token");
 
         getDataBaseInformation = new GetDataBaseInformation(this.context);
@@ -90,7 +89,7 @@ public class LoadData {
             Log.d(Globalconstant.TAG, "getGROUPS- LOAD DATA");
 
         String[] projection = new String[]{DatabaseOpenHelper._ID};
-        Uri uri = MyContentProvider.CONTENT_URI_DOC_DETAILS;
+        Uri uri = ContentProvider.CONTENT_URI_DOC_DETAILS;
 
 
         return this.context.getContentResolver().query(uri, projection, null, null, null);
@@ -180,7 +179,7 @@ public class LoadData {
         valuesArray = new ContentValues[valueList.size()];
         valueList.toArray(valuesArray);
 
-        context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_DOC_NOTES, valuesArray);
+        context.getContentResolver().bulkInsert(ContentProvider.CONTENT_URI_DOC_NOTES, valuesArray);
 
 
         cursorDocId.close();
@@ -230,7 +229,7 @@ public class LoadData {
             //Insert data on table groups
             valuesArray = new ContentValues[valueList.size()];
             valueList.toArray(valuesArray);
-            context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_GROUPS, valuesArray);
+            context.getContentResolver().bulkInsert(ContentProvider.CONTENT_URI_GROUPS, valuesArray);
 
 
         } catch (Exception e) {
@@ -247,7 +246,7 @@ public class LoadData {
             Log.d(Globalconstant.TAG, "getGROUPS- LOAD DATA");
 
         String[] projection = new String[]{DatabaseOpenHelper._ID + " as _id"};
-        Uri uri = MyContentProvider.CONTENT_URI_GROUPS;
+        Uri uri = ContentProvider.CONTENT_URI_GROUPS;
 
 
         return this.context.getContentResolver().query(uri, projection, null, null, null);
@@ -317,7 +316,7 @@ public class LoadData {
             //Insert data on table files
             valuesArray = new ContentValues[valueList.size()];
             valueList.toArray(valuesArray);
-            context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_FILES, valuesArray);
+            context.getContentResolver().bulkInsert(ContentProvider.CONTENT_URI_FILES, valuesArray);
 
 
         } catch (Exception e) {
@@ -389,7 +388,7 @@ public class LoadData {
             //Insert data on table Folders
             valuesArray = new ContentValues[valueList.size()];
             valueList.toArray(valuesArray);
-            context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_FOLDERS, valuesArray);
+            context.getContentResolver().bulkInsert(ContentProvider.CONTENT_URI_FOLDERS, valuesArray);
 
 
         } catch (Exception e) {
@@ -628,17 +627,17 @@ public class LoadData {
             //Insert data on table Document_details
             mValueArray = new ContentValues[valueList.size()];
             valueList.toArray(mValueArray);
-            this.context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_DOC_DETAILS, mValueArray);
+            this.context.getContentResolver().bulkInsert(ContentProvider.CONTENT_URI_DOC_DETAILS, mValueArray);
 
             //Insert data on table Authors
             authorsValuesArray = new ContentValues[authorsValuesList.size()];
             authorsValuesList.toArray(authorsValuesArray);
-            context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_AUTHORS, authorsValuesArray);
+            context.getContentResolver().bulkInsert(ContentProvider.CONTENT_URI_AUTHORS, authorsValuesArray);
 
             //Insert data on table Tags
             tagsValuesArray = new ContentValues[tagValueList.size()];
             tagValueList.toArray(tagsValuesArray);
-            context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_DOC_TAGS, tagsValuesArray);
+            context.getContentResolver().bulkInsert(ContentProvider.CONTENT_URI_DOC_TAGS, tagsValuesArray);
 
 
         } catch (Exception e) {
@@ -655,7 +654,7 @@ public class LoadData {
 
 
         String[] projection = new String[]{DatabaseOpenHelper.FOLDER_ID, DatabaseOpenHelper.FOLDER_NAME};
-        Uri uri = MyContentProvider.CONTENT_URI_FOLDERS;
+        Uri uri = ContentProvider.CONTENT_URI_FOLDERS;
 
 
         return this.context.getContentResolver().query(uri, projection, null, null, null);
@@ -727,7 +726,7 @@ public class LoadData {
             //Insert data on table Folders_doc
             valuesArray = new ContentValues[valueList.size()];
             valueList.toArray(valuesArray);
-            context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_FOLDERS_DOCS, valuesArray);
+            context.getContentResolver().bulkInsert(ContentProvider.CONTENT_URI_FOLDERS_DOCS, valuesArray);
 
 
         } catch (Exception e) {
@@ -746,7 +745,7 @@ public class LoadData {
 
         projection = new String[]{DatabaseOpenHelper._ID + " as _id", DatabaseOpenHelper.PMID, DatabaseOpenHelper.DOI, DatabaseOpenHelper.ISSN, DatabaseOpenHelper.ISBN, DatabaseOpenHelper.SCOPUS, DatabaseOpenHelper.ARXIV};
 
-        Uri uri = MyContentProvider.CONTENT_URI_DOC_DETAILS;
+        Uri uri = ContentProvider.CONTENT_URI_DOC_DETAILS;
         query = this.context.getContentResolver().query(uri, projection, selection, null, orderBy);
 
         return query;
@@ -765,7 +764,7 @@ public class LoadData {
         Cursor cursorDocs;
         String urlfilter = null;
         boolean toProcess = false;
-        Uri uri_ = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
+        Uri uri_ = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
 
         cursorDocs = getDocInfo();
 
@@ -877,7 +876,7 @@ public class LoadData {
         //Insert data on table Academic_status
         valuesArray = new ContentValues[valueList.size()];
         valueList.toArray(valuesArray);
-        context.getContentResolver().bulkInsert(MyContentProvider.CONTENT_URI_ACADEMIC_DOCS, valuesArray);
+        context.getContentResolver().bulkInsert(ContentProvider.CONTENT_URI_ACADEMIC_DOCS, valuesArray);
 
         cursorDocs.close();
     }
@@ -905,7 +904,7 @@ public class LoadData {
                 values.put(DatabaseOpenHelper.PROFILE_DISPLAY_NAME, mapObject.get(DatabaseOpenHelper.PROFILE_DISPLAY_NAME).toString());
                 values.put(DatabaseOpenHelper.PROFILE_LINK, mapObject.get(DatabaseOpenHelper.PROFILE_LINK).toString());
 
-                Uri uri = this.context.getContentResolver().insert(MyContentProvider.CONTENT_URI_PROFILE, values);
+                Uri uri = this.context.getContentResolver().insert(ContentProvider.CONTENT_URI_PROFILE, values);
 
             }
 

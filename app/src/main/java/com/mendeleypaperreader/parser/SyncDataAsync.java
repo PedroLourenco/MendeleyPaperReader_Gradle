@@ -14,10 +14,10 @@ import android.view.View;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mendeleypaperreader.R;
+import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.service.ServiceIntent;
-import com.mendeleypaperreader.sessionManager.SessionManager;
-import com.mendeleypaperreader.utl.Globalconstant;
-import com.mendeleypaperreader.utl.TypefaceSpan;
+import com.mendeleypaperreader.util.Globalconstant;
+import com.mendeleypaperreader.util.TypefaceSpan;
 
 import java.io.IOException;
 
@@ -29,7 +29,7 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
     private static LoadData load;
     ProgressDialog dialog;
     String access_token;
-    SessionManager session;
+    Preferences session;
     public static int progressBarValue;
     private NumberProgressBar progressBar;
 
@@ -42,7 +42,7 @@ public class SyncDataAsync extends AsyncTask<String, Integer, String> {
         load = new LoadData(this.activity.getApplicationContext());
         dialog = new ProgressDialog(context);
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        session = new SessionManager(this.activity.getApplicationContext());
+        session = new Preferences(this.activity.getApplicationContext());
         access_token = session.LoadPreference("access_token");
 
 

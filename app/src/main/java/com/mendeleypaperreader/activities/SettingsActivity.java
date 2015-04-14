@@ -18,21 +18,17 @@ import android.widget.TextView;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.mendeleypaperreader.R;
-import com.mendeleypaperreader.ServiceProvider.DataService;
+import com.mendeleypaperreader.preferences.Preferences;
+import com.mendeleypaperreader.service.ServiceIntent;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
-import com.mendeleypaperreader.jsonParser.SyncDataAsync;
-import com.mendeleypaperreader.sessionManager.SessionManager;
-import com.mendeleypaperreader.utl.GetDataBaseInformation;
-import com.mendeleypaperreader.utl.Globalconstant;
-import com.mendeleypaperreader.utl.TypefaceSpan;
+import com.mendeleypaperreader.util.GetDataBaseInformation;
+import com.mendeleypaperreader.util.Globalconstant;
+import com.mendeleypaperreader.util.TypefaceSpan;
 
 public class SettingsActivity extends Activity {
 
     private GetDataBaseInformation getDataBaseInformation;
-    private SessionManager sessionManager;
-    private Typeface roboto;
-
-    private Float progress;
+    private Preferences preferences;
     private NumberProgressBar progressBar;
 
     
@@ -42,7 +38,7 @@ public class SettingsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        roboto = Typeface.createFromAsset(getAssets(), "fonts/RobotoCondensed-Regular.ttf");
+        Typeface roboto = Typeface.createFromAsset(getAssets(), "fonts/RobotoCondensed-Regular.ttf");
 
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
@@ -59,12 +55,12 @@ public class SettingsActivity extends Activity {
             actionBar.setTitle(s);
         }
 
-        sessionManager = new SessionManager(getApplicationContext());
+        preferences = new Preferences(getApplicationContext());
 
         progressBar = (NumberProgressBar) findViewById(R.id.progress_bar);
-        if(DataService.serviceState) {
+        if(ServiceIntent.serviceState) {
             progressBar.setProgress(View.VISIBLE);
-            progressBar.setProgress(sessionManager.LoadPreferenceInt("progress"));
+            progressBar.setProgress(preferences.LoadPreferenceInt("progress"));
         }
 
         TextView tvProfileName = (TextView)findViewById(R.id.settings_profile_name_value);
@@ -84,7 +80,7 @@ public class SettingsActivity extends Activity {
         tvProfileName.setText(getDataBaseInformation.getProfileInformation(DatabaseOpenHelper.PROFILE_DISPLAY_NAME));
 
 
-        if (sessionManager.LoadPreference("syncOnLoad").equals("true")){
+        if (preferences.LoadPreference("syncOnLoad").equals("true")){
             cbSync.setChecked(true);
         }
             
@@ -95,10 +91,10 @@ public class SettingsActivity extends Activity {
     public void itemClicked(View v) {
 
         if (((CheckBox) v).isChecked()){
-            sessionManager.savePreferences("syncOnLoad", "true");
+            preferences.savePreferences("syncOnLoad", "true");
 
         }else{
-            sessionManager.savePreferences("syncOnLoad", "false");
+            preferences.savePreferences("syncOnLoad", "false");
         }
     }
 
@@ -142,7 +138,7 @@ public class SettingsActivity extends Activity {
     {
         super.onPause();
 
-        if(DataService.serviceState) {
+        if(ServiceIntent.serviceState) {
             unregisterReceiver(mReceiver);
         }
     }
@@ -151,9 +147,9 @@ public class SettingsActivity extends Activity {
     public void onResume()
     {
         super.onResume();
-        if(DataService.serviceState) {
+        if(ServiceIntent.serviceState) {
             progressBar.setVisibility(View.VISIBLE);
-            progressBar.setProgress(sessionManager.LoadPreferenceInt("progress"));
+            progressBar.setProgress(preferences.LoadPreferenceInt("progress"));
 
             IntentFilter mIntentFilter = new IntentFilter();
             mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
@@ -162,10 +158,10 @@ public class SettingsActivity extends Activity {
 
             registerReceiver(mReceiver, mIntentFilter);
 
-            if(sessionManager.LoadPreferenceInt("progress") == 100) {
-                progressBar.setVisibility(View.GONE);
-                DataService.serviceState = false;
-            }
+
+        }
+        if(preferences.LoadPreferenceInt("progress") == 100) {
+            progressBar.setVisibility(View.GONE);
         }
 
     }
@@ -176,16 +172,15 @@ public class SettingsActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Globalconstant.mBroadcastIntegerAction)) {
 
-                progress = intent.getFloatExtra("Progress", 0);
+                Float progress = intent.getFloatExtra("Progress", 0);
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setProgress(progress.intValue());
-                sessionManager.savePreferencesInt("progress", progress.intValue());
+                preferences.savePreferencesInt("progress", progress.intValue());
 
             }
 
             if(progressBar.getProgress() == 100) {
                 progressBar.setVisibility(View.GONE);
-                DataService.serviceState = false;
             }
 
         }

@@ -40,20 +40,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
+import com.mendeleypaperreader.Provider.ContentProvider;
 import com.mendeleypaperreader.R;
-import com.mendeleypaperreader.ServiceProvider.DataService;
-import com.mendeleypaperreader.contentProvider.MyContentProvider;
+import com.mendeleypaperreader.preferences.Preferences;
+import com.mendeleypaperreader.service.ServiceIntent;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
-import com.mendeleypaperreader.jsonParser.SyncDataAsync;
+import com.mendeleypaperreader.parser.SyncDataAsync;
 import com.mendeleypaperreader.sessionManager.GetAccessToken;
-import com.mendeleypaperreader.sessionManager.SessionManager;
-import com.mendeleypaperreader.utl.ConnectionDetector;
-import com.mendeleypaperreader.utl.DownloaderThread;
-import com.mendeleypaperreader.utl.GetDataBaseInformation;
-import com.mendeleypaperreader.utl.Globalconstant;
-import com.mendeleypaperreader.utl.RobotoBoldFontHelper;
-import com.mendeleypaperreader.utl.RobotoRegularFontHelper;
-import com.mendeleypaperreader.utl.TypefaceSpan;
+import com.mendeleypaperreader.util.ConnectionDetector;
+import com.mendeleypaperreader.service.DownloaderThread;
+import com.mendeleypaperreader.util.GetDataBaseInformation;
+import com.mendeleypaperreader.util.Globalconstant;
+import com.mendeleypaperreader.util.RobotoBoldFontHelper;
+import com.mendeleypaperreader.util.RobotoRegularFontHelper;
+import com.mendeleypaperreader.util.TypefaceSpan;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,11 +71,10 @@ public class DocumentsDetailsActivity extends Activity {
     // private Cursor foldersAdapter;
     private TextView doc_abstract, doc_url, doc_pmid, doc_issn, doc_catalog, readerCounterValue, doc_tags, docNotes;
     private String docId, mAbstract, t_doc_url, issn, doi, pmid, doc_title, doc_authors_text, doc_source_text, readerValue, isDownloaded, tags, notes;
-    private static SessionManager session;
+    private static Preferences session;
     private static String code;
     private static String refresh_token;
     private Boolean isInternetPresent = false;
-    private Boolean isToSync = false;
     private Cursor cursorDetails;
     private Cursor cursorFile;
     private Thread downloaderThread;
@@ -83,9 +82,9 @@ public class DocumentsDetailsActivity extends Activity {
     private ProgressDialog progressDialog;
     private DocumentsDetailsActivity thisActivity;
     private GetDataBaseInformation getDataBaseInformation;
-
     private IntentFilter mIntentFilter;
     private NumberProgressBar progressBar;
+
 
 
 
@@ -118,10 +117,10 @@ public class DocumentsDetailsActivity extends Activity {
             actionBar.setTitle(s);
         }
 
-        session = new SessionManager(DocumentsDetailsActivity.this);
+        session = new Preferences(DocumentsDetailsActivity.this);
 
          progressBar = (NumberProgressBar) findViewById(R.id.progress_bar);
-        if(DataService.serviceState) {
+        if(ServiceIntent.serviceState) {
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setProgress(SyncDataAsync.progressBarValue);
 
@@ -390,6 +389,19 @@ public class DocumentsDetailsActivity extends Activity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+            MenuItem refreshIcon = menu.findItem(R.id.menu_refresh);
+            if(refreshIcon != null && ServiceIntent.serviceState)
+                refreshIcon.setVisible(false);
+
+           if(refreshIcon != null && !ServiceIntent.serviceState)
+               refreshIcon.setVisible(true);
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
 
     //ActionBar Menu Options
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -397,8 +409,8 @@ public class DocumentsDetailsActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
 
-                if(!Globalconstant.isTaskRunning) {
-                    isToSync = true;
+                if(!ServiceIntent.serviceState) {
+                    invalidateOptionsMenu();
                     refreshToken();
                 }
                 return true;
@@ -429,7 +441,7 @@ public class DocumentsDetailsActivity extends Activity {
 
         String[] projection = new String[]{DatabaseOpenHelper.TYPE + " as _id", DatabaseOpenHelper.TITLE, DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE, DatabaseOpenHelper.YEAR, DatabaseOpenHelper.VOLUME, DatabaseOpenHelper.PAGES, DatabaseOpenHelper.ISSUE, DatabaseOpenHelper.ABSTRACT, DatabaseOpenHelper.WEBSITE, DatabaseOpenHelper.DOI, DatabaseOpenHelper.PMID, DatabaseOpenHelper.ISSN, DatabaseOpenHelper.STARRED, DatabaseOpenHelper.READER_COUNT, DatabaseOpenHelper.IS_DOWNLOAD, DatabaseOpenHelper.TAGS};
         String selection = DatabaseOpenHelper._ID + " = '" + docId + "'";
-        Uri uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
+        Uri uri = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
 
         cursorDetails = getApplicationContext().getContentResolver().query(uri, projection, selection, null, null);
 
@@ -446,7 +458,7 @@ public class DocumentsDetailsActivity extends Activity {
 
         String[] projection = new String[]{DatabaseOpenHelper.TEXT + " as _id"};
         String selection = DatabaseOpenHelper.DOCUMENT_ID + " = '" + docId + "'";
-        Uri uri = Uri.parse(MyContentProvider.CONTENT_URI_DOC_NOTES + "/id");
+        Uri uri = Uri.parse(ContentProvider.CONTENT_URI_DOC_NOTES + "/id");
 
         Cursor cursorNotes = getApplicationContext().getContentResolver().query(uri, projection, selection, null, null);
 
@@ -468,7 +480,7 @@ public class DocumentsDetailsActivity extends Activity {
 
         String[] projection = new String[]{DatabaseOpenHelper.FILE_ID + " as _id", DatabaseOpenHelper.FILE_NAME, DatabaseOpenHelper.FILE_MIME_TYPE};
         String selection = DatabaseOpenHelper.FILE_DOC_ID + " = '" + docId + "'";
-        Uri uri = Uri.parse(MyContentProvider.CONTENT_URI_FILES + "/id");
+        Uri uri = Uri.parse(ContentProvider.CONTENT_URI_FILES + "/id");
 
         cursorFile = getApplicationContext().getContentResolver().query(uri, projection, selection, null, null);
         cursorFile.moveToPosition(0);
@@ -1037,8 +1049,8 @@ public class DocumentsDetailsActivity extends Activity {
 
         registerReceiver(mReceiver, mIntentFilter);
 
-        Intent serviceIntent = new Intent(this, DataService.class);
-        serviceIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        Intent serviceIntent = new Intent(this, ServiceIntent.class);
+
         startService(serviceIntent);
 
     }
@@ -1054,14 +1066,15 @@ public class DocumentsDetailsActivity extends Activity {
                Float progress = intent.getFloatExtra("Progress", 0);
                progressBar.setVisibility(View.VISIBLE);
                progressBar.setProgress(progress.intValue());
-                session.savePreferencesInt("progress", progress.intValue());
+               session.savePreferencesInt("progress", progress.intValue());
 
 
            }
 
             if(progressBar.getProgress() == 100) {
                 progressBar.setVisibility(View.GONE);
-                DataService.serviceState = false;
+
+
             }
 
         }
@@ -1071,23 +1084,21 @@ public class DocumentsDetailsActivity extends Activity {
 
     private void refreshToken() {
 
-        //delete data from data base and get new access token to start sync
-
         // check internet connection
+
+        Boolean isInternetPresent;
         ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
 
         isInternetPresent = connectionDetector.isConnectingToInternet();
 
         if (isInternetPresent) {
-            if (isToSync) {
-                getContentResolver().delete(MyContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
-            }
+            getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
             new ProgressTask().execute();
         } else {
             connectionDetector.showDialog(DocumentsDetailsActivity.this, ConnectionDetector.DEFAULT_DIALOG);
         }
-
     }
+
 
 
     private void openBrowser(String url) {
@@ -1115,7 +1126,7 @@ public class DocumentsDetailsActivity extends Activity {
     {
         super.onPause();
 
-        if(DataService.serviceState) {
+        if(ServiceIntent.serviceState) {
                 unregisterReceiver(mReceiver);
             }
     }
@@ -1124,7 +1135,7 @@ public class DocumentsDetailsActivity extends Activity {
     public void onResume()
     {
         super.onResume();
-        if(DataService.serviceState) {
+        if(ServiceIntent.serviceState) {
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setProgress(session.LoadPreferenceInt("progress"));
 
@@ -1135,14 +1146,17 @@ public class DocumentsDetailsActivity extends Activity {
 
             registerReceiver(mReceiver, mIntentFilter);
 
+        }
 
 
-            if(session.LoadPreferenceInt("progress") == 100) {
-                progressBar.setVisibility(View.GONE);
-                DataService.serviceState = false;
-            }
+        if(session.LoadPreferenceInt("progress") == 100) {
+            progressBar.setVisibility(View.GONE);
+            ServiceIntent.serviceState = false;
 
         }
+
+
+        invalidateOptionsMenu();
 
     }
 
@@ -1153,7 +1167,7 @@ public class DocumentsDetailsActivity extends Activity {
 
 
         protected void onPreExecute() {
-            session = new SessionManager(DocumentsDetailsActivity.this);
+            session = new Preferences(DocumentsDetailsActivity.this);
             code = session.LoadPreference("Code");
             refresh_token = session.LoadPreference("refresh_token");
         }
@@ -1168,11 +1182,11 @@ public class DocumentsDetailsActivity extends Activity {
                     session.savePreferences("expires_in", json.getString("expires_in"));
                     session.savePreferences("refresh_token", json.getString("refresh_token"));
 
-                    if (isToSync) {
+
                         //Get data from server
                         syncData();
-                        isToSync = false;
-                    }
+
+
 
 
                 } catch (JSONException e) {
@@ -1297,7 +1311,7 @@ public class DocumentsDetailsActivity extends Activity {
                     isDownloaded = "YES";
                     //update column - table documents_details - is_download
                     ContentValues values = new ContentValues();
-                    Uri uri_ = Uri.parse(MyContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
+                    Uri uri_ = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
                     values.put(DatabaseOpenHelper.IS_DOWNLOAD, "YES");
                     String where = DatabaseOpenHelper._ID + " = '" + docId + "'";
                     thisActivity.getContentResolver().update(uri_, values, where, null);

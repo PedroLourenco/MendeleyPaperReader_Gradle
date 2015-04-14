@@ -8,8 +8,8 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.mendeleypaperreader.sessionManager.SessionManager;
-import com.mendeleypaperreader.utl.Globalconstant;
+import com.mendeleypaperreader.preferences.Preferences;
+import com.mendeleypaperreader.util.Globalconstant;
 
 /**
  * @author PedroLourenco (pdrolourenco@gmail.com)
@@ -213,8 +213,8 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
 
-        SessionManager session;
-        session = new SessionManager(this.mContext);
+        Preferences session;
+        session = new Preferences(this.mContext);
         session.savePreferences("versionCode", "10");
 
 
