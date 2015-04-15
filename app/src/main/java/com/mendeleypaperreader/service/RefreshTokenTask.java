@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.sessionManager.GetAccessToken;
+import com.mendeleypaperreader.util.DateUtil;
 import com.mendeleypaperreader.util.Globalconstant;
 
 import org.json.JSONException;
@@ -30,12 +31,14 @@ public class RefreshTokenTask extends AsyncTask<String, Integer, JSONObject> {
 
     private Context context;
     private Preferences sharedPreferences;
+    private boolean isToSync;
 
 
 
-    public RefreshTokenTask(Context context){
+    public RefreshTokenTask(Context context, boolean isToSync){
 
         this.context = context;
+        this.isToSync = isToSync;
 
     }
 
@@ -82,16 +85,14 @@ public class RefreshTokenTask extends AsyncTask<String, Integer, JSONObject> {
                 Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
                 calendar.add(Calendar.SECOND, 3600);
 
-
-                Calendar calobj = Calendar.getInstance();
-                System.out.println("llllllllll: " +sdf.format(calobj.getTime()));
-
                 sharedPreferences.savePreferences("expires_on", sdf.format(calendar.getTime()));
 
-                Intent serviceIntent = new Intent(context, ServiceIntent.class);
-                context.startService(serviceIntent);
-
-
+                if(isToSync){
+                    if (DateUtil.TokenExpired(this.context)) {
+                        Intent serviceIntent = new Intent(context, ServiceIntent.class);
+                        context.startService(serviceIntent);
+                    }
+                }
 
                 if (DEBUG) {
                     Log.d(TAG, "json: " + json.toString());

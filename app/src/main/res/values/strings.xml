@@ -95,7 +95,12 @@
     <string name="settings_sync_option">Synchronization options</string>
     <string name="settings_sync_on_load_cb">Sync files on load</string>
     <string name="settings_sync_on_load_help">Choose this option if you want to synchronize files. When is turned off you can still download files as you need.</string>
-    
-    
+
+
+
+    <!-- Synchronization -->
+    <string name="sync_alert_in_progress">Synchronization in progress...:</string>
+
+
 
 </resources>

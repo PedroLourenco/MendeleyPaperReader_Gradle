@@ -43,6 +43,7 @@ import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.mendeleypaperreader.Provider.ContentProvider;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.preferences.Preferences;
+import com.mendeleypaperreader.service.RefreshTokenTask;
 import com.mendeleypaperreader.service.ServiceIntent;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.parser.SyncDataAsync;
@@ -125,6 +126,12 @@ public class DocumentsDetailsActivity extends Activity {
             progressBar.setProgress(SyncDataAsync.progressBarValue);
 
         }
+
+        //register receiver
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
+
+        getActivity().registerReceiver(mReceiver, mIntentFilter);
 
         final ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
 
@@ -332,7 +339,7 @@ public class DocumentsDetailsActivity extends Activity {
                     if (isDownloaded == null) {
 
                         String flileId = cursorFile.getString(cursorFile.getColumnIndex(DatabaseOpenHelper._ID));
-                        refreshToken();
+                        new RefreshTokenTask(DocumentsDetailsActivity.this, false).execute();
 
                         String access_token = session.LoadPreference("access_token");
                         String url = Globalconstant.get_files_by_doc_id.replace("file_id", flileId) + access_token;
@@ -409,11 +416,13 @@ public class DocumentsDetailsActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
 
-                if(!ServiceIntent.serviceState) {
-                    invalidateOptionsMenu();
-                    refreshToken();
-                }
+                if (!ServiceIntent.serviceState) {
+                new RefreshTokenTask(DocumentsDetailsActivity.this, true).execute();
+            } else {
+                Toast.makeText(DocumentsDetailsActivity.this, getResources().getString(R.string.sync_alert_in_progress), Toast.LENGTH_LONG).show();
+            }
                 return true;
+
             // up button
             case android.R.id.home:
                 finish();
@@ -1040,7 +1049,7 @@ public class DocumentsDetailsActivity extends Activity {
         startActivity(openInChooser);
     }
 
-
+/*
     private void syncData() {
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
@@ -1055,7 +1064,7 @@ public class DocumentsDetailsActivity extends Activity {
 
     }
 
-
+*/
 
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -1080,7 +1089,7 @@ public class DocumentsDetailsActivity extends Activity {
         }
     };
 
-
+/*
 
     private void refreshToken() {
 
@@ -1099,7 +1108,7 @@ public class DocumentsDetailsActivity extends Activity {
         }
     }
 
-
+*/
 
     private void openBrowser(String url) {
 
@@ -1160,7 +1169,7 @@ public class DocumentsDetailsActivity extends Activity {
 
     }
 
-
+/*
     //AsyncTask to download DATA from server
 
     class ProgressTask extends AsyncTask<String, Integer, JSONObject> {
@@ -1205,7 +1214,7 @@ public class DocumentsDetailsActivity extends Activity {
         }
     }
 
-
+*/
     /**
      * This is the Handler for this activity. It will receive messages from the
      * DownloaderThread and make the necessary updates to the UI.

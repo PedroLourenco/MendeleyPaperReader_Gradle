@@ -119,14 +119,12 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
 
         session = new Preferences(getActivity().getApplicationContext());
 
-
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
         mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
         mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
 
         getActivity().registerReceiver(mReceiver, mIntentFilter);
-
 
         //Start upload data from server
         String firstLoad = session.LoadPreference("IS_DB_CREATED");
@@ -137,11 +135,8 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
 
             if (DEBUG) Log.d(FragmentList.TAG, "First Sync");
 
-            new RefreshTokenTask(getActivity()).execute();
+            new RefreshTokenTask(getActivity(), true).execute();
         }
-
-
-
 
 
         // Use a custom adapter so we can have something more than the just the text view filled in.
@@ -181,14 +176,7 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
         // fragment directly in the containing UI.
         View detailsFrame = getActivity().findViewById(R.id.details);
 
-        //if(Globalconstant.isTaskRunning) {
-        //    NumberProgressBar progressBar = (NumberProgressBar) detailsFrame.findViewById(R.id.progress_bar);
-        //    progressBar.setProgress(SyncDataAsync.progressBarValue);
-        //}
-
-
         mDualPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
-
 
         if (savedInstanceState != null) {
             // Restore last state for checked position.
@@ -259,16 +247,9 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
                 return true;
             case R.id.main_menu_refresh:
                 if (!ServiceIntent.serviceState) {
-
-                   if(DateUtil.TokenExpired(getActivity().getApplicationContext())){
-                       new RefreshTokenTask(getActivity()).execute();
-                   }else{
-                      refreshToken();
-                   }
-
+                       new RefreshTokenTask(getActivity(), true).execute();
                 } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Sync in progress ", Toast.LENGTH_LONG).show();
-
+                    Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.sync_alert_in_progress), Toast.LENGTH_LONG).show();
                 }
                 return true;
             case R.id.menu_settings:
@@ -552,13 +533,13 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
         //}
     }
 
-
+/*
     public void syncData() {
         Intent serviceIntent = new Intent(getActivity(), ServiceIntent.class);
         getActivity().startService(serviceIntent);
 
     }
-
+*/
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -582,7 +563,7 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
 
         }
     };
-
+/*
     private void refreshToken() {
 
         // check internet connection
@@ -600,9 +581,9 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
         }
     }
 
-
+*/
     //AsyncTask to download DATA from server
-
+/*
     class ProgressTask extends AsyncTask<String, Integer, JSONObject> {
 
 
@@ -655,7 +636,7 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
 
         }
     }
-
+*/
 
     /**
      * CustomAdapter

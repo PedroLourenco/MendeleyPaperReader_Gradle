@@ -41,6 +41,7 @@ import com.mendeleypaperreader.activities.AboutActivity;
 import com.mendeleypaperreader.activities.DocumentsDetailsActivity;
 import com.mendeleypaperreader.activities.SettingsActivity;
 import com.mendeleypaperreader.preferences.Preferences;
+import com.mendeleypaperreader.service.RefreshTokenTask;
 import com.mendeleypaperreader.service.ServiceIntent;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.sessionManager.GetAccessToken;
@@ -102,9 +103,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         session = new Preferences(getActivity().getApplicationContext());
 
         mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
         mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
-        mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
 
         getActivity().registerReceiver(mReceiver, mIntentFilter);
 
@@ -279,12 +278,10 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
                 showDialog();
                 return true;
             case R.id.frag_menu_refresh:
-
                 if (!ServiceIntent.serviceState) {
-                    refreshToken();
+                    new RefreshTokenTask(getActivity(), false).execute();
                 } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Sync in progress ", Toast.LENGTH_LONG).show();
-
+                    Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.sync_alert_in_progress), Toast.LENGTH_LONG).show();
                 }
                 return true;
             case R.id.menu_settings:
@@ -297,7 +294,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
                 return super.onOptionsItemSelected(item);
         }
     }
-
+/*
 
     private void syncData() {
 
@@ -323,7 +320,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
             connectionDetector.showDialog(getActivity(), ConnectionDetector.DEFAULT_DIALOG);
         }
     }
-
+    */
 
     public void showDialog() {
         // Use the Builder class for convenient dialog construction
@@ -477,10 +474,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setProgress(session.LoadPreferenceInt("progress"));
 
-            mIntentFilter = new IntentFilter();
-            mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
             mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
-            mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
 
             getActivity().registerReceiver(mReceiver, mIntentFilter);
 
@@ -641,7 +635,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         }
     }
 
-
+/*
 //AsyncTask to download DATA from server
 
     class ProgressTask extends AsyncTask<String, Integer, JSONObject> {
@@ -697,5 +691,5 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         }
     }
 
-
+*/
 }

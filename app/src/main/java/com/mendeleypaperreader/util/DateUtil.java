@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.mendeleypaperreader.preferences.Preferences;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -29,8 +30,9 @@ public class DateUtil {
         String expiresOn = preferences.LoadPreference("expires_on");
 
         Calendar expiresOnDate = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         Date dateText = null;
+
         try {
             dateText = sdf.parse(expiresOn);
         } catch (ParseException e) {
