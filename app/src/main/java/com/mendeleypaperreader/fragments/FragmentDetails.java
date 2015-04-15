@@ -10,10 +10,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -40,21 +38,14 @@ import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.activities.AboutActivity;
 import com.mendeleypaperreader.activities.DocumentsDetailsActivity;
 import com.mendeleypaperreader.activities.SettingsActivity;
+import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.service.RefreshTokenTask;
 import com.mendeleypaperreader.service.ServiceIntent;
-import com.mendeleypaperreader.db.DatabaseOpenHelper;
-import com.mendeleypaperreader.sessionManager.GetAccessToken;
-import com.mendeleypaperreader.util.ConnectionDetector;
 import com.mendeleypaperreader.util.Globalconstant;
 import com.mendeleypaperreader.util.RobotoBoldFontHelper;
 import com.mendeleypaperreader.util.RobotoRegularFontHelper;
 import com.mendeleypaperreader.util.TypefaceSpan;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Calendar;
 
 /**
  * @author PedroLourenco (pdrolourenco@gmail.com)
@@ -178,7 +169,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
 
         getActivity().getSupportLoaderManager().initLoader(DETAILS_LOADER, null, this);
 
-        if (DEBUG) LoaderManager.enableDebugLogging(true);
+       // if (DEBUG) LoaderManager.enableDebugLogging(true);
 
         return view;
 

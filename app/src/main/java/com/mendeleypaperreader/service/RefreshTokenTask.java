@@ -48,8 +48,12 @@ public class RefreshTokenTask extends AsyncTask<String, Integer, JSONObject> {
     protected JSONObject doInBackground(final String... args) {
         GetAccessToken jParser = new GetAccessToken();
 
-        return jParser.refresh_token(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, Globalconstant.GRANT_TYPE, refresh_token);
+        JSONObject jsonObject = null;
 
+        if(DateUtil.TokenExpired(this.context))
+            jsonObject = jParser.refresh_token(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, Globalconstant.GRANT_TYPE, refresh_token);
+
+        return jsonObject;
     }
 
 
@@ -69,6 +73,9 @@ public class RefreshTokenTask extends AsyncTask<String, Integer, JSONObject> {
 
     protected void onPostExecute(final JSONObject json) {
 
+        Calendar calendar = Calendar.getInstance();
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+
         if (json != null) {
             try {
                 String token = json.getString("access_token");
@@ -79,20 +86,9 @@ public class RefreshTokenTask extends AsyncTask<String, Integer, JSONObject> {
                 // Save access token in shared preferences
                 sharedPreferences.savePreferences("access_token", json.getString("access_token"));
                 sharedPreferences.savePreferences("expires_in", json.getString("expires_in"));
+                sharedPreferences.savePreferences("lastRefreshDate", sdf.format(calendar.getTime()));
                 sharedPreferences.savePreferences("refresh_token", json.getString("refresh_token"));
 
-                DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
-                calendar.add(Calendar.SECOND, 3600);
-
-                sharedPreferences.savePreferences("expires_on", sdf.format(calendar.getTime()));
-
-                if(isToSync){
-                    if (DateUtil.TokenExpired(this.context)) {
-                        Intent serviceIntent = new Intent(context, ServiceIntent.class);
-                        context.startService(serviceIntent);
-                    }
-                }
 
                 if (DEBUG) {
                     Log.d(TAG, "json: " + json.toString());
@@ -105,8 +101,18 @@ public class RefreshTokenTask extends AsyncTask<String, Integer, JSONObject> {
                 e.printStackTrace();
             }
         }
+
+
+
+         // gets a calendar using the default time zone and locale.
+        calendar.add(Calendar.SECOND, 3600);
+
+        sharedPreferences.savePreferences("expires_on", sdf.format(calendar.getTime()));
+
+        if(isToSync){
+            Intent serviceIntent = new Intent(context, ServiceIntent.class);
+            context.startService(serviceIntent);
+        }
+
     }
-
-
-
 }

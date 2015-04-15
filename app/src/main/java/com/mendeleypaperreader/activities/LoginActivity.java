@@ -37,7 +37,10 @@ import com.mendeleypaperreader.util.TypefaceSpan;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * @author PedroLourenco (pdrolourenco@gmail.com)
@@ -235,13 +238,15 @@ public class LoginActivity extends Activity {
                 try {
 
                     // Save access token in shared preferences
-
+                    Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
+                    DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                     session.savePreferences("access_token", json.getString("access_token"));
                     session.savePreferences("expires_in", json.getString("expires_in"));
                     session.savePreferences("refresh_token", json.getString("refresh_token"));
-                    Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
+                    session.savePreferences("lastRefreshDate", sdf.format(calendar.getTime()));
+
                     calendar.add(Calendar.SECOND, 3600);
-                    session.savePreferences("expires_on", calendar.getTime().toString());
+                    session.savePreferences("expires_on", sdf.format(calendar.getTime()));
 
                     if (Globalconstant.LOG) {
                         Log.d(Globalconstant.TAG, "NOW: " + calendar.getTime().toString());

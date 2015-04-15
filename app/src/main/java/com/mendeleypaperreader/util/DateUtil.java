@@ -28,26 +28,42 @@ public class DateUtil {
 
         Preferences preferences = new Preferences(context);
         String expiresOn = preferences.LoadPreference("expires_on");
+        String lastRefresh = preferences.LoadPreference("lastRefreshDate");
 
-        Calendar expiresOnDate = Calendar.getInstance();
+        Calendar calExpiresOn = Calendar.getInstance();
+        Calendar calLastRefresh = Calendar.getInstance();
         DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        Date dateText = null;
+        Date dateExpiresOn = null;
+        Date dateLastRefresh = null;
+
+
+        if(DEBUG) Log.d(TAG, "lastRefresh: " + lastRefresh + "  -  expiresOn: " + expiresOn);
+
+
+
+        if(expiresOn == null)
+            return true;
+
+
 
         try {
-            dateText = sdf.parse(expiresOn);
+
+            dateExpiresOn = sdf.parse(expiresOn);
+            dateLastRefresh = sdf.parse(lastRefresh);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        expiresOnDate.setTime(dateText);
+        calExpiresOn.setTime(dateExpiresOn);
+        calLastRefresh.setTime(dateLastRefresh);
 
-        if(DEBUG) Log.d(TAG, "calendar: " + calendar.getTime() + "expiresOnDate: " + expiresOnDate.getTime());
+        if(DEBUG) Log.d(TAG, "calendar: " + calLastRefresh.getTime() + "  -  expiresOnDate: " + calExpiresOn.getTime());
 
-        if(calendar.compareTo(expiresOnDate) > 0){
-            if(DEBUG) Log.d(TAG, "Token is valid.");
-            return false;
-        }else{
+        if(calLastRefresh.compareTo(calExpiresOn) > 0){
             if(DEBUG) Log.d(TAG, "Token expired.");
             return true;
+        }else{
+            if(DEBUG) Log.d(TAG, "Token is valid.");
+            return false;
         }
 
     }

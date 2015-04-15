@@ -19,7 +19,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -42,22 +41,18 @@ import android.widget.Toast;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.mendeleypaperreader.Provider.ContentProvider;
 import com.mendeleypaperreader.R;
-import com.mendeleypaperreader.preferences.Preferences;
-import com.mendeleypaperreader.service.RefreshTokenTask;
-import com.mendeleypaperreader.service.ServiceIntent;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.parser.SyncDataAsync;
-import com.mendeleypaperreader.sessionManager.GetAccessToken;
-import com.mendeleypaperreader.util.ConnectionDetector;
+import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.service.DownloaderThread;
+import com.mendeleypaperreader.service.RefreshTokenTask;
+import com.mendeleypaperreader.service.ServiceIntent;
+import com.mendeleypaperreader.util.ConnectionDetector;
 import com.mendeleypaperreader.util.GetDataBaseInformation;
 import com.mendeleypaperreader.util.Globalconstant;
 import com.mendeleypaperreader.util.RobotoBoldFontHelper;
 import com.mendeleypaperreader.util.RobotoRegularFontHelper;
 import com.mendeleypaperreader.util.TypefaceSpan;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -85,8 +80,6 @@ public class DocumentsDetailsActivity extends Activity {
     private GetDataBaseInformation getDataBaseInformation;
     private IntentFilter mIntentFilter;
     private NumberProgressBar progressBar;
-
-
 
 
     // Used to communicate state changes in the DownloaderThread
@@ -131,7 +124,7 @@ public class DocumentsDetailsActivity extends Activity {
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
 
-        getActivity().registerReceiver(mReceiver, mIntentFilter);
+        registerReceiver(mReceiver, mIntentFilter);
 
         final ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
 
