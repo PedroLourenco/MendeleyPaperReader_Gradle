@@ -122,7 +122,7 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
 
         if (DEBUG) Log.d(FragmentList.TAG, "firstLoad: " + firstLoad);
 
-        if (!firstLoad.equals("YES")) {
+        if (!firstLoad.equals("YES") && !ServiceIntent.serviceState) {
 
             if (DEBUG) Log.d(FragmentList.TAG, "First Sync");
 
@@ -238,7 +238,8 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
                 return true;
             case R.id.main_menu_refresh:
                 if (!ServiceIntent.serviceState) {
-                       new RefreshTokenTask(getActivity(), true).execute();
+                    getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
+                    new RefreshTokenTask(getActivity(), true).execute();
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.sync_alert_in_progress), Toast.LENGTH_LONG).show();
                 }

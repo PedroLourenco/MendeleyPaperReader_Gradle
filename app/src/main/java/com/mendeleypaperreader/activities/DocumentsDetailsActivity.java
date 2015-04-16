@@ -11,9 +11,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -330,7 +332,7 @@ public class DocumentsDetailsActivity extends Activity {
                     String mimeType = cursorFile.getString(cursorFile.getColumnIndex(DatabaseOpenHelper.FILE_MIME_TYPE));
 
                     if (isDownloaded == null) {
-
+                        lockScreenOrientation();
                         String flileId = cursorFile.getString(cursorFile.getColumnIndex(DatabaseOpenHelper._ID));
                         new RefreshTokenTask(DocumentsDetailsActivity.this, false).execute();
 
@@ -367,7 +369,18 @@ public class DocumentsDetailsActivity extends Activity {
 
     }
 
+    private void lockScreenOrientation() {
+        int currentOrientation = getResources().getConfiguration().orientation;
+        if (currentOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else {
+           setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+    }
 
+    private void unlockScreenOrientation() {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+    }
 
 
 
@@ -1245,7 +1258,7 @@ public class DocumentsDetailsActivity extends Activity {
                             tUrl += "...";
                             url = tUrl;
                         }
-                        String pdTitle = thisActivity.getString(R.string.progress_dialog_title_connecting);
+                        String pdTitle = getString(R.string.progress_dialog_title_connecting);
                         String pdMsg = thisActivity.getString(R.string.progress_dialog_message_prefix_connecting);
                         pdMsg += " " + url;
 
@@ -1363,8 +1376,9 @@ public class DocumentsDetailsActivity extends Activity {
     public void dismissCurrentProgressDialog() {
         if (progressDialog != null) {
             progressDialog.hide();
-            progressDialog.dismiss();
+           // progressDialog.dismiss();
             progressDialog = null;
+            unlockScreenOrientation();
         }
     }
 

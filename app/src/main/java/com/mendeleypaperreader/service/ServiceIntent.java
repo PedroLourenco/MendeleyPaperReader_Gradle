@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
+import com.mendeleypaperreader.Provider.ContentProvider;
 import com.mendeleypaperreader.parser.LoadData;
 import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.util.Globalconstant;

@@ -1,7 +1,10 @@
-/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/classes/release
-/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/release/jackson-annotations-2.4.0-d87718e01c720db7bbff3248fcda22c75f026e4e.jar
-/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/release/robotium-solo-5.2.1-f1442d744b89bdc9bfea37de2202a6fef4625b94.jar
-/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/release/jackson-core-2.4.1.1-b788df8cecf44cc4b1edd0d6ae274aa682532fce.jar
-/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/release/classes-aa2701c5f675637ab230c45d936739b189887b6e.jar
-/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/release/support-v4-19.0.0-b1a257cd6a0532e4b1c38bbe78b5622361e396ed.jar
-/Users/pedro/Downloads/MendeleyPaperReader/app/build/intermediates/pre-dexed/release/jackson-databind-2.2.4-fc6c16facfa00a0fa0e7694687b26467837b024d.jar
+/Users/pedro/git/MendeleyPaperReader_Gradle/app/build/intermediates/classes/release
+/Users/pedro/git/MendeleyPaperReader_Gradle/app/build/intermediates/pre-dexed/release/support-annotations-21.0.0-b5b0b5469d6dc1377a9497d03ff8eab82aace1aa.jar
+/Users/pedro/git/MendeleyPaperReader_Gradle/app/build/intermediates/pre-dexed/release/classes-00262f965985aa6fc7da08bd69b3b8d958bcc713.jar
+/Users/pedro/git/MendeleyPaperReader_Gradle/app/build/intermediates/pre-dexed/release/jackson-annotations-2.4.0-12a76e6121050bc1cdce1aa3edc61f60d02190a1.jar
+/Users/pedro/git/MendeleyPaperReader_Gradle/app/build/intermediates/pre-dexed/release/robotium-solo-5.2.1-25b3cfb4c20fa82814cbbe383e99e2f18dfff994.jar
+/Users/pedro/git/MendeleyPaperReader_Gradle/app/build/intermediates/pre-dexed/release/internal_impl-21.0.0-43733a7e154826575ef54b711ed22ebf1748ae68.jar
+/Users/pedro/git/MendeleyPaperReader_Gradle/app/build/intermediates/pre-dexed/release/jackson-core-2.4.1.1-854ecd055ee52d766e40ff7a1927fae7c04e20bb.jar
+/Users/pedro/git/MendeleyPaperReader_Gradle/app/build/intermediates/pre-dexed/release/classes-f598fafac60a72245248930ed159f3e185ea09f1.jar
+/Users/pedro/git/MendeleyPaperReader_Gradle/app/build/intermediates/pre-dexed/release/classes-65dd3204e458e1464a30b2c3ce3bdcc793b44e26.jar
+/Users/pedro/git/MendeleyPaperReader_Gradle/app/build/intermediates/pre-dexed/release/jackson-databind-2.2.4-d0cf7d03985077290a129b8fb7999ad31bacff61.jar

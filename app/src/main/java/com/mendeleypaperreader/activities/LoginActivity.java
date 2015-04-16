@@ -49,6 +49,9 @@ import java.util.Locale;
 
 public class LoginActivity extends Activity {
 
+    private static final String TAG = "LoginActivity";
+    private static final boolean DEBUG = Globalconstant.DEBUG;
+
     private static String CLIENT_ID = "177";
     // Use your own client id
 
@@ -85,14 +88,18 @@ public class LoginActivity extends Activity {
         Integer version = 1;
         try {
             version = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
-            if (Globalconstant.LOG)
-                Log.d(Globalconstant.TAG, "version: " + version);
+            if (DEBUG) Log.d(TAG, "version: " + version);
         } catch (NameNotFoundException e) {
             e.printStackTrace();
         }
 
 
+        if (DEBUG) Log.d(TAG, "New version: " + version);
+        if (DEBUG) Log.d(TAG, "old version: " + session.LoadPreference("versionCode"));
+
+
         if (!version.toString().equals(session.LoadPreference("versionCode"))) {
+            if (DEBUG) Log.d(TAG, "New instalation");
             session.deleteAllPreferences();
             session.savePreferences("versionCode", version.toString());
         }

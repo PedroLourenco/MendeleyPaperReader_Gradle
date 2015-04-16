@@ -130,6 +130,7 @@ public class AbstractDescriptionActivity extends Activity {
             case R.id.menu_refresh:
 
                 if(!ServiceIntent.serviceState) {
+
                     refreshToken();
                 }else{
                     Toast.makeText(this, "Sync in progress ", Toast.LENGTH_LONG).show();

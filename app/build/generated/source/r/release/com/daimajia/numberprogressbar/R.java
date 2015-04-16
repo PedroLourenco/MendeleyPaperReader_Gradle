@@ -4,7 +4,7 @@
  * aapt tool from the resource data it found.  It
  * should not be modified by hand.
  */
-package android.support.v7.appcompat;
+package com.daimajia.numberprogressbar;
 
 public final class R {
 	public static final class anim {
@@ -79,15 +79,26 @@ public final class R {
 		public static final int listPreferredItemPaddingLeft = 0x7f010027;
 		public static final int listPreferredItemPaddingRight = 0x7f010028;
 		public static final int logo = 0x7f010045;
+		public static final int max = 0x7f01005e;
 		public static final int navigationMode = 0x7f01003f;
+		public static final int numberProgressBarStyle = 0x7f010073;
 		public static final int paddingEnd = 0x7f010075;
 		public static final int paddingStart = 0x7f010074;
 		public static final int panelMenuListTheme = 0x7f010071;
 		public static final int panelMenuListWidth = 0x7f010070;
 		public static final int popupMenuStyle = 0x7f01006f;
 		public static final int popupPromptView = 0x7f01006b;
+		public static final int progress = 0x7f01005d;
 		public static final int progressBarPadding = 0x7f01004e;
 		public static final int progressBarStyle = 0x7f01004c;
+		public static final int progress_reached_bar_height = 0x7f010061;
+		public static final int progress_reached_color = 0x7f010060;
+		public static final int progress_text_color = 0x7f010064;
+		public static final int progress_text_offset = 0x7f010065;
+		public static final int progress_text_size = 0x7f010063;
+		public static final int progress_text_visibility = 0x7f010066;
+		public static final int progress_unreached_bar_height = 0x7f010062;
+		public static final int progress_unreached_color = 0x7f01005f;
 		public static final int prompt = 0x7f010069;
 		public static final int queryHint = 0x7f010068;
 		public static final int searchDropdownBackground = 0x7f010029;
@@ -275,6 +286,7 @@ public final class R {
 		public static final int icon = 0x7f09002c;
 		public static final int ifRoom = 0x7f090015;
 		public static final int image = 0x7f090029;
+		public static final int invisible = 0x7f090018;
 		public static final int listMode = 0x7f090006;
 		public static final int list_item = 0x7f09002b;
 		public static final int middle = 0x7f090011;
@@ -305,6 +317,7 @@ public final class R {
 		public static final int top_action_bar = 0x7f090022;
 		public static final int up = 0x7f090023;
 		public static final int useLogo = 0x7f09000e;
+		public static final int visible = 0x7f090019;
 		public static final int withText = 0x7f090017;
 	}
 	public static final class integer {
@@ -350,8 +363,17 @@ public final class R {
 		public static final int abc_searchview_description_voice = 0x7f0b000a;
 		public static final int abc_shareactionprovider_share_with = 0x7f0b000b;
 		public static final int abc_shareactionprovider_share_with_application = 0x7f0b000c;
+		public static final int app_name = 0x7f0b0016;
 	}
 	public static final class style {
+		public static final int NumberProgressBar_Beauty_Red = 0x7f0c0008;
+		public static final int NumberProgressBar_Default = 0x7f0c0009;
+		public static final int NumberProgressBar_Funny_Orange = 0x7f0c000a;
+		public static final int NumberProgressBar_Grace_Yellow = 0x7f0c000b;
+		public static final int NumberProgressBar_Passing_Green = 0x7f0c000c;
+		public static final int NumberProgressBar_Relax_Blue = 0x7f0c000d;
+		public static final int NumberProgressBar_Twinkle_Night = 0x7f0c000e;
+		public static final int NumberProgressBar_Warning_Red = 0x7f0c000f;
 		public static final int TextAppearance_AppCompat_Base_CompactMenu_Dialog = 0x7f0c0010;
 		public static final int TextAppearance_AppCompat_Base_SearchResult = 0x7f0c0011;
 		public static final int TextAppearance_AppCompat_Base_SearchResult_Subtitle = 0x7f0c0012;
@@ -563,6 +585,17 @@ public final class R {
 		public static final int MenuView_android_preserveIconSpacing = 7;
 		public static final int MenuView_android_verticalDivider = 3;
 		public static final int MenuView_android_windowAnimationStyle = 0;
+		public static final int[] NumberProgressBar = { 0x7f01005d, 0x7f01005e, 0x7f01005f, 0x7f010060, 0x7f010061, 0x7f010062, 0x7f010063, 0x7f010064, 0x7f010065, 0x7f010066 };
+		public static final int NumberProgressBar_max = 1;
+		public static final int NumberProgressBar_progress = 0;
+		public static final int NumberProgressBar_progress_reached_bar_height = 4;
+		public static final int NumberProgressBar_progress_reached_color = 3;
+		public static final int NumberProgressBar_progress_text_color = 7;
+		public static final int NumberProgressBar_progress_text_offset = 8;
+		public static final int NumberProgressBar_progress_text_size = 6;
+		public static final int NumberProgressBar_progress_text_visibility = 9;
+		public static final int NumberProgressBar_progress_unreached_bar_height = 5;
+		public static final int NumberProgressBar_progress_unreached_color = 2;
 		public static final int[] SearchView = { 0x0101011f, 0x01010220, 0x01010264, 0x7f010067, 0x7f010068 };
 		public static final int SearchView_android_imeOptions = 2;
 		public static final int SearchView_android_inputType = 1;
@@ -587,6 +620,8 @@ public final class R {
 		public static final int Theme_panelMenuListTheme = 4;
 		public static final int Theme_panelMenuListWidth = 3;
 		public static final int Theme_popupMenuStyle = 2;
+		public static final int[] Themes = { 0x7f010073 };
+		public static final int Themes_numberProgressBarStyle = 0;
 		public static final int[] View = { 0x010100da, 0x7f010074, 0x7f010075 };
 		public static final int View_android_focusable = 0;
 		public static final int View_paddingEnd = 2;

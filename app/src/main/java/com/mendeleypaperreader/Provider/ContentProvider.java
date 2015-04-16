@@ -16,6 +16,9 @@ import com.mendeleypaperreader.util.Globalconstant;
 
 public class ContentProvider extends android.content.ContentProvider {
 
+    private static final String TAG = "ContentProvider";
+    private static final boolean DEBUG = Globalconstant.DEBUG;
+
     private DatabaseOpenHelper db_helper;
 
     private static final String AUTHORITY =
@@ -107,7 +110,7 @@ public class ContentProvider extends android.content.ContentProvider {
         int count = 0;
         switch (sURIMatcher.match(uri)) {
             case DELETE_DATA_BASE:
-
+                if (DEBUG) Log.d(TAG, "DELETE_DATA_BASE ");
                 count = deleteDatabase(db, selection, selectionArgs);
 
                 break;

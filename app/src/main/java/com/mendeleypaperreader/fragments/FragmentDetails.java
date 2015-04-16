@@ -270,6 +270,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
                 return true;
             case R.id.frag_menu_refresh:
                 if (!ServiceIntent.serviceState) {
+                    getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
                     new RefreshTokenTask(getActivity(), false).execute();
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.sync_alert_in_progress), Toast.LENGTH_LONG).show();
