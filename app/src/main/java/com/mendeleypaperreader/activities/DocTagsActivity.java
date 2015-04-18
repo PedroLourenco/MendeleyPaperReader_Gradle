@@ -23,7 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
-import com.mendeleypaperreader.Provider.ContentProvider;
+import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.service.ServiceIntent;
@@ -198,10 +198,7 @@ public class DocTagsActivity extends ListActivity {
             progressBar.setProgress(preferences.LoadPreferenceInt("progress"));
 
             IntentFilter mIntentFilter = new IntentFilter();
-            mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
-            mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
-            mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
-
+            mIntentFilter.addAction(Globalconstant.mBroadcastUpdateProgressBar);
             registerReceiver(mReceiver, mIntentFilter);
         }
 
@@ -216,7 +213,7 @@ public class DocTagsActivity extends ListActivity {
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Globalconstant.mBroadcastIntegerAction)) {
+            if (intent.getAction().equals(Globalconstant.mBroadcastUpdateProgressBar)) {
 
                 Float progress = intent.getFloatExtra("Progress", 0);
                 progressBar.setVisibility(View.VISIBLE);

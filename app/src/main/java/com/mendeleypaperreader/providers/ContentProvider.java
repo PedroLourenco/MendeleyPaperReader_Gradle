@@ -1,4 +1,4 @@
-package com.mendeleypaperreader.Provider;
+package com.mendeleypaperreader.providers;
 
 import android.content.ContentUris;
 import android.content.ContentValues;

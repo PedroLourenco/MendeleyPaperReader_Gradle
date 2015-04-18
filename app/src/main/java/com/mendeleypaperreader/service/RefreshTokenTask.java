@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.mendeleypaperreader.preferences.Preferences;
+import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.sessionManager.GetAccessToken;
 import com.mendeleypaperreader.util.DateUtil;
 import com.mendeleypaperreader.util.Globalconstant;
@@ -109,7 +110,13 @@ public class RefreshTokenTask extends AsyncTask<String, Integer, JSONObject> {
 
         sharedPreferences.savePreferences("expires_on", sdf.format(calendar.getTime()));
 
+
+
+
         if(isToSync){
+
+            context.getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
+
             Intent serviceIntent = new Intent(context, ServiceIntent.class);
             context.startService(serviceIntent);
         }

@@ -14,7 +14,6 @@
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
 
 
-
     <application
         android:allowBackup="true"
         android:icon="@drawable/paper_reader_512_512"
@@ -98,7 +97,7 @@
 
         <!--Provider declared in manifest -->
         <provider
-            android:name=".Provider.ContentProvider"
+            android:name=".providers.ContentProvider"
             android:authorities="com.android.mendeleypaperreader.utl.MyContentProvider"
             android:exported="false" />
 
@@ -106,11 +105,6 @@
         <service
             android:name="com.mendeleypaperreader.service.ServiceIntent"
             android:exported="false"/>
-
-        <service
-            android:name="com.mendeleypaperreader.service.ServiceSync"
-            android:exported="false"/>
-
 
 
     </application>

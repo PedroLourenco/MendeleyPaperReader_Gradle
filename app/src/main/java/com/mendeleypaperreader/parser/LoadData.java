@@ -11,7 +11,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mendeleypaperreader.Provider.ContentProvider;
+import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.service.DownloaderThread;

@@ -174,10 +174,7 @@ public class AboutActivity extends Activity {
             progressBar.setProgress(session.LoadPreferenceInt("progress"));
 
             IntentFilter mIntentFilter = new IntentFilter();
-            mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
-            mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
-            mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
-
+            mIntentFilter.addAction(Globalconstant.mBroadcastUpdateProgressBar);
             registerReceiver(mReceiver, mIntentFilter);
         }
 
@@ -191,7 +188,7 @@ public class AboutActivity extends Activity {
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Globalconstant.mBroadcastIntegerAction)) {
+            if (intent.getAction().equals(Globalconstant.mBroadcastUpdateProgressBar)) {
 
                 Float progress = intent.getFloatExtra("Progress", 0);
                 progressBar.setVisibility(View.VISIBLE);

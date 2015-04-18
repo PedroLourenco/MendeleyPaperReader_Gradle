@@ -29,7 +29,6 @@ import android.widget.Toast;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.sessionManager.GetAccessToken;
-import com.mendeleypaperreader.util.ConnectionDetector;
 import com.mendeleypaperreader.util.Globalconstant;
 import com.mendeleypaperreader.util.NetworkUtil;
 import com.mendeleypaperreader.util.TypefaceSpan;
@@ -198,7 +197,7 @@ public class LoginActivity extends Activity {
                     startActivity(myWebLink);
 
                 } else {
-                    NetworkUtil.NetWorkDialog(LoginActivity.this, ConnectionDetector.NETWORK_DIALOG);
+                    NetworkUtil.NetWorkDialog(LoginActivity.this, NetworkUtil.NETWORK_DIALOG);
                     showDialog();
                 }
             }

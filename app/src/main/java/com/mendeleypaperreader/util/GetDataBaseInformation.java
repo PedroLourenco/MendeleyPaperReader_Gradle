@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
-import com.mendeleypaperreader.Provider.ContentProvider;
+import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 
 /**

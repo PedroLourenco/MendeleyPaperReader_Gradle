@@ -23,9 +23,8 @@ public class Globalconstant {
 
 
 
-    public static final String mBroadcastStringAction = "com.truiton.broadcast.string";
-    public static final String mBroadcastIntegerAction = "com.truiton.broadcast.integer";
-    public static final String mBroadcastArrayListAction = "com.truiton.broadcast.arraylist";
+    //Broadcast
+    public static final String mBroadcastUpdateProgressBar = "com.mendeleypaperreader.updateProgressBar";
 
 
     //API URLs

@@ -33,7 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
-import com.mendeleypaperreader.Provider.ContentProvider;
+import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.activities.AboutActivity;
 import com.mendeleypaperreader.activities.DocumentsDetailsActivity;
@@ -43,6 +43,7 @@ import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.service.RefreshTokenTask;
 import com.mendeleypaperreader.service.ServiceIntent;
 import com.mendeleypaperreader.util.Globalconstant;
+import com.mendeleypaperreader.util.NetworkUtil;
 import com.mendeleypaperreader.util.RobotoBoldFontHelper;
 import com.mendeleypaperreader.util.RobotoRegularFontHelper;
 import com.mendeleypaperreader.util.TypefaceSpan;
@@ -94,7 +95,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         session = new Preferences(getActivity().getApplicationContext());
 
         mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
+        mIntentFilter.addAction(Globalconstant.mBroadcastUpdateProgressBar);
 
         getActivity().registerReceiver(mReceiver, mIntentFilter);
 
@@ -269,11 +270,16 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
                 showDialog();
                 return true;
             case R.id.frag_menu_refresh:
-                if (!ServiceIntent.serviceState) {
-                    getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
-                    new RefreshTokenTask(getActivity(), false).execute();
-                } else {
-                    Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.sync_alert_in_progress), Toast.LENGTH_LONG).show();
+
+                if (NetworkUtil.isConnectingToInternet(getActivity().getApplicationContext())){
+                    if (!ServiceIntent.serviceState) {
+                        getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
+                        new RefreshTokenTask(getActivity(), true).execute();
+                    } else {
+                        Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.sync_alert_in_progress), Toast.LENGTH_LONG).show();
+                    }
+                }else{
+                    NetworkUtil.NetWorkDialog(getActivity(), NetworkUtil.DEFAULT_DIALOG);
                 }
                 return true;
             case R.id.menu_settings:
@@ -466,7 +472,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setProgress(session.LoadPreferenceInt("progress"));
 
-            mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
+            mIntentFilter.addAction(Globalconstant.mBroadcastUpdateProgressBar);
 
             getActivity().registerReceiver(mReceiver, mIntentFilter);
 
@@ -485,7 +491,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Globalconstant.mBroadcastIntegerAction)) {
+            if (intent.getAction().equals(Globalconstant.mBroadcastUpdateProgressBar)) {
 
                 Float progress = intent.getFloatExtra("Progress", 0);
                 progressBar.setVisibility(View.VISIBLE);

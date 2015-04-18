@@ -34,7 +34,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
-import com.mendeleypaperreader.Provider.ContentProvider;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.activities.AboutActivity;
 import com.mendeleypaperreader.activities.DetailsActivity;
@@ -43,9 +42,11 @@ import com.mendeleypaperreader.adapter.ListTitleAdapter;
 import com.mendeleypaperreader.adapter.MergeAdapter;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.preferences.Preferences;
+import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.service.RefreshTokenTask;
 import com.mendeleypaperreader.service.ServiceIntent;
 import com.mendeleypaperreader.util.Globalconstant;
+import com.mendeleypaperreader.util.NetworkUtil;
 import com.mendeleypaperreader.util.RobotoRegularFontHelper;
 import com.mendeleypaperreader.util.TypefaceSpan;
 
@@ -111,10 +112,7 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
         session = new Preferences(getActivity().getApplicationContext());
 
         mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
-        mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
-        mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
-
+        mIntentFilter.addAction(Globalconstant.mBroadcastUpdateProgressBar);
         getActivity().registerReceiver(mReceiver, mIntentFilter);
 
         //Start upload data from server
@@ -200,12 +198,8 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
             progressBar.setProgress(session.LoadPreferenceInt("progress"));
 
             mIntentFilter = new IntentFilter();
-            mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
-            mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
-            mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
-
+            mIntentFilter.addAction(Globalconstant.mBroadcastUpdateProgressBar);
             getActivity().registerReceiver(mReceiver, mIntentFilter);
-
 
         }
 
@@ -237,11 +231,15 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
                 showDialog();
                 return true;
             case R.id.main_menu_refresh:
-                if (!ServiceIntent.serviceState) {
-                    getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
-                    new RefreshTokenTask(getActivity(), true).execute();
-                } else {
-                    Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.sync_alert_in_progress), Toast.LENGTH_LONG).show();
+                if(NetworkUtil.isConnectingToInternet(getActivity().getApplicationContext()))
+                    if (!ServiceIntent.serviceState) {
+                        getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
+                        new RefreshTokenTask(getActivity(), true).execute();
+                    } else {
+                        Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.sync_alert_in_progress), Toast.LENGTH_LONG).show();
+                    }
+                else{
+                    NetworkUtil.NetWorkDialog(getActivity(), NetworkUtil.DEFAULT_DIALOG);
                 }
                 return true;
             case R.id.menu_settings:
@@ -502,10 +500,7 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
             progressBar.setProgress(session.LoadPreferenceInt("progress"));
 
             mIntentFilter = new IntentFilter();
-            mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
-            mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
-            mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
-
+            mIntentFilter.addAction(Globalconstant.mBroadcastUpdateProgressBar);
             getActivity().registerReceiver(mReceiver, mIntentFilter);
 
 
@@ -536,7 +531,7 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Globalconstant.mBroadcastIntegerAction)) {
+            if (intent.getAction().equals(Globalconstant.mBroadcastUpdateProgressBar)) {
                 if (progressBar != null) {
                     progress = intent.getFloatExtra("Progress", 0);
                     progressBar.setVisibility(View.VISIBLE);

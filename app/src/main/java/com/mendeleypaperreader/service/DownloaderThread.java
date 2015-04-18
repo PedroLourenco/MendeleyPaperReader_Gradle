@@ -6,7 +6,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Message;
 
-import com.mendeleypaperreader.Provider.ContentProvider;
+import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.activities.DocumentsDetailsActivity;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;

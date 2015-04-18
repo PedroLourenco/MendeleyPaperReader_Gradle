@@ -8,13 +8,13 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.view.MenuItem;
 
-import com.mendeleypaperreader.Provider.ContentProvider;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.fragments.FragmentDetails;
 import com.mendeleypaperreader.preferences.Preferences;
+import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.sessionManager.GetAccessToken;
-import com.mendeleypaperreader.util.ConnectionDetector;
 import com.mendeleypaperreader.util.Globalconstant;
+import com.mendeleypaperreader.util.NetworkUtil;
 import com.mendeleypaperreader.util.TypefaceSpan;
 
 import org.json.JSONException;
@@ -121,16 +121,15 @@ public class DetailsActivity extends FragmentActivity {
         //delete data from data base and get new access token to start sync
 
         // check internet connection
-        Boolean isInternetPresent;
-        ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
+        Boolean isInternetPresent = NetworkUtil.isConnectingToInternet(getApplicationContext());
 
-        isInternetPresent = connectionDetector.isConnectingToInternet();
+
 
         if (isInternetPresent) {
             getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
             new ProgressTask().execute();
         } else {
-            connectionDetector.showDialog(DetailsActivity.this, ConnectionDetector.DEFAULT_DIALOG);
+            NetworkUtil.NetWorkDialog(DetailsActivity.this, NetworkUtil.DEFAULT_DIALOG);
         }
     }
 

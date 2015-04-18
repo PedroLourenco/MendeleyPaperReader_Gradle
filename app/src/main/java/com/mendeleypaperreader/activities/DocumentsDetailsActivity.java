@@ -41,7 +41,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
-import com.mendeleypaperreader.Provider.ContentProvider;
+import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.parser.SyncDataAsync;
@@ -49,9 +49,9 @@ import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.service.DownloaderThread;
 import com.mendeleypaperreader.service.RefreshTokenTask;
 import com.mendeleypaperreader.service.ServiceIntent;
-import com.mendeleypaperreader.util.ConnectionDetector;
 import com.mendeleypaperreader.util.GetDataBaseInformation;
 import com.mendeleypaperreader.util.Globalconstant;
+import com.mendeleypaperreader.util.NetworkUtil;
 import com.mendeleypaperreader.util.RobotoBoldFontHelper;
 import com.mendeleypaperreader.util.RobotoRegularFontHelper;
 import com.mendeleypaperreader.util.TypefaceSpan;
@@ -124,11 +124,11 @@ public class DocumentsDetailsActivity extends Activity {
 
         //register receiver
         mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
+        mIntentFilter.addAction(Globalconstant.mBroadcastUpdateProgressBar);
 
         registerReceiver(mReceiver, mIntentFilter);
 
-        final ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
+        //final ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
 
         thisActivity = this;
         downloaderThread = null;
@@ -291,12 +291,12 @@ public class DocumentsDetailsActivity extends Activity {
 
                 // check internet connection
 
-                isInternetPresent = connectionDetector.isConnectingToInternet();
+                isInternetPresent = NetworkUtil.isConnectingToInternet(getApplicationContext());
 
                 if (isInternetPresent) {
                     onShareClick(v);
                 } else {
-                    connectionDetector.showDialog(DocumentsDetailsActivity.this, ConnectionDetector.DEFAULT_DIALOG);
+                    NetworkUtil.NetWorkDialog(DocumentsDetailsActivity.this, NetworkUtil.DEFAULT_DIALOG);
                 }
 
             }
@@ -325,7 +325,7 @@ public class DocumentsDetailsActivity extends Activity {
 
             public void onClick(View v) {
 
-                isInternetPresent = connectionDetector.isConnectingToInternet();
+                isInternetPresent = NetworkUtil.isConnectingToInternet(getApplicationContext());
 
                 if (isInternetPresent) {
                     String fileNames = cursorFile.getString(cursorFile.getColumnIndex(DatabaseOpenHelper.FILE_NAME));
@@ -360,7 +360,7 @@ public class DocumentsDetailsActivity extends Activity {
 
 
                 } else {
-                    connectionDetector.showDialog(DocumentsDetailsActivity.this, ConnectionDetector.DEFAULT_DIALOG);
+                    NetworkUtil.NetWorkDialog(DocumentsDetailsActivity.this, NetworkUtil.DEFAULT_DIALOG);
                 }
             }
         };
@@ -402,18 +402,6 @@ public class DocumentsDetailsActivity extends Activity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-
-            MenuItem refreshIcon = menu.findItem(R.id.menu_refresh);
-            if(refreshIcon != null && ServiceIntent.serviceState)
-                refreshIcon.setVisible(false);
-
-           if(refreshIcon != null && !ServiceIntent.serviceState)
-               refreshIcon.setVisible(true);
-
-        return super.onPrepareOptionsMenu(menu);
-    }
 
 
     //ActionBar Menu Options
@@ -422,11 +410,15 @@ public class DocumentsDetailsActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
 
-                if (!ServiceIntent.serviceState) {
-                new RefreshTokenTask(DocumentsDetailsActivity.this, true).execute();
-            } else {
-                Toast.makeText(DocumentsDetailsActivity.this, getResources().getString(R.string.sync_alert_in_progress), Toast.LENGTH_LONG).show();
-            }
+                if (NetworkUtil.isConnectingToInternet(getApplicationContext())) {
+                    if (!ServiceIntent.serviceState) {
+                        new RefreshTokenTask(DocumentsDetailsActivity.this, true).execute();
+                    } else {
+                        Toast.makeText(DocumentsDetailsActivity.this, getResources().getString(R.string.sync_alert_in_progress), Toast.LENGTH_LONG).show();
+                    }
+                }else{
+                    NetworkUtil.NetWorkDialog(DocumentsDetailsActivity.this, NetworkUtil.DEFAULT_DIALOG);
+                }
                 return true;
 
             // up button
@@ -1076,7 +1068,7 @@ public class DocumentsDetailsActivity extends Activity {
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Globalconstant.mBroadcastIntegerAction)) {
+            if (intent.getAction().equals(Globalconstant.mBroadcastUpdateProgressBar)) {
 
                Float progress = intent.getFloatExtra("Progress", 0);
                progressBar.setVisibility(View.VISIBLE);
@@ -1155,10 +1147,7 @@ public class DocumentsDetailsActivity extends Activity {
             progressBar.setProgress(session.LoadPreferenceInt("progress"));
 
             mIntentFilter = new IntentFilter();
-            mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
-            mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
-            mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
-
+            mIntentFilter.addAction(Globalconstant.mBroadcastUpdateProgressBar);
             registerReceiver(mReceiver, mIntentFilter);
 
         }
@@ -1169,10 +1158,6 @@ public class DocumentsDetailsActivity extends Activity {
             ServiceIntent.serviceState = false;
 
         }
-
-
-        invalidateOptionsMenu();
-
     }
 
 /*
