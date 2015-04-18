@@ -30,7 +30,7 @@ before_script:
 
 
 script:
-  - adb start-server
+ 
   - adb devices
   - ./gradlew build
   - calabash-android resign app/build/outputs/apk/app-release-unsigned.apk
