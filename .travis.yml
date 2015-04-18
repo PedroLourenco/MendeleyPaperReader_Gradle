@@ -30,8 +30,9 @@ before_script:
 
 
 script:
- 
+
   - adb devices
+  - ./gradlew connectedCheck --info
   - ./gradlew build
   - calabash-android resign app/build/outputs/apk/app-release-unsigned.apk
   - calabash-android run app/build/outputs/apk/app-release-unsigned.apk
