@@ -4,7 +4,7 @@ sudo: false
 android:
   components:
     - sys-img-armeabi-v7a-android-21
-    - build-tools-21.1.1
+    - build-tools-19.1.0
 
 jdk: oraclejdk7
 
@@ -24,7 +24,7 @@ before_script:
     - mksdcard 265M sdcard
     - emulator -avd test -no-audio -no-boot-anim -sdcard sdcard &
     - android-wait-for-emulator
-    - adb shell input keyevent 82
+    - adb shell input keyevent 82 &
    # - sleep 20
 
 
