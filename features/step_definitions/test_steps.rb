@@ -1,5 +1,5 @@
 require 'calabash-android/calabash_steps'
-require 'pry'
+#require 'pry'
 
 
 
