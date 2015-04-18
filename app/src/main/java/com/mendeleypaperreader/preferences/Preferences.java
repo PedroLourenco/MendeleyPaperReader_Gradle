@@ -20,7 +20,7 @@ public class Preferences {
     int PRIVATE_MODE = 0;
 
     // Sharedpref file name
-    private static final String PREF_NAME = "preferences";
+    private static final String PREF_NAME = "MendeleyPaperReaderPREF";
 
 
     // Constructor

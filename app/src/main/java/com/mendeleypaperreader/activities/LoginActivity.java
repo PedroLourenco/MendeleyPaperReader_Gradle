@@ -97,12 +97,13 @@ public class LoginActivity extends Activity {
         if (DEBUG) Log.d(TAG, "old version: " + session.LoadPreference("versionCode"));
 
 
-        if (!version.toString().equals(session.LoadPreference("versionCode"))) {
+        if (!version.toString().equals(session.LoadPreference("versionCode")) && !session.LoadPreference("versionCode").equals("10")) {
             if (DEBUG) Log.d(TAG, "New instalation");
             session.deleteAllPreferences();
-            session.savePreferences("versionCode", version.toString());
+
         }
 
+        session.savePreferences("versionCode", version.toString());
 
         robotoBold = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Bold.ttf");
 
@@ -252,7 +253,7 @@ public class LoginActivity extends Activity {
                     session.savePreferences("lastRefreshDate", sdf.format(calendar.getTime()));
 
                     calendar.add(Calendar.SECOND, 3600);
-                    session.savePreferences("expires_on", sdf.format(calendar.getTime()));
+                    session.savePreferences("expire_date", sdf.format(calendar.getTime()));
 
                     if (Globalconstant.LOG) {
                         Log.d(Globalconstant.TAG, "NOW: " + calendar.getTime().toString());

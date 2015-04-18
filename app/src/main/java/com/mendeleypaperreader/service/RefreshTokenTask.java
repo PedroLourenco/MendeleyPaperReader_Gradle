@@ -95,7 +95,7 @@ public class RefreshTokenTask extends AsyncTask<String, Integer, JSONObject> {
                     Log.d(TAG, "json: " + json.toString());
                     Log.d(TAG, "refresh_token - Expire: " + expire);
                     Log.d(TAG, "refresh_token - Refresh: " + refresh);
-                    Log.d(TAG, "expires_on: " + sharedPreferences.LoadPreference("expires_on"));
+                    Log.d(TAG, "expire_date: " + sharedPreferences.LoadPreference("expire_date"));
                 }
 
             } catch (JSONException e) {
@@ -108,7 +108,7 @@ public class RefreshTokenTask extends AsyncTask<String, Integer, JSONObject> {
          // gets a calendar using the default time zone and locale.
         calendar.add(Calendar.SECOND, 3600);
 
-        sharedPreferences.savePreferences("expires_on", sdf.format(calendar.getTime()));
+        sharedPreferences.savePreferences("expire_date", sdf.format(calendar.getTime()));
 
 
 

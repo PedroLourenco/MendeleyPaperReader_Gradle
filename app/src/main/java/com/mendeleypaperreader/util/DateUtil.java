@@ -27,7 +27,7 @@ public class DateUtil {
         Calendar calendar = Calendar.getInstance();
 
         Preferences preferences = new Preferences(context);
-        String expiresOn = preferences.LoadPreference("expires_on");
+        String expiresOn = preferences.LoadPreference("expire_date");
         String lastRefresh = preferences.LoadPreference("lastRefreshDate");
 
         Calendar calExpiresOn = Calendar.getInstance();
@@ -37,11 +37,10 @@ public class DateUtil {
         Date dateLastRefresh = null;
 
 
-        if(DEBUG) Log.d(TAG, "lastRefresh: " + lastRefresh + "  -  expiresOn: " + expiresOn);
+        if(DEBUG) Log.d(TAG, "lastRefresh: " + lastRefresh + "  -  expire_date: " + expiresOn);
 
 
-
-        if(expiresOn == null)
+        if(expiresOn.equals(""))
             return true;
 
 
