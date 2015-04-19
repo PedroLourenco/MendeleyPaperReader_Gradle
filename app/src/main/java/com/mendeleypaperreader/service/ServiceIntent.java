@@ -81,13 +81,6 @@ public class ServiceIntent extends IntentService {
 
 
 
-    private void DeleteDataBase(){
-
-
-
-    }
-
-
 
     @Override
     public void onDestroy() {
@@ -97,10 +90,6 @@ public class ServiceIntent extends IntentService {
            serviceState = true;
 
         else {
-
-            if(serviceState)
-                preferences.savePreferences("IS_DB_CREATED", "YES");
-
            serviceState = false;
 
        }

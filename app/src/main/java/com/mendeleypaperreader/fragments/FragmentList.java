@@ -122,7 +122,7 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
         if (DEBUG) Log.d(FragmentList.TAG, "ServiceIntent.serviceState: " + ServiceIntent.serviceState);
 
         if (!firstLoad.equals("YES") && !ServiceIntent.serviceState) {
-
+            session.savePreferences("IS_DB_CREATED", "YES");
             if (DEBUG) Log.d(FragmentList.TAG, "First Sync");
 
             new RefreshTokenTask(getActivity(), true).execute();
@@ -207,6 +207,31 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
     }
 
 
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+
+
+        if (mDualPane) {
+
+            MenuItem search = menu.findItem(R.id.main_grid_default_search);
+            if(search.isVisible()){
+                search.setVisible(false);
+
+            }
+
+
+
+        }
+
+
+
+
+    }
+
+
+
+
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         if (!mDualPane) {
@@ -214,7 +239,20 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
             searchView = (SearchView) menu.findItem(R.id.main_grid_default_search).getActionView();
             searchView.setOnQueryTextListener(queryListener);
 
+        }else{
+            inflater.inflate(R.menu.actionbar_search, menu);
+
+            //MenuItem search = menu.findItem(R.id.main_grid_default_search);
+            //search.setVisible(false);
+            searchView = (SearchView) menu.findItem(R.id.default_search).getActionView();
+            searchView.setOnQueryTextListener(queryListener);
+
         }
+
+
+
+
+
     }
 
 
@@ -264,7 +302,7 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
                 .setPositiveButton(getResources().getString(R.string.word_ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
-                        ServiceIntent.serviceState = false;
+                        Globalconstant.syncAbort = true;
                         session.deleteAllPreferences();
                         getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
                         getActivity().finish();
@@ -522,13 +560,15 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
         //}
     }
 
-/*
-    public void syncData() {
-        Intent serviceIntent = new Intent(getActivity(), ServiceIntent.class);
-        getActivity().startService(serviceIntent);
+    @Override
+    public void onDestroy() {
+        if(DEBUG)Log.d(TAG, "In onDestroy" );
 
+
+
+        super.onDestroy();
     }
-*/
+
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override

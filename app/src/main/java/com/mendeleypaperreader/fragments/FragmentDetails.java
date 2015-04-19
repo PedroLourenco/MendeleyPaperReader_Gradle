@@ -217,6 +217,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
     }
 
 
+
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
 
@@ -292,33 +293,9 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
                 return super.onOptionsItemSelected(item);
         }
     }
-/*
-
-    private void syncData() {
-
-        Intent serviceIntent = new Intent(getActivity(), ServiceIntent.class);
-        getActivity().startService(serviceIntent);
-
-    }
 
 
-    private void refreshToken() {
 
-        // check internet connection
-
-        Boolean isInternetPresent;
-        ConnectionDetector connectionDetector = new ConnectionDetector(getActivity().getApplicationContext());
-
-        isInternetPresent = connectionDetector.isConnectingToInternet();
-
-        if (isInternetPresent) {
-            getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
-            new ProgressTask().execute();
-        } else {
-            connectionDetector.showDialog(getActivity(), ConnectionDetector.DEFAULT_DIALOG);
-        }
-    }
-    */
 
     public void showDialog() {
         // Use the Builder class for convenient dialog construction
@@ -329,7 +306,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
                 .setPositiveButton(getResources().getString(R.string.word_ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
-                        ServiceIntent.serviceState = false;
+                        Globalconstant.syncAbort = true;
                         session.deleteAllPreferences();
                         getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
                         ServiceIntent.serviceState = false;
@@ -537,6 +514,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
 
             title.setText(Globalconstant.MYLIBRARY[0]);
             projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
+            selection = DatabaseOpenHelper.GROUP_ID + " = ''";
             uri = ContentProvider.CONTENT_URI_DOC_DETAILS;
         } else if (index == 2) { //added
 
@@ -548,7 +526,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
 
             title.setText(Globalconstant.MYLIBRARY[2]);
             projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
-            selection = DatabaseOpenHelper.STARRED + " = 'true'";
+            selection = DatabaseOpenHelper.STARRED + " = 'true' and " + DatabaseOpenHelper.GROUP_ID + " = ''";
             uri = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
         } else if (index == 4) { //Authored = true
 

@@ -20,14 +20,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
-import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.R;
-import com.mendeleypaperreader.preferences.Preferences;
-import com.mendeleypaperreader.service.ServiceIntent;
 import com.mendeleypaperreader.adapter.ListTitleAdapter;
 import com.mendeleypaperreader.adapter.MergeAdapter;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
-import com.mendeleypaperreader.parser.SyncDataAsync;
+import com.mendeleypaperreader.preferences.Preferences;
+import com.mendeleypaperreader.providers.ContentProvider;
+import com.mendeleypaperreader.service.ServiceIntent;
 import com.mendeleypaperreader.util.Globalconstant;
 import com.mendeleypaperreader.util.TypefaceSpan;
 
@@ -60,12 +59,14 @@ public class ReadersActivity extends ListActivity {
             actionBar.setTitle(s);
         }
 
+
+
         preferences = new Preferences(getApplicationContext());
 ;
         progressBar = (NumberProgressBar) findViewById(R.id.progress_bar);
         if(ServiceIntent.serviceState) {
 
-            progressBar.setProgress(SyncDataAsync.progressBarValue);
+            progressBar.setProgress(preferences.LoadPreferenceInt("progress"));
         }else{
             progressBar.setVisibility(View.GONE);
 

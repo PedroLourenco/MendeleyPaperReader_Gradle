@@ -34,6 +34,10 @@ import java.util.Map.Entry;
 
 public class LoadData {
 
+    private static final String TAG = "LoadData";
+    private static final boolean DEBUG = Globalconstant.DEBUG;
+
+
     private Context context;
     private static String access_token;
     private GetDataBaseInformation getDataBaseInformation;
@@ -523,11 +527,22 @@ public class LoadData {
 
                     if (temp.has(DatabaseOpenHelper.STARRED)) {
                         values.put(DatabaseOpenHelper.STARRED, temp.get(DatabaseOpenHelper.STARRED).asText());
+
                     } else {
                         values.put(DatabaseOpenHelper.STARRED, "");
                     }
+
+
+                    if (temp.has(DatabaseOpenHelper.GROUP_ID)) {
+                        values.put(DatabaseOpenHelper.GROUP_ID, temp.get(DatabaseOpenHelper.GROUP_ID).asText());
+
+                    } else {
+                        values.put(DatabaseOpenHelper.GROUP_ID, "");
+                    }
+
                     if (temp.has(DatabaseOpenHelper.AUTHORED)) {
                         values.put(DatabaseOpenHelper.AUTHORED, temp.get(DatabaseOpenHelper.AUTHORED).asText());
+
 
                     } else {
                         values.put(DatabaseOpenHelper.AUTHORED, "");

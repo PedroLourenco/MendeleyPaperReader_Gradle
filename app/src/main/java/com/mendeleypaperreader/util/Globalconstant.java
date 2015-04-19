@@ -9,7 +9,9 @@ public class Globalconstant {
 
     public static String TAG = "PaperReader";
     public static final boolean LOG = false;
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
+
+    public static boolean syncAbort = false;
 
 
     //Login information

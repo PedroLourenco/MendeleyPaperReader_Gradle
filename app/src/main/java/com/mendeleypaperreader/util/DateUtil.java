@@ -57,12 +57,14 @@ public class DateUtil {
 
         if(DEBUG) Log.d(TAG, "calendar: " + calLastRefresh.getTime() + "  -  expiresOnDate: " + calExpiresOn.getTime());
 
+
         if(calLastRefresh.compareTo(calExpiresOn) > 0){
-            if(DEBUG) Log.d(TAG, "Token expired.");
-            return true;
-        }else{
+
             if(DEBUG) Log.d(TAG, "Token is valid.");
             return false;
+        }else{
+            if(DEBUG) Log.d(TAG, "Token expired.");
+            return true;
         }
 
     }

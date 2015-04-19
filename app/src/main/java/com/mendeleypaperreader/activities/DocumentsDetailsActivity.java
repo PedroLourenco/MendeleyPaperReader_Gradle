@@ -44,7 +44,6 @@ import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
-import com.mendeleypaperreader.parser.SyncDataAsync;
 import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.service.DownloaderThread;
 import com.mendeleypaperreader.service.RefreshTokenTask;
@@ -118,7 +117,7 @@ public class DocumentsDetailsActivity extends Activity {
          progressBar = (NumberProgressBar) findViewById(R.id.progress_bar);
         if(ServiceIntent.serviceState) {
             progressBar.setVisibility(View.VISIBLE);
-            progressBar.setProgress(SyncDataAsync.progressBarValue);
+            progressBar.setProgress(session.LoadPreferenceInt("progress"));
 
         }
 
