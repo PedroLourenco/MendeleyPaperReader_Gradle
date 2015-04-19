@@ -119,6 +119,7 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
         String firstLoad = session.LoadPreference("IS_DB_CREATED");
 
         if (DEBUG) Log.d(FragmentList.TAG, "firstLoad: " + firstLoad);
+        if (DEBUG) Log.d(FragmentList.TAG, "ServiceIntent.serviceState: " + ServiceIntent.serviceState);
 
         if (!firstLoad.equals("YES") && !ServiceIntent.serviceState) {
 
@@ -263,6 +264,7 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
                 .setPositiveButton(getResources().getString(R.string.word_ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
+                        ServiceIntent.serviceState = false;
                         session.deleteAllPreferences();
                         getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
                         getActivity().finish();
@@ -550,81 +552,6 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
 
         }
     };
-/*
-    private void refreshToken() {
-
-        // check internet connection
-
-        Boolean isInternetPresent;
-        ConnectionDetector connectionDetector = new ConnectionDetector(getActivity().getApplicationContext());
-
-        isInternetPresent = connectionDetector.isConnectingToInternet();
-
-        if (isInternetPresent) {
-            getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
-            new ProgressTask().execute();
-        } else {
-            connectionDetector.showDialog(getActivity(), ConnectionDetector.DEFAULT_DIALOG);
-        }
-    }
-
-*/
-    //AsyncTask to download DATA from server
-/*
-    class ProgressTask extends AsyncTask<String, Integer, JSONObject> {
-
-
-        protected void onPreExecute() {
-            code = session.LoadPreference("Code");
-            refresh_token = session.LoadPreference("refresh_token");
-        }
-
-
-        protected void onPostExecute(final JSONObject json) {
-
-            if (json != null) {
-                try {
-                    String token = json.getString("access_token");
-                    String expire = json.getString("expires_in");
-                    String refresh = json.getString("refresh_token");
-
-
-                    // Save access token in shared preferences
-                    session.savePreferences("access_token", json.getString("access_token"));
-                    session.savePreferences("expires_in", json.getString("expires_in"));
-                    session.savePreferences("refresh_token", json.getString("refresh_token"));
-
-                    Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
-                    calendar.add(Calendar.SECOND, 3600);
-                    session.savePreferences("expires_on", calendar.getTime().toString());
-
-                    //Get data from server
-                    syncData();
-
-                    if (DEBUG) {
-
-                        Log.d(FragmentList.TAG, "refresh_token - Expire: " + expire);
-                        Log.d(FragmentList.TAG, "refresh_token - Refresh: " + refresh);
-                        Log.d(FragmentList.TAG, "expires_on" + json.getString("exwpires_on"));
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-
-        protected JSONObject doInBackground(final String... args) {
-
-            GetAccessToken jParser = new GetAccessToken();
-
-            return jParser.refresh_token(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, Globalconstant.GRANT_TYPE, refresh_token);
-
-        }
-    }
-*/
-
     /**
      * CustomAdapter
      */

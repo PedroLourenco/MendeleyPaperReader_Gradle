@@ -3,9 +3,14 @@ package com.mendeleypaperreader.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.util.Log;
+
+import com.mendeleypaperreader.util.Globalconstant;
 
 public class Preferences {
 
+    private static final String TAG = "Preferences";
+    private static final boolean DEBUG = Globalconstant.DEBUG;
 
     // Shared Preferences
     SharedPreferences sharedPreferences;
@@ -79,6 +84,9 @@ public class Preferences {
      */
     public void deleteAllPreferences() {
         // Clearing all data from Shared Preferences
+
+        if(DEBUG) Log.d(TAG, "deleteAllPreferences");
+
         editor.clear();
         editor.commit();
 

@@ -329,8 +329,10 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
                 .setPositiveButton(getResources().getString(R.string.word_ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
+                        ServiceIntent.serviceState = false;
                         session.deleteAllPreferences();
                         getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
+                        ServiceIntent.serviceState = false;
                         getActivity().finish();
                     }
                 });
@@ -633,61 +635,5 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         }
     }
 
-/*
-//AsyncTask to download DATA from server
 
-    class ProgressTask extends AsyncTask<String, Integer, JSONObject> {
-
-
-        protected void onPreExecute() {
-            code = session.LoadPreference("Code");
-            refresh_token = session.LoadPreference("refresh_token");
-        }
-
-
-        protected void onPostExecute(final JSONObject json) {
-
-            if (json != null) {
-                try {
-                    String token = json.getString("access_token");
-                    String expire = json.getString("expires_in");
-                    String refresh = json.getString("refresh_token");
-
-
-                    // Save access token in shared preferences
-                    session.savePreferences("access_token", json.getString("access_token"));
-                    session.savePreferences("expires_in", json.getString("expires_in"));
-                    session.savePreferences("refresh_token", json.getString("refresh_token"));
-
-                    Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
-                    calendar.add(Calendar.SECOND, 3600);
-                    session.savePreferences("expires_on", calendar.getTime().toString());
-
-                    //Get data from server
-                    syncData();
-
-                    if (Globalconstant.LOG) {
-
-                        Log.d("refresh_token - Expire", expire);
-                        Log.d("refresh_token - Refresh", refresh);
-                        Log.d("expires_on", json.getString("exwpires_on"));
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-
-        protected JSONObject doInBackground(final String... args) {
-
-            GetAccessToken jParser = new GetAccessToken();
-
-            return jParser.refresh_token(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, Globalconstant.GRANT_TYPE, refresh_token);
-
-        }
-    }
-
-*/
 }

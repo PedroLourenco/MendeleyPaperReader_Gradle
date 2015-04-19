@@ -1047,23 +1047,6 @@ public class DocumentsDetailsActivity extends Activity {
         startActivity(openInChooser);
     }
 
-/*
-    private void syncData() {
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(Globalconstant.mBroadcastStringAction);
-        mIntentFilter.addAction(Globalconstant.mBroadcastIntegerAction);
-        mIntentFilter.addAction(Globalconstant.mBroadcastArrayListAction);
-
-        registerReceiver(mReceiver, mIntentFilter);
-
-        Intent serviceIntent = new Intent(this, ServiceIntent.class);
-
-        startService(serviceIntent);
-
-    }
-
-*/
-
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -1087,26 +1070,6 @@ public class DocumentsDetailsActivity extends Activity {
         }
     };
 
-/*
-
-    private void refreshToken() {
-
-        // check internet connection
-
-        Boolean isInternetPresent;
-        ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
-
-        isInternetPresent = connectionDetector.isConnectingToInternet();
-
-        if (isInternetPresent) {
-            getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
-            new ProgressTask().execute();
-        } else {
-            connectionDetector.showDialog(DocumentsDetailsActivity.this, ConnectionDetector.DEFAULT_DIALOG);
-        }
-    }
-
-*/
 
     private void openBrowser(String url) {
 
@@ -1160,52 +1123,7 @@ public class DocumentsDetailsActivity extends Activity {
         }
     }
 
-/*
-    //AsyncTask to download DATA from server
 
-    class ProgressTask extends AsyncTask<String, Integer, JSONObject> {
-
-
-        protected void onPreExecute() {
-            session = new Preferences(DocumentsDetailsActivity.this);
-            code = session.LoadPreference("Code");
-            refresh_token = session.LoadPreference("refresh_token");
-        }
-
-        protected void onPostExecute(final JSONObject json) {
-
-
-            if (json != null) {
-                try {
-                    // Save access token in shared preferences
-                    session.savePreferences("access_token", json.getString("access_token"));
-                    session.savePreferences("expires_in", json.getString("expires_in"));
-                    session.savePreferences("refresh_token", json.getString("refresh_token"));
-
-
-                        //Get data from server
-                        syncData();
-
-
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-
-        protected JSONObject doInBackground(final String... args) {
-
-            GetAccessToken jParser = new GetAccessToken();
-
-            return jParser.refresh_token(Globalconstant.TOKEN_URL, code, Globalconstant.CLIENT_ID, Globalconstant.CLIENT_SECRET, Globalconstant.REDIRECT_URI, Globalconstant.GRANT_TYPE, refresh_token);
-
-        }
-    }
-
-*/
     /**
      * This is the Handler for this activity. It will receive messages from the
      * DownloaderThread and make the necessary updates to the UI.

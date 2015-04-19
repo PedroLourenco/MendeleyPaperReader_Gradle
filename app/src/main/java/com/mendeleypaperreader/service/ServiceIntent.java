@@ -91,15 +91,17 @@ public class ServiceIntent extends IntentService {
 
     @Override
     public void onDestroy() {
-        if(DEBUG)Log.d(TAG, "In onDestroy");
+       if(DEBUG)Log.d(TAG, "In onDestroy" + serviceState);
+
        if( NetworkUtil.getConnectivityStatus(getApplicationContext()) == 0)
            serviceState = true;
 
         else {
 
-           serviceState = false;
+            if(serviceState)
+                preferences.savePreferences("IS_DB_CREATED", "YES");
 
-           preferences.savePreferences("IS_DB_CREATED", "YES");
+           serviceState = false;
 
        }
 
