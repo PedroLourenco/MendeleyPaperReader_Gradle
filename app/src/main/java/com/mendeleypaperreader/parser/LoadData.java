@@ -11,9 +11,9 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.preferences.Preferences;
+import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.service.DownloaderThread;
 import com.mendeleypaperreader.util.GetDataBaseInformation;
 import com.mendeleypaperreader.util.Globalconstant;
@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -41,11 +42,12 @@ public class LoadData {
     private Context context;
     private static String access_token;
     private GetDataBaseInformation getDataBaseInformation;
+    Preferences session;
 
     public LoadData(Context context) {
         this.context = context;
 
-        Preferences session = new Preferences(this.context);
+        session = new Preferences(this.context);
         access_token = session.LoadPreference("access_token");
 
         getDataBaseInformation = new GetDataBaseInformation(this.context);
@@ -80,7 +82,7 @@ public class LoadData {
 
             String url = Globalconstant.get_docs_in_groups.replace("#groupId#", groups.getString(groups.getColumnIndex(DatabaseOpenHelper._ID)));
 
-            getUserLibrary(url + access_token);
+            getUserLibrary(url + access_token, false);
         }
 
         groups.close();
@@ -111,21 +113,23 @@ public class LoadData {
 
         List<ContentValues> valueList = new ArrayList<ContentValues>();
         List<InputStream> link = new ArrayList<InputStream>();
+        Cursor cursorDocId;
+        String url;
 
 
-        Cursor cursorDocId = getDocId();
+            cursorDocId = getDocId();
+
 
         while (cursorDocId.moveToNext()) {
 
-            String url = Globalconstant.get_docs_notes2 + cursorDocId.getString(cursorDocId.getColumnIndex(DatabaseOpenHelper._ID)) + "&limit=200&access_token=" + access_token;
-
+                url = Globalconstant.get_docs_notes2 + cursorDocId.getString(cursorDocId.getColumnIndex(DatabaseOpenHelper._ID)) + "&limit=200&access_token=" + access_token;
 
             JSONParser jParser = new JSONParser();
             ObjectMapper mapper = new ObjectMapper();
             JsonFactory factory = mapper.getFactory();
 
 
-            link = jParser.getJACKSONFromUrl(url, true);
+            link = jParser.getJACKSONFromUrl(url, JSONParser.GET, null, true);
 
             try {
                 for (InputStream oneItem : link) {
@@ -191,6 +195,93 @@ public class LoadData {
     }
 
 
+    public void getModifiedNotes() {
+
+        ContentValues[] valuesArray;
+
+        List<ContentValues> valueList = new ArrayList<ContentValues>();
+        List<InputStream> link = new ArrayList<InputStream>();
+
+        String url;
+        String delete_notes_where = null;
+
+        url = Globalconstant.get_docs_notes_modified + session.LoadPreference("LAST_SYNCHRONIZATION_DATE") + "&limit=200&access_token=" + access_token;
+
+        JSONParser jParser = new JSONParser();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonFactory factory = mapper.getFactory();
+
+
+        link = jParser.getJACKSONFromUrl(url, JSONParser.GET, null, true);
+
+        try {
+            for (InputStream oneItem : link) {
+                JsonParser jp = factory.createParser(oneItem);
+
+                JsonNode rootNode = mapper.readTree(jp);
+
+                Iterator<JsonNode> ite = rootNode.iterator();
+
+                while (ite.hasNext()) {
+                    JsonNode temp = ite.next();
+
+                    ContentValues note_values = new ContentValues();
+
+                    if (temp.has(DatabaseOpenHelper.TYPE)) {
+
+                        String noteType = temp.get(DatabaseOpenHelper.TYPE).asText();
+
+                        if (!noteType.equals("note")) {
+                            break;
+                        }
+
+                        note_values.put(DatabaseOpenHelper.TYPE, noteType);
+                    }
+
+
+                    if (temp.has(DatabaseOpenHelper.NOTE_ID)) {
+
+                        note_values.put(DatabaseOpenHelper.NOTE_ID, temp.get(DatabaseOpenHelper.NOTE_ID).asText());
+                    }
+
+
+                    if (temp.has(DatabaseOpenHelper.TEXT)) {
+
+                        note_values.put(DatabaseOpenHelper.TEXT, temp.get(DatabaseOpenHelper.TEXT).asText().replace("<br/>", " "));
+                    }
+                    if (temp.has(DatabaseOpenHelper.DOCUMENT_ID)) {
+                        String docid = temp.get(DatabaseOpenHelper.DOCUMENT_ID).asText();
+                        delete_notes_where = DatabaseOpenHelper.DOCUMENT_ID + " = '" + docid + "'";
+                        note_values.put(DatabaseOpenHelper.DOCUMENT_ID, temp.get(DatabaseOpenHelper.DOCUMENT_ID).asText());
+                    }
+
+
+                    //delete old notes
+                    Uri uri_notes = Uri.parse(ContentProvider.CONTENT_URI_DOC_NOTES + "/" + DatabaseOpenHelper.DOCUMENT_ID);
+                    context.getContentResolver().delete(uri_notes, delete_notes_where, null);
+                    valueList.add(note_values);
+                }
+
+                jp.close();
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        //Insert data on table notes
+        valuesArray = new ContentValues[valueList.size()];
+        valueList.toArray(valuesArray);
+
+        context.getContentResolver().bulkInsert(ContentProvider.CONTENT_URI_DOC_NOTES, valuesArray);
+
+
+    }
+
+
+
     public void getUserGroups(String url) {
 
 
@@ -202,7 +293,7 @@ public class LoadData {
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory factory = mapper.getFactory();
         List<InputStream> link = new ArrayList<InputStream>();
-        link = jParser.getJACKSONFromUrl(url, true);
+        link = jParser.getJACKSONFromUrl(url, JSONParser.GET, null, true);
 
         try {
             for (InputStream oneItem : link) {
@@ -270,7 +361,7 @@ public class LoadData {
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory factory = mapper.getFactory();
         List<InputStream> link = new ArrayList<InputStream>();
-        link = jParser.getJACKSONFromUrl(url, true);
+        link = jParser.getJACKSONFromUrl(url, JSONParser.GET, null, true);
 
         try {
             for (InputStream oneItem : link) {
@@ -290,6 +381,7 @@ public class LoadData {
 
                     if (temp.has(DatabaseOpenHelper.FILE_DOC_ID)) {
                         values.put(DatabaseOpenHelper.FILE_DOC_ID, temp.get(DatabaseOpenHelper.FILE_DOC_ID).asText());
+
                     } else {
                         values.put(DatabaseOpenHelper.FILE_DOC_ID, "");
                     }
@@ -310,6 +402,87 @@ public class LoadData {
                     } else {
                         values.put(DatabaseOpenHelper.FILE_FILEHASH, "");
                     }
+
+
+                    valueList.add(values);
+                }
+
+                jp.close();
+            }
+
+            //Insert data on table files
+            valuesArray = new ContentValues[valueList.size()];
+            valueList.toArray(valuesArray);
+            context.getContentResolver().bulkInsert(ContentProvider.CONTENT_URI_FILES, valuesArray);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void getFilesModified(String serviceUrl) {
+
+
+        List<ContentValues> valueList = new ArrayList<ContentValues>();
+
+        ContentValues[] valuesArray;
+        String delete_files_where = null;
+
+        String url = serviceUrl.replace("#dateAdded#", session.LoadPreference("LAST_SYNCHRONIZATION_DATE")) + access_token ;
+
+        JSONParser jParser = new JSONParser();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonFactory factory = mapper.getFactory();
+        List<InputStream> link = new ArrayList<InputStream>();
+        link = jParser.getJACKSONFromUrl(url, JSONParser.GET, null, true);
+
+        try {
+            for (InputStream oneItem : link) {
+                JsonParser jp = factory.createParser(oneItem);
+                JsonNode rootNode = mapper.readTree(jp);
+
+                Iterator<JsonNode> ite = rootNode.iterator();
+
+                while (ite.hasNext()) {
+                    JsonNode temp = ite.next();
+
+                    ContentValues values = new ContentValues();
+
+                    if (temp.has(DatabaseOpenHelper.ID)) {
+                        values.put(DatabaseOpenHelper.FILE_ID, temp.get(DatabaseOpenHelper.ID).asText());
+                    }
+
+                    if (temp.has(DatabaseOpenHelper.FILE_DOC_ID)) {
+                        String docid = temp.get(DatabaseOpenHelper.FILE_DOC_ID).asText();
+                        values.put(DatabaseOpenHelper.FILE_DOC_ID, docid);
+
+                        delete_files_where = DatabaseOpenHelper.DOCUMENT_ID + " = '" + docid + "'";
+                    } else {
+                        values.put(DatabaseOpenHelper.FILE_DOC_ID, "");
+                    }
+
+                    if (temp.has(DatabaseOpenHelper.FILE_NAME)) {
+                        values.put(DatabaseOpenHelper.FILE_NAME, temp.get(DatabaseOpenHelper.FILE_NAME).asText());
+                    } else {
+                        values.put(DatabaseOpenHelper.FILE_NAME, "");
+                    }
+
+                    if (temp.has(DatabaseOpenHelper.FILE_MIME_TYPE)) {
+                        values.put(DatabaseOpenHelper.FILE_MIME_TYPE, temp.get(DatabaseOpenHelper.FILE_MIME_TYPE).asText());
+                    } else {
+                        values.put(DatabaseOpenHelper.FILE_MIME_TYPE, "");
+                    }
+                    if (temp.has(DatabaseOpenHelper.FILE_FILEHASH)) {
+                        values.put(DatabaseOpenHelper.FILE_FILEHASH, temp.get(DatabaseOpenHelper.FILE_FILEHASH).asText());
+                    } else {
+                        values.put(DatabaseOpenHelper.FILE_FILEHASH, "");
+                    }
+
+                    //delete old notes
+                    Uri uri_files = Uri.parse(ContentProvider.CONTENT_URI_FILES + "/" + DatabaseOpenHelper.DOCUMENT_ID);
+                    context.getContentResolver().delete(uri_files, delete_files_where, null);
 
                     valueList.add(values);
                 }
@@ -341,7 +514,7 @@ public class LoadData {
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory factory = mapper.getFactory();
         List<InputStream> link = new ArrayList<InputStream>();
-        link = jParser.getJACKSONFromUrl(url, true);
+        link = jParser.getJACKSONFromUrl(url, JSONParser.GET, null, true);
 
         try {
             for (InputStream oneItem : link) {
@@ -404,7 +577,7 @@ public class LoadData {
 
 
 
-    public void getUserLibrary(String url) {
+    public void getUserLibrary(String url, boolean isTrash) {
 
         JSONParser jParser = new JSONParser();
         String docTitle, docId;
@@ -420,7 +593,7 @@ public class LoadData {
         ObjectMapper mapper = new ObjectMapper();
 
         JsonFactory factory = mapper.getFactory();
-        link = jParser.getJACKSONFromUrl(url, true);
+        link = jParser.getJACKSONFromUrl(url, JSONParser.GET, null, true);
 
         try {
 
@@ -435,6 +608,11 @@ public class LoadData {
 
                     ContentValues values = new ContentValues();
 
+
+                    if(isTrash){
+                        values.put(DatabaseOpenHelper.TRASH, "true");
+
+                    }
 
                     if (temp.has(DatabaseOpenHelper.ID)) {
 
@@ -657,15 +835,521 @@ public class LoadData {
 
         } catch (Exception e) {
             e.printStackTrace();
+            Log.d(TAG, e.toString());
+
         }
 
     }
 
 
+    public void insertNewDocument(JsonNode temp, boolean isTrash){
+
+
+        ContentValues values = new ContentValues();
+        String docTitle, docId;
+
+        List<ContentValues> valueList = new ArrayList<ContentValues>();
+        List<ContentValues> authorsValuesList = new ArrayList<ContentValues>();
+        List<ContentValues> tagValueList = new ArrayList<ContentValues>();
+
+        ContentValues[] mValueArray, authorsValuesArray, tagsValuesArray;
+
+
+        if(isTrash){
+            values.put(DatabaseOpenHelper.TRASH, "true");
+
+        }
+
+        if (temp.has(DatabaseOpenHelper.ID)) {
+
+
+            docId = temp.get(DatabaseOpenHelper.ID).asText();
+            values.put(DatabaseOpenHelper._ID, docId);
+        }
+
+        if (temp.has(DatabaseOpenHelper.TITLE)) {
+            docTitle = temp.get(DatabaseOpenHelper.TITLE).asText();
+            values.put(DatabaseOpenHelper.TITLE, docTitle);
+        } else {
+            docTitle = "";
+            values.put(DatabaseOpenHelper.TITLE, docTitle);
+        }
+
+        if (temp.has(DatabaseOpenHelper.TYPE)) {
+            values.put(DatabaseOpenHelper.TYPE, temp.get(DatabaseOpenHelper.TYPE).asText());
+        } else {
+            values.put(DatabaseOpenHelper.TYPE, "");
+        }
+
+
+        if (temp.has(DatabaseOpenHelper.YEAR)) {
+            values.put(DatabaseOpenHelper.YEAR, temp.get(DatabaseOpenHelper.YEAR).asText());
+        } else {
+            values.put(DatabaseOpenHelper.YEAR, "");
+        }
+        if (temp.has(DatabaseOpenHelper.LAST_MODIFIED)) {
+            values.put(DatabaseOpenHelper.LAST_MODIFIED, temp.get(DatabaseOpenHelper.LAST_MODIFIED).asText());
+        } else {
+            values.put(DatabaseOpenHelper.LAST_MODIFIED, "");
+        }
+
+        if (temp.has(DatabaseOpenHelper.TAGS)) {
+
+            Iterator<JsonNode> tagIterator = temp.get(DatabaseOpenHelper.TAGS).elements();
+            String tags = "";
+            while (tagIterator.hasNext()) {
+
+                ContentValues tagsValues = new ContentValues();
+
+                String tagName = tagIterator.next().asText();
+                tags += tagName + ",";
+                tagsValues.put(DatabaseOpenHelper._ID, temp.get(DatabaseOpenHelper.ID).asText());
+                tagsValues.put(DatabaseOpenHelper.TAG_NAME, tagName);
+                //Uri uriTag = context.getContentResolver().insert(MyContentProvider.CONTENT_URI_DOC_TAGS, tagsValues);
+                values.put(DatabaseOpenHelper.TAGS, tags.substring(0, tags.length() - 1));
+
+                tagValueList.add(tagsValues);
+            }
+
+        } else {
+            values.put(DatabaseOpenHelper.TAGS, "");
+        }
+
+        if (temp.has(DatabaseOpenHelper.CREATED)) {
+            values.put(DatabaseOpenHelper.ADDED, temp.get(DatabaseOpenHelper.CREATED).asText());
+        } else {
+            values.put(DatabaseOpenHelper.ADDED, "");
+        }
+
+        if (temp.has(DatabaseOpenHelper.GROUP_ID)) {
+            values.put(DatabaseOpenHelper.GROUP_ID, temp.get(DatabaseOpenHelper.GROUP_ID).asText());
+        } else {
+            values.put(DatabaseOpenHelper.GROUP_ID, "");
+        }
+        if (temp.has(DatabaseOpenHelper.SOURCE)) {
+            values.put(DatabaseOpenHelper.SOURCE, temp.get(DatabaseOpenHelper.SOURCE).asText());
+        } else {
+            values.put(DatabaseOpenHelper.SOURCE, "");
+        }
+
+        if (temp.has(DatabaseOpenHelper.PAGES)) {
+            values.put(DatabaseOpenHelper.PAGES, temp.get(DatabaseOpenHelper.PAGES).asText());
+        } else {
+            values.put(DatabaseOpenHelper.PAGES, "");
+        }
+
+        if (temp.has(DatabaseOpenHelper.VOLUME)) {
+            values.put(DatabaseOpenHelper.VOLUME, temp.get(DatabaseOpenHelper.VOLUME).asText());
+        } else {
+            values.put(DatabaseOpenHelper.VOLUME, "");
+        }
+        if (temp.has(DatabaseOpenHelper.ISSUE)) {
+            values.put(DatabaseOpenHelper.ISSUE, temp.get(DatabaseOpenHelper.ISSUE).asText());
+        } else {
+            values.put(DatabaseOpenHelper.ISSUE, "");
+        }
+
+        if (temp.has(DatabaseOpenHelper.STARRED)) {
+            values.put(DatabaseOpenHelper.STARRED, temp.get(DatabaseOpenHelper.STARRED).asText());
+
+        } else {
+            values.put(DatabaseOpenHelper.STARRED, "");
+        }
+
+
+        if (temp.has(DatabaseOpenHelper.GROUP_ID)) {
+            values.put(DatabaseOpenHelper.GROUP_ID, temp.get(DatabaseOpenHelper.GROUP_ID).asText());
+
+        } else {
+            values.put(DatabaseOpenHelper.GROUP_ID, "");
+        }
+
+        if (temp.has(DatabaseOpenHelper.AUTHORED)) {
+            values.put(DatabaseOpenHelper.AUTHORED, temp.get(DatabaseOpenHelper.AUTHORED).asText());
+
+
+        } else {
+            values.put(DatabaseOpenHelper.AUTHORED, "");
+        }
+
+        if (temp.has(DatabaseOpenHelper.ABSTRACT)) {
+            values.put(DatabaseOpenHelper.ABSTRACT, temp.get(DatabaseOpenHelper.ABSTRACT).asText());
+        } else {
+            values.put(DatabaseOpenHelper.ABSTRACT, "");
+        }
+
+        //Array
+        //authors":[{"first_name":"Asger","last_name":"Hobolth"},{"first_name":"Ole F","last_name":"Christensen"},{"first_name":"Thomas","last_name":"Mailund"},{"first_name":"Mikkel H","last_name":"Schierup"}]
+        if (temp.has(DatabaseOpenHelper.AUTHORS)) {
+            Iterator<JsonNode> authorsIterator = temp.get(DatabaseOpenHelper.AUTHORS).elements();
+            String authors = "";
+            String aux_surname, aux_forenamed;
+
+            while (authorsIterator.hasNext()) {
+
+                JsonNode author = authorsIterator.next();
+                ContentValues authors_values = new ContentValues();
+
+                if (author.has(DatabaseOpenHelper.PROFILE_FIRST_NAME)) {
+                    aux_forenamed = author.get(DatabaseOpenHelper.PROFILE_FIRST_NAME).asText();
+
+                } else {
+                    aux_forenamed = "";
+                }
+
+                if (author.has(DatabaseOpenHelper.PROFILE_LAST_NAME)) {
+                    aux_surname = author.get(DatabaseOpenHelper.PROFILE_LAST_NAME).asText();
+
+                } else {
+                    aux_surname = "";
+                }
+
+                author.get(DatabaseOpenHelper.PROFILE_LAST_NAME);
+
+                String author_name = aux_forenamed + " " + aux_surname;
+
+                authors += author_name + ",";
+                values.put(DatabaseOpenHelper.AUTHORS, authors.substring(0, authors.length() - 1));
+
+
+                authors_values.put(DatabaseOpenHelper.DOC_DETAILS_ID, temp.get("id").asText());
+                authors_values.put(DatabaseOpenHelper.AUTHOR_NAME, author_name);
+
+                authorsValuesList.add(authors_values);
+
+            }
+
+
+        } else {
+            values.put(DatabaseOpenHelper.AUTHORS, "");
+        }
+
+
+        if (temp.has(DatabaseOpenHelper.IDENTIFIERS)) {
+
+            Iterator<Entry<String, JsonNode>> identifierIterator = temp.get(DatabaseOpenHelper.IDENTIFIERS).fields();
+
+            values.put(DatabaseOpenHelper.ISSN, "");
+            values.put(DatabaseOpenHelper.ISBN, "");
+            values.put(DatabaseOpenHelper.PMID, "");
+            values.put(DatabaseOpenHelper.SCOPUS, "");
+            values.put(DatabaseOpenHelper.SSN, "");
+            values.put(DatabaseOpenHelper.ARXIV, "");
+            values.put(DatabaseOpenHelper.DOI, "");
+
+            while (identifierIterator.hasNext()) {
+
+                Entry<String, JsonNode> entry = identifierIterator.next();
+
+                values.put(entry.getKey(), entry.getValue().asText());
+            }
+        } else {
+            values.put(DatabaseOpenHelper.ISSN, "");
+            values.put(DatabaseOpenHelper.ISBN, "");
+            values.put(DatabaseOpenHelper.PMID, "");
+            values.put(DatabaseOpenHelper.SCOPUS, "");
+            values.put(DatabaseOpenHelper.SSN, "");
+            values.put(DatabaseOpenHelper.ARXIV, "");
+            values.put(DatabaseOpenHelper.DOI, "");
+        }
+
+
+        valueList.add(values);
+
+        //Insert data on table Document_details
+        mValueArray = new ContentValues[valueList.size()];
+        valueList.toArray(mValueArray);
+        this.context.getContentResolver().bulkInsert(ContentProvider.CONTENT_URI_DOC_DETAILS, mValueArray);
+
+        //Insert data on table Authors
+        authorsValuesArray = new ContentValues[authorsValuesList.size()];
+        authorsValuesList.toArray(authorsValuesArray);
+        context.getContentResolver().bulkInsert(ContentProvider.CONTENT_URI_AUTHORS, authorsValuesArray);
+
+        //Insert data on table Tags
+        tagsValuesArray = new ContentValues[tagValueList.size()];
+        tagValueList.toArray(tagsValuesArray);
+        context.getContentResolver().bulkInsert(ContentProvider.CONTENT_URI_DOC_TAGS, tagsValuesArray);
+
+    }
+
+
+
+
+
+    public void updateUserDocument(String url, boolean isTrash) {
+
+        JSONParser jParser = new JSONParser();
+        String docTitle, docId = null;
+        String where = null;
+
+        List<ContentValues> valueList = new ArrayList<ContentValues>();
+        List<ContentValues> authorsValuesList = new ArrayList<ContentValues>();
+        List<ContentValues> tagValueList = new ArrayList<ContentValues>();
+
+        Uri uri_ = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
+        Uri uri_authors = Uri.parse(ContentProvider.CONTENT_URI_AUTHORS + "/"+ DatabaseOpenHelper.DOC_DETAILS_ID);
+        Uri uri_tags = Uri.parse(ContentProvider.CONTENT_URI_DOC_TAGS + "/id");
+
+        HashMap<String, String> docsOnLibrary = GetDataBaseInformation.getAllDocumentDetailsId(context);
+        HashMap<String, String> trashDocsOnLibrary = GetDataBaseInformation.getAllTrashDocumentDetailsId(context);
+
+
+        ContentValues[] mValueArray, authorsValuesArray, tagsValuesArray;
+
+        List<InputStream> link = new ArrayList<InputStream>();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        JsonFactory factory = mapper.getFactory();
+        link = jParser.getJACKSONFromUrl(url, JSONParser.GET, null, true);
+
+        try {
+
+            for (InputStream oneItem : link) {
+
+                JsonParser jp = factory.createParser(oneItem);
+                JsonNode rootNode = mapper.readTree(jp);
+                Iterator<JsonNode> ite = rootNode.iterator();
+                while (ite.hasNext()) {
+                    JsonNode temp = ite.next();
+
+
+                    ContentValues values = new ContentValues();
+
+                    if (temp.has(DatabaseOpenHelper.ID)) {
+
+                        docId = temp.get(DatabaseOpenHelper.ID).asText();
+                        where = DatabaseOpenHelper._ID + " = '" + docId + "'";
+                    }
+
+                    if(!docsOnLibrary.containsKey(docId)) {
+                        insertNewDocument(temp, isTrash);
+                        continue;
+                    }
+
+
+
+                    if(isTrash){
+                        values.put(DatabaseOpenHelper.TRASH, "true");
+
+                    }else{
+                        values.put(DatabaseOpenHelper.TRASH, "false");
+                    }
+
+
+
+                    if (temp.has(DatabaseOpenHelper.TITLE)) {
+                        docTitle = temp.get(DatabaseOpenHelper.TITLE).asText();
+                        values.put(DatabaseOpenHelper.TITLE, docTitle);
+                    } else {
+                        docTitle = "";
+                        values.put(DatabaseOpenHelper.TITLE, docTitle);
+                    }
+
+                    if (temp.has(DatabaseOpenHelper.TYPE)) {
+                        values.put(DatabaseOpenHelper.TYPE, temp.get(DatabaseOpenHelper.TYPE).asText());
+                    } else {
+                        values.put(DatabaseOpenHelper.TYPE, "");
+                    }
+
+
+                    if (temp.has(DatabaseOpenHelper.YEAR)) {
+                        values.put(DatabaseOpenHelper.YEAR, temp.get(DatabaseOpenHelper.YEAR).asText());
+                    } else {
+                        values.put(DatabaseOpenHelper.YEAR, "");
+                    }
+                    if (temp.has(DatabaseOpenHelper.LAST_MODIFIED)) {
+                        values.put(DatabaseOpenHelper.LAST_MODIFIED, temp.get(DatabaseOpenHelper.LAST_MODIFIED).asText());
+                    } else {
+                        values.put(DatabaseOpenHelper.LAST_MODIFIED, "");
+                    }
+
+                    if (temp.has(DatabaseOpenHelper.TAGS)) {
+
+                        String update_tags_where = DatabaseOpenHelper._ID + " = '" + docId + "'";
+                        //delete authors
+                        context.getContentResolver().delete(uri_tags, update_tags_where, null);
+
+                        Iterator<JsonNode> tagIterator = temp.get(DatabaseOpenHelper.TAGS).elements();
+                        String tags = "";
+                        while (tagIterator.hasNext()) {
+
+                            ContentValues tagsValues = new ContentValues();
+
+                            String tagName = tagIterator.next().asText();
+                            tags += tagName + ",";
+                            tagsValues.put(DatabaseOpenHelper._ID, temp.get(DatabaseOpenHelper.ID).asText());
+                            tagsValues.put(DatabaseOpenHelper.TAG_NAME, tagName);
+                            //Uri uriTag = context.getContentResolver().insert(MyContentProvider.CONTENT_URI_DOC_TAGS, tagsValues);
+                            values.put(DatabaseOpenHelper.TAGS, tags.substring(0, tags.length() - 1));
+
+                            tagValueList.add(tagsValues);
+                        }
+
+                    } else {
+                        values.put(DatabaseOpenHelper.TAGS, "");
+                    }
+
+
+
+                    if (temp.has(DatabaseOpenHelper.GROUP_ID)) {
+                        values.put(DatabaseOpenHelper.GROUP_ID, temp.get(DatabaseOpenHelper.GROUP_ID).asText());
+                    } else {
+                        values.put(DatabaseOpenHelper.GROUP_ID, "");
+                    }
+                    if (temp.has(DatabaseOpenHelper.SOURCE)) {
+                        values.put(DatabaseOpenHelper.SOURCE, temp.get(DatabaseOpenHelper.SOURCE).asText());
+                    } else {
+                        values.put(DatabaseOpenHelper.SOURCE, "");
+                    }
+
+                    if (temp.has(DatabaseOpenHelper.PAGES)) {
+                        values.put(DatabaseOpenHelper.PAGES, temp.get(DatabaseOpenHelper.PAGES).asText());
+                    } else {
+                        values.put(DatabaseOpenHelper.PAGES, "");
+                    }
+
+                    if (temp.has(DatabaseOpenHelper.VOLUME)) {
+                        values.put(DatabaseOpenHelper.VOLUME, temp.get(DatabaseOpenHelper.VOLUME).asText());
+                    } else {
+                        values.put(DatabaseOpenHelper.VOLUME, "");
+                    }
+                    if (temp.has(DatabaseOpenHelper.ISSUE)) {
+                        values.put(DatabaseOpenHelper.ISSUE, temp.get(DatabaseOpenHelper.ISSUE).asText());
+                    } else {
+                        values.put(DatabaseOpenHelper.ISSUE, "");
+                    }
+
+                    if (temp.has(DatabaseOpenHelper.STARRED)) {
+                        values.put(DatabaseOpenHelper.STARRED, temp.get(DatabaseOpenHelper.STARRED).asText());
+
+                    } else {
+                        values.put(DatabaseOpenHelper.STARRED, "");
+                    }
+
+
+                    if (temp.has(DatabaseOpenHelper.GROUP_ID)) {
+                        values.put(DatabaseOpenHelper.GROUP_ID, temp.get(DatabaseOpenHelper.GROUP_ID).asText());
+
+                    } else {
+                        values.put(DatabaseOpenHelper.GROUP_ID, "");
+                    }
+
+                    if (temp.has(DatabaseOpenHelper.AUTHORED)) {
+                        values.put(DatabaseOpenHelper.AUTHORED, temp.get(DatabaseOpenHelper.AUTHORED).asText());
+
+
+                    } else {
+                        values.put(DatabaseOpenHelper.AUTHORED, "");
+                    }
+
+                    if (temp.has(DatabaseOpenHelper.ABSTRACT)) {
+                        values.put(DatabaseOpenHelper.ABSTRACT, temp.get(DatabaseOpenHelper.ABSTRACT).asText());
+                    } else {
+                        values.put(DatabaseOpenHelper.ABSTRACT, "");
+                    }
+
+                    //Array
+                    //authors":[{"first_name":"Asger","last_name":"Hobolth"},{"first_name":"Ole F","last_name":"Christensen"},{"first_name":"Thomas","last_name":"Mailund"},{"first_name":"Mikkel H","last_name":"Schierup"}]
+                    if (temp.has(DatabaseOpenHelper.AUTHORS)) {
+                        String update_authors_where = DatabaseOpenHelper.DOC_DETAILS_ID + " = '" + docId + "'";
+                        //delete authors
+                        context.getContentResolver().delete(uri_authors, update_authors_where, null);
+
+                        Iterator<JsonNode> authorsIterator = temp.get(DatabaseOpenHelper.AUTHORS).elements();
+                        String authors = "";
+                        String aux_surname, aux_forenamed;
+
+                        while (authorsIterator.hasNext()) {
+
+                            JsonNode author = authorsIterator.next();
+                            ContentValues authors_values = new ContentValues();
+
+                            if (author.has(DatabaseOpenHelper.PROFILE_FIRST_NAME)) {
+                                aux_forenamed = author.get(DatabaseOpenHelper.PROFILE_FIRST_NAME).asText();
+
+                            } else {
+                                aux_forenamed = "";
+                            }
+
+                            if (author.has(DatabaseOpenHelper.PROFILE_LAST_NAME)) {
+                                aux_surname = author.get(DatabaseOpenHelper.PROFILE_LAST_NAME).asText();
+
+                            } else {
+                                aux_surname = "";
+                            }
+
+                            author.get(DatabaseOpenHelper.PROFILE_LAST_NAME);
+
+                            String author_name = aux_forenamed + " " + aux_surname;
+
+                            authors += author_name + ",";
+                            values.put(DatabaseOpenHelper.AUTHORS, authors.substring(0, authors.length() - 1));
+
+
+                            authors_values.put(DatabaseOpenHelper.DOC_DETAILS_ID, temp.get("id").asText());
+                            authors_values.put(DatabaseOpenHelper.AUTHOR_NAME, author_name);
+
+                            authorsValuesList.add(authors_values);
+
+                        }
+
+
+                    } else {
+                        values.put(DatabaseOpenHelper.AUTHORS, "");
+                    }
+
+
+
+
+
+                    //Insert data on table Document_details
+
+                    mValueArray = new ContentValues[valueList.size()];
+                    valueList.toArray(mValueArray);
+                    this.context.getContentResolver().update(Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id"), values, where, null);
+
+
+                }
+
+
+                jp.close();
+            }
+
+
+
+            //Insert data on table Authors
+            authorsValuesArray = new ContentValues[authorsValuesList.size()];
+            authorsValuesList.toArray(authorsValuesArray);
+            context.getContentResolver().bulkInsert(ContentProvider.CONTENT_URI_AUTHORS, authorsValuesArray);
+
+            //Insert data on table Tags
+            tagsValuesArray = new ContentValues[tagValueList.size()];
+            tagValueList.toArray(tagsValuesArray);
+            context.getContentResolver().bulkInsert(ContentProvider.CONTENT_URI_DOC_TAGS, tagsValuesArray);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, e.toString());
+
+        }
+
+    }
+
+
+
+
+
+
+
+
+
     private Cursor getFoldersId() {
 
-        if (Globalconstant.LOG)
-            Log.d(Globalconstant.TAG, "getGROUPS- LOAD DATA");
+        if (DEBUG)
+            Log.d(TAG, "getGROUPS- LOAD DATA");
 
 
         String[] projection = new String[]{DatabaseOpenHelper.FOLDER_ID, DatabaseOpenHelper.FOLDER_NAME};
@@ -712,7 +1396,7 @@ public class LoadData {
         List<InputStream> link = new ArrayList<InputStream>();
 
 
-        link = jParser.getJACKSONFromUrl(url, true);
+        link = jParser.getJACKSONFromUrl(url, JSONParser.GET, null, true);
 
 
         try {
@@ -833,7 +1517,7 @@ public class LoadData {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonFactory factory = mapper.getFactory();
                 List<InputStream> link = new ArrayList<InputStream>();
-                link = jParser.getJACKSONFromUrl(url, false);
+                link = jParser.getJACKSONFromUrl(url, JSONParser.GET, null, false);
 
                 try {
 
@@ -904,7 +1588,7 @@ public class LoadData {
         JSONParser jParser = new JSONParser();
         ObjectMapper mapper = new ObjectMapper();
         List<InputStream> link = new ArrayList<InputStream>();
-        link = jParser.getJACKSONFromUrl(url, false);
+        link = jParser.getJACKSONFromUrl(url, JSONParser.GET, null, false);
 
         try {
 
@@ -927,5 +1611,26 @@ public class LoadData {
             e.printStackTrace();
         }
     }
+
+
+
+
+
+    public void processRequests(){
+
+        Cursor cursorSyncRequests  = GetDataBaseInformation.getSynRequests(context);
+        JSONParser jParser = new JSONParser();
+        while (cursorSyncRequests.moveToNext()) {
+
+            Log.d(TAG, "URL: " + cursorSyncRequests.getString(cursorSyncRequests.getColumnIndex(DatabaseOpenHelper.URL)));
+            String url = cursorSyncRequests.getString(cursorSyncRequests.getColumnIndex(DatabaseOpenHelper.URL));
+
+            jParser.getJACKSONFromUrl(url + access_token, JSONParser.POST, null, false);
+        }
+
+
+    }
+
+
 
 }

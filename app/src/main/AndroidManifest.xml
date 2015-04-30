@@ -104,7 +104,14 @@
 
         <service
             android:name="com.mendeleypaperreader.service.ServiceIntent"
-            android:exported="false"/>
+            android:exported="false">
+
+        <intent-filter>
+            <action android:name="com.mendeleypaperreader.action.FIRST_LOAD" />
+            <action android:name="com.mendeleypaperreader.action.SYNC_RESQUEST" />
+        </intent-filter>
+
+        </service>
 
 
     </application>

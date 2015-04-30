@@ -83,6 +83,10 @@
     <string name="error_message_file_not_found">Error: File not found!</string>
     <string name="error_message_general">Error downloading file!</string>
     <string name="title_activity_doc_tags">DocTagsActivity</string>
+    <string name="alert_document_to_trash_title">Trash Document</string>
+    <string name="alert_document_to_trash">You will send the document to trash.</string>
+
+
 
     <!-- ListDocTagsActivity activity -->
     <string name="documents">Documents</string>
@@ -95,6 +99,7 @@
     <string name="settings_sync_option">Synchronization options</string>
     <string name="settings_sync_on_load_cb">Sync files on load</string>
     <string name="settings_sync_on_load_help">Choose this option if you want to synchronize files. When is turned off you can still download files as you need.</string>
+
 
 
 

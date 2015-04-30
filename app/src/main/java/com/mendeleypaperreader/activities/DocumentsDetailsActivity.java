@@ -409,14 +409,15 @@ public class DocumentsDetailsActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
 
-                if (NetworkUtil.isConnectingToInternet(getApplicationContext())) {
+                if(NetworkUtil.isConnectingToInternet(getApplicationContext()))
                     if (!ServiceIntent.serviceState) {
-                        new RefreshTokenTask(DocumentsDetailsActivity.this, true).execute();
+                        //getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
+                        new RefreshTokenTask(this, false).execute();
                     } else {
-                        Toast.makeText(DocumentsDetailsActivity.this, getResources().getString(R.string.sync_alert_in_progress), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.sync_alert_in_progress), Toast.LENGTH_LONG).show();
                     }
-                }else{
-                    NetworkUtil.NetWorkDialog(DocumentsDetailsActivity.this, NetworkUtil.DEFAULT_DIALOG);
+                else{
+                    NetworkUtil.NetWorkDialog(this, NetworkUtil.DEFAULT_DIALOG);
                 }
                 return true;
 

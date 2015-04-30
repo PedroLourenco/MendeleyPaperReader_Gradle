@@ -39,6 +39,7 @@ public class ContentProvider extends android.content.ContentProvider {
     public static final Uri CONTENT_URI_DOC_TAGS = Uri.parse("content://" + AUTHORITY + "/" + DatabaseOpenHelper.TABLE_DOC_TAGS);
     public static final Uri CONTENT_URI_UNION_SEARCH = Uri.parse("content://" + AUTHORITY + "/" + "DUMMY");
     public static final Uri CONTENT_URI_DOC_NOTES = Uri.parse("content://" + AUTHORITY + "/" + DatabaseOpenHelper.TABLE_DOC_NOTES);
+    public static final Uri CONTENT_URI_SYNC_REQUEST = Uri.parse("content://" + AUTHORITY + "/" + DatabaseOpenHelper.TABLE_SYNC_REQUEST);
 
     public static final int ALLDOCS = 1;
     public static final int ALL_DOCS_ID = 2;
@@ -63,6 +64,10 @@ public class ContentProvider extends android.content.ContentProvider {
     public static final int SEARCH_DOCS = 21;
     public static final int ALL_DOC_NOTES = 22;
     public static final int DOC_NOTES_ID = 23;
+    public static final int ALL_SYNC_REQUEST = 24;
+    public static final int SYNC_REQUEST_ID = 25;
+    public static final int DOC_NOTES_DOCUMENT_ID = 26;
+    public static final int ALL_FILES_DOCUMENT_ID = 27;
 
 
     private static final UriMatcher sURIMatcher =
@@ -72,11 +77,12 @@ public class ContentProvider extends android.content.ContentProvider {
         sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_DOCUMENT_DETAILS, ALLDOCS);
         sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_DOCUMENT_DETAILS + "/id", ALL_DOCS_ID);
         sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_AUTHORS, ALL_DOC_AUTHORS);
-        sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_AUTHORS + "/#", DOC_AUTHORS_ID);
+        sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_AUTHORS + "/" + DatabaseOpenHelper.DOC_DETAILS_ID, DOC_AUTHORS_ID);
         sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_FOLDERS, ALL_FOLDERS);
         sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_FOLDERS + "/#", FOLDERS_ID);
         sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_FILES, ALL_FILES);
         sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_FILES + "/id", ALL_FILES_ID);
+        sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_FILES + "/" + DatabaseOpenHelper.DOCUMENT_ID, ALL_FILES_DOCUMENT_ID);
         sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_PROFILE, ALL_PROFILE);
         sURIMatcher.addURI(AUTHORITY, "DUMMY", DELETE_DATA_BASE);
         sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_FOLDERS_DOCS, ALL_FOLDERS_DOCS);
@@ -91,6 +97,9 @@ public class ContentProvider extends android.content.ContentProvider {
         sURIMatcher.addURI(AUTHORITY, "DUMMY/" +DatabaseOpenHelper.TITLE + "/" + DatabaseOpenHelper.AUTHORS , SEARCH_DOCS);
         sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_DOC_NOTES, ALL_DOC_NOTES);
         sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_DOC_NOTES + "/id", DOC_NOTES_ID);
+        sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_DOC_NOTES + "/" +DatabaseOpenHelper.DOCUMENT_ID, DOC_NOTES_DOCUMENT_ID);
+        sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_SYNC_REQUEST, ALL_SYNC_REQUEST);
+        sURIMatcher.addURI(AUTHORITY, DatabaseOpenHelper.TABLE_SYNC_REQUEST + "/id", SYNC_REQUEST_ID);
     }
 
 
@@ -115,6 +124,42 @@ public class ContentProvider extends android.content.ContentProvider {
 
                 break;
 
+
+            case DOC_AUTHORS_ID:
+                if (!TextUtils.isEmpty(selection)) {
+
+                    count = db.delete(DatabaseOpenHelper.TABLE_AUTHORS, selection, null);
+
+
+                }
+
+                break;
+            case DOC_TAGS_ID:
+                if (!TextUtils.isEmpty(selection)) {
+
+                    count = db.delete(DatabaseOpenHelper.TABLE_DOC_TAGS, selection, null);
+
+
+                }
+
+                break;
+            case DOC_NOTES_DOCUMENT_ID:
+            if (!TextUtils.isEmpty(selection)) {
+
+                count = db.delete(DatabaseOpenHelper.TABLE_DOC_NOTES, selection, null);
+
+
+            }
+
+            break;
+            case ALL_FILES_DOCUMENT_ID:
+                if (!TextUtils.isEmpty(selection)) {
+
+                    count = db.delete(DatabaseOpenHelper.TABLE_FILES, selection, null);
+
+                }
+
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -133,15 +178,10 @@ public class ContentProvider extends android.content.ContentProvider {
         switch (sURIMatcher.match(uri)) {
             case ALLDOCS:
 
-
-                
                 db.beginTransaction();
                 try {
 
                     for (ContentValues values : allValues) {
-
-
-                        
                         long row = db.insertOrThrow(DatabaseOpenHelper.TABLE_DOCUMENT_DETAILS, null, values);
 
                         if (row <= 0) {
@@ -160,7 +200,6 @@ public class ContentProvider extends android.content.ContentProvider {
                 break;
 
             case ALL_DOC_AUTHORS:
-
 
                 db.beginTransaction();
                 try {
@@ -181,12 +220,10 @@ public class ContentProvider extends android.content.ContentProvider {
                     db.endTransaction();
                     
                 }
-                
 
                 break;
 
             case ALL_CATALOG_DOCS:
-
                 
                 db.beginTransaction();
                 try {
@@ -208,8 +245,6 @@ public class ContentProvider extends android.content.ContentProvider {
                 
                 break;
             case ALL_FOLDERS_DOCS:
-
-
 
                 db.beginTransaction();
                 try {
@@ -233,8 +268,6 @@ public class ContentProvider extends android.content.ContentProvider {
 
             case ALL_FOLDERS:
 
-
-
                 db.beginTransaction();
                 try {
 
@@ -256,8 +289,6 @@ public class ContentProvider extends android.content.ContentProvider {
                 break;
 
             case ALL_FILES:
-
-
 
                 db.beginTransaction();
                 try {
@@ -281,8 +312,6 @@ public class ContentProvider extends android.content.ContentProvider {
                 break;
             case ALL_GROUPS:
 
-
-
                 db.beginTransaction();
                 try {
 
@@ -304,8 +333,6 @@ public class ContentProvider extends android.content.ContentProvider {
                 break;
 
             case ALL_DOC_NOTES:
-
-
 
                 db.beginTransaction();
                 try {
@@ -329,7 +356,6 @@ public class ContentProvider extends android.content.ContentProvider {
 
             case ALL_DOC_TAGS:
 
-
                 db.beginTransaction();
                 try {
 
@@ -351,8 +377,6 @@ public class ContentProvider extends android.content.ContentProvider {
                 break;
 
             case ALL_ACADEMIC_DOCS:
-
-
 
                 db.beginTransaction();
                 try {
@@ -530,6 +554,18 @@ public class ContentProvider extends android.content.ContentProvider {
                     return newUri;
                 }
                 break;
+            case ALL_SYNC_REQUEST:
+
+                long syncRequestRow = db.insert(DatabaseOpenHelper.TABLE_SYNC_REQUEST, null, values);
+
+                // If record is added successfully
+                if (syncRequestRow > 0) {
+
+                    Uri newUri = ContentUris.withAppendedId(CONTENT_URI_SYNC_REQUEST, syncRequestRow);
+                    getContext().getContentResolver().notifyChange(newUri, null);
+                    return newUri;
+                }
+                break;
             default:
                 throw new SQLException("Failed to insert row into " + uri);
         }
@@ -604,6 +640,11 @@ public class ContentProvider extends android.content.ContentProvider {
                 queryBuilder.setTables(DatabaseOpenHelper.TABLE_PROFILE);
                 break;
 
+            case ALL_SYNC_REQUEST:
+
+                queryBuilder.setTables(DatabaseOpenHelper.TABLE_SYNC_REQUEST);
+                break;
+
             case SEARCH_DOCS:
 
                 //First query
@@ -670,6 +711,31 @@ public class ContentProvider extends android.content.ContentProvider {
                 }
 
                 break;
+            case SYNC_REQUEST_ID:
+
+                if (!TextUtils.isEmpty(selection)) {
+
+                    rowsUpdated =
+                            db.update(DatabaseOpenHelper.TABLE_SYNC_REQUEST,
+                                    values,
+                                    selection,
+                                    selectionArgs);
+                }
+
+                break;
+            case DOC_AUTHORS_ID:
+
+                if (!TextUtils.isEmpty(selection)) {
+
+                    rowsUpdated =
+                            db.update(DatabaseOpenHelper.TABLE_AUTHORS,
+                                    values,
+                                    selection,
+                                    selectionArgs);
+                }
+
+                break;
+
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }

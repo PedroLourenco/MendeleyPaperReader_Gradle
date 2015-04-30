@@ -29,6 +29,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public final static String TABLE_GROUPS = "groups";
     public final static String TABLE_DOC_TAGS = "documents_tags";
     public final static String TABLE_DOC_NOTES = "documents_notes";
+    public final static String TABLE_SYNC_REQUEST = "sync_request";
 
     public final static String _ID = "_id";
     public final static String ID = "id";
@@ -48,6 +49,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public final static String ARXIV = "arxiv";
     public final static String ISBN = "isbn";
     public final static String SCOPUS = "scopus";
+    public final static String TRASH = "trash";
     public final static String SSN = "ssn";
     public final static String ABSTRACT = "abstract";
     public final static String PROFILE_ID = "profile_id";
@@ -114,6 +116,14 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public final static String DOCUMENT_ID = "document_id";
     private final static String SPACE = "''";
 
+    //Table SYNC_REQUEST columns
+    public final static String METHOD = "method";
+    public final static String SERVICE = "service";
+    public final static String URL = "url";
+    public final static String INSERT_DATE = "insert_date";
+    public final static String PARAM = "param";
+
+
 
     final static String[] document_details_columns = {_ID, TYPE, MONTH, YEAR, LAST_MODIFIED, DAY, GROUP_ID, SOURCE, TITLE, REVISION, IDENTIFIERS, ABSTRACT, PROFILE_ID, AUTHORS, ADDED, PAGES, VOLUME, ISSUE, WEBSITE, PUBLISHER, CITY, EDITION, INSTITUTION, SERIES, CHAPTER, EDITORS, READ, STARRED, AUTHORED, CONFIRMED, HIDDEN};
     final static String[] document_titles_columns = {TITLE, AUTHORS, SOURCE, YEAR};
@@ -139,6 +149,8 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     private static String CREATE_TABLE_DOC_TAGS = "CREATE TABLE if not exists documents_tags (" + _ID + " TEXT, " + TAG_NAME + " TEXT ) ";
 
     private static String CREATE_TABLE_DOC_NOTES = "CREATE TABLE if not exists documents_notes (" + NOTE_ID + " TEXT, " + TYPE + " TEXT, " + PREVIOUS_ID + " TEXT, "+ COLOR + " TEXT, "+ TEXT + " TEXT, " + POSITIONS + " TEXT, "+ PRIVACY_LEVEL + " TEXT, "+ FILEHASH + " TEXT, " +  DOCUMENT_ID + "  TEXT ) ";
+
+    private static String CREATE_TABLE_SYNC_REQUEST = "CREATE TABLE if not exists sync_request (" + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + DOCUMENT_ID + " TEXT, " + METHOD + " TEXT, " + PARAM + " TEXT, " + URL + " TEXT, " + SERVICE + " TEXT, " + INSERT_DATE + " DEFAULT (datetime('current_timestamp','localtime'))) ";
 
     final private static String CREATE_TABLE_DOCUMENT_DETAILS =
 
@@ -169,11 +181,12 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                     + CONFIRMED + " TEXT, "
                     + IS_DOWNLOAD + " TEXT, "
                     + READER_COUNT + " TEXT default 0, "
+                    + TRASH + " TEXT default false, "
                     + TAGS + " Text )";
 
 
     final private static String DATABASE_NAME = "Mendeley_library.db";
-    final private static Integer VERSION = 6;
+    final private static Integer VERSION = 7;
     final private Context mContext;
 
     public DatabaseOpenHelper(Context context, String name,
@@ -206,6 +219,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_GROUPS);
         db.execSQL(CREATE_TABLE_DOC_TAGS);
         db.execSQL(CREATE_TABLE_DOC_NOTES);
+        db.execSQL(CREATE_TABLE_SYNC_REQUEST);
         db.execSQL("CREATE UNIQUE INDEX index_id on " + TABLE_DOCUMENT_DETAILS + " (" + _ID +")");
     }
 
@@ -245,10 +259,10 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE IF NOT EXISTS TEMP_DOCUMENTS_DETAILS (" + _ID + " TEXT PRIMARY KEY, " + TYPE + " TEXT, " + YEAR + " TEXT, " + LAST_MODIFIED + " TEXT, " + GROUP_ID + " TEXT, " + SOURCE + " TEXT, " + TITLE + " TEXT, " + PMID + " TEXT, "
                 + DOI + " TEXT, " + ISSN + " TEXT, " + ARXIV + " TEXT, " + ISBN + " TEXT, " + SCOPUS + " TEXT, " + SSN + " TEXT, " + ABSTRACT + " TEXT, " + AUTHORS + " TEXT, " + ADDED + " TEXT, " + PAGES + " TEXT, " + VOLUME + " TEXT, " + ISSUE + " TEXT, " + AUTHORED + " TEXT, "
-                + WEBSITE + " TEXT default " + SPACE + " , " + STARRED + " TEXT, " + TAGS + " TEXT, " + IS_DOWNLOAD + " TEXT, " + READER_COUNT + " TEXT default 0)");
+                + WEBSITE + " TEXT default " + SPACE + " , " + STARRED + " TEXT, " + TAGS + " TEXT, " + IS_DOWNLOAD + " TEXT, " + TAGS + " TEXT, " + READER_COUNT + " TEXT default 0)");
 
         db.execSQL("INSERT INTO TEMP_DOCUMENTS_DETAILS (" + _ID + ", " + TYPE + ", " + YEAR + ", " + LAST_MODIFIED + ", " + GROUP_ID + ", " + SOURCE + ", " + TITLE + ", " + PMID + ", "
-                + DOI + ",  " + ISSN + ",  " + ARXIV + ",  " + ISBN + ",  " + SCOPUS + ",  " + SSN + ",  " + ABSTRACT + ",  " + AUTHORS + ",  " + ADDED + ",  " + PAGES + ",  " + VOLUME + ",  " + ISSUE + ",  " + WEBSITE + ", " + STARRED + ", " + IS_DOWNLOAD + ", " + READER_COUNT + ", " + AUTHORED + ") " +
+                + DOI + ",  " + ISSN + ",  " + ARXIV + ",  " + ISBN + ",  " + SCOPUS + ",  " + SSN + ",  " + ABSTRACT + ",  " + AUTHORS + ",  " + ADDED + ",  " + PAGES + ",  " + VOLUME + ",  " + ISSUE + ",  " + WEBSITE + ", " + STARRED + ", " + IS_DOWNLOAD + ", " + READER_COUNT + ", "  + TAGS + ", " + AUTHORED + ") " +
                 "SELECT " + _ID + ", " + TYPE + ", " + YEAR + ", " + LAST_MODIFIED + ", " + GROUP_ID + ", " + SOURCE + ", " + TITLE + ", " + PMID + ", "
                 + DOI + ",  " + ISSN + ",  " + ARXIV + ",  " + ISBN + ",  " + SCOPUS + ",  " + SSN + ",  " + ABSTRACT + ",  " + AUTHORS + ",  " + ADDED + ",  " + PAGES + ",  " + VOLUME + ",  " + ISSUE + ",  " + WEBSITE + ", " + STARRED + ", " + IS_DOWNLOAD + ", " + READER_COUNT + ", " + AUTHORED + " FROM document_details");
 
@@ -263,6 +277,32 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
         //TAG: v10
         db.execSQL("CREATE UNIQUE INDEX index_id on " + TABLE_DOCUMENT_DETAILS + " (" + _ID +")");
+
+
+
+        //TAG: V12
+        //Create temporary table base on documents_details
+
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS TEMP_DOCUMENTS_DETAILS (" + _ID + " TEXT PRIMARY KEY, " + TYPE + " TEXT, " + YEAR + " TEXT,  " + LAST_MODIFIED + " TEXT, " + GROUP_ID + " TEXT, " + SOURCE + " TEXT, " + TITLE + " TEXT, " + PMID + " TEXT, "
+                + DOI + " TEXT,  " + ISSN + " TEXT,  " + ARXIV + " TEXT,  " + ISBN + " TEXT,  " + SCOPUS + " TEXT,  " + SSN + " TEXT,  " + ABSTRACT + " TEXT,  " + AUTHORS + " TEXT,  " + ADDED + " TEXT,  " + PAGES + " TEXT,  " + VOLUME + " TEXT,  " + ISSUE + " TEXT,  " + WEBSITE + " TEXT default " + SPACE + " , " + STARRED + " TEXT, " + LAST_MODIFIED + " TEXT, " + IS_DOWNLOAD + " TEXT, " + TRASH + " TEXT default false, " + READER_COUNT + " TEXT default 0, " + AUTHORED + " TEXT ) ");
+
+
+
+        db.execSQL("INSERT INTO TEMP_DOCUMENTS_DETAILS (" + _ID + ", " + TYPE + ", " + YEAR + ", " + LAST_MODIFIED + ", " + GROUP_ID + ", " + SOURCE + ", " + TITLE + ", " + PMID + ", "
+                + DOI + ",  " + ISSN + ",  " + ARXIV + ",  " + ISBN + ",  " + SCOPUS + ",  " + SSN + ",  " + ABSTRACT + ",  " + AUTHORS + ",  " + ADDED + ",  " + PAGES + ",  " + VOLUME + ",  " + ISSUE + ",  " + WEBSITE + ", " + STARRED + ", " + IS_DOWNLOAD + ", " + READER_COUNT + ", " + AUTHORED + ") " +
+                "SELECT " + _ID + ", " + TYPE + ", " + YEAR + ", " + LAST_MODIFIED + ", " + GROUP_ID + ", " + SOURCE + ", " + TITLE + ", " + PMID + ", "
+                + DOI + ",  " + ISSN + ",  " + ARXIV + ",  " + ISBN + ",  " + SCOPUS + ",  " + SSN + ",  " + ABSTRACT + ",  " + AUTHORS + ",  " + ADDED + ",  " + PAGES + ",  " + VOLUME + ",  " + ISSUE + ",  " + WEBSITE + ", " + STARRED + ", " + IS_DOWNLOAD + ", " + READER_COUNT + ", " + AUTHORED + " FROM document_details");
+
+
+
+        db.execSQL("DROP TABLE document_details");
+
+        db.execSQL("ALTER TABLE TEMP_DOCUMENTS_DETAILS RENAME TO document_details");
+
+        db.execSQL(CREATE_TABLE_SYNC_REQUEST);
+
+
 
     }
 

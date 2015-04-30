@@ -4,6 +4,7 @@ package com.mendeleypaperreader.fragments;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,7 +12,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -25,34 +26,46 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
-import com.mendeleypaperreader.providers.ContentProvider;
+import com.daimajia.swipe.SwipeLayout;
+import com.daimajia.swipe.implments.SwipeItemAdapterMangerImpl;
+import com.daimajia.swipe.interfaces.SwipeAdapterInterface;
+import com.daimajia.swipe.interfaces.SwipeItemMangerInterface;
+import com.daimajia.swipe.util.Attributes;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.activities.AboutActivity;
 import com.mendeleypaperreader.activities.DocumentsDetailsActivity;
 import com.mendeleypaperreader.activities.SettingsActivity;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
+import com.mendeleypaperreader.parser.JSONParser;
 import com.mendeleypaperreader.preferences.Preferences;
+import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.service.RefreshTokenTask;
 import com.mendeleypaperreader.service.ServiceIntent;
+import com.mendeleypaperreader.util.GetDataBaseInformation;
 import com.mendeleypaperreader.util.Globalconstant;
 import com.mendeleypaperreader.util.NetworkUtil;
 import com.mendeleypaperreader.util.RobotoBoldFontHelper;
 import com.mendeleypaperreader.util.RobotoRegularFontHelper;
 import com.mendeleypaperreader.util.TypefaceSpan;
 
+import java.util.List;
+
 /**
  * @author PedroLourenco (pdrolourenco@gmail.com)
  */
 
-public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cursor> {
+public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor> {
 
     private static final String TAG = "FragmentDetails";
     private static final boolean DEBUG = Globalconstant.DEBUG;
@@ -63,13 +76,20 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
     private SearchView searchView;
     private static final int DETAILS_LOADER = 2;
 
+    private int cposition;
+
     private Preferences session;
     private IntentFilter mIntentFilter;
     private NumberProgressBar progressBar;
 
+    private SwipeLayout sample3;
+
+    private ListView lv;
+
 
     private static String code;
     private static String refresh_token;
+    private String documentID;
 
 
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -98,6 +118,12 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         mIntentFilter.addAction(Globalconstant.mBroadcastUpdateProgressBar);
 
         getActivity().registerReceiver(mReceiver, mIntentFilter);
+
+
+
+
+
+
 
 
     }
@@ -138,7 +164,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         String description = getShownDescription();
 
         View view = inflater.inflate(R.layout.activity_main_menu_details, container, false);
-        ListView lv = (ListView) view.findViewById(android.R.id.list);
+         lv = (ListView) view.findViewById(android.R.id.list);
 
 
         if (mDualPane) {
@@ -166,11 +192,14 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         mAdapter = new CustomListSimpleCursorAdapter(getActivity(), R.layout.list_row_all_doc, null, dataColumns, viewIDs, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
         lv.setAdapter(mAdapter);
-
+        mAdapter.setMode(Attributes.Mode.Single);
 
         getActivity().getSupportLoaderManager().initLoader(DETAILS_LOADER, null, this);
 
        // if (DEBUG) LoaderManager.enableDebugLogging(true);
+
+
+
 
         return view;
 
@@ -272,14 +301,14 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
                 return true;
             case R.id.frag_menu_refresh:
 
-                if (NetworkUtil.isConnectingToInternet(getActivity().getApplicationContext())){
+                if(NetworkUtil.isConnectingToInternet(getActivity().getApplicationContext()))
                     if (!ServiceIntent.serviceState) {
-                        getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
-                        new RefreshTokenTask(getActivity(), true).execute();
+                        //getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
+                        new RefreshTokenTask(getActivity(), false).execute();
                     } else {
                         Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.sync_alert_in_progress), Toast.LENGTH_LONG).show();
                     }
-                }else{
+                else{
                     NetworkUtil.NetWorkDialog(getActivity(), NetworkUtil.DEFAULT_DIALOG);
                 }
                 return true;
@@ -363,7 +392,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
     }
 
 
-    @Override
+    /*
     public void onListItemClick(ListView l, View v, int position, long id) {
 
         v.setSelected(false);
@@ -392,6 +421,12 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         startActivity(doc_details);
         getActivity().overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
     }
+
+*/
+
+
+
+
 
 
     private Cursor getDocId(String doc_title) {
@@ -514,7 +549,7 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
 
             title.setText(Globalconstant.MYLIBRARY[0]);
             projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
-            selection = DatabaseOpenHelper.GROUP_ID + " = ''";
+            selection = DatabaseOpenHelper.GROUP_ID + " = '' and " + DatabaseOpenHelper.TRASH + " = 'false'";
             uri = ContentProvider.CONTENT_URI_DOC_DETAILS;
         } else if (index == 2) { //added
 
@@ -537,6 +572,13 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
         } else if (index == 5) { //Trash
 
             title.setText(Globalconstant.MYLIBRARY[4]);
+            projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
+            selection = DatabaseOpenHelper.TRASH + " = 'true'";
+            uri = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
+
+
+
+
         } else if (index > 5 && index <= getFoldersCount() + 7) {
 
             String folderName = getShownDescription();
@@ -590,10 +632,176 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
     }
 
 
-    private class CustomListSimpleCursorAdapter extends SimpleCursorAdapter {
+    private class CustomListSimpleCursorAdapter extends SimpleCursorAdapter implements SwipeItemMangerInterface, SwipeAdapterInterface {
+
+        private SwipeItemAdapterMangerImpl mItemManger = new SwipeItemAdapterMangerImpl(this);
+        //DIALOG
+        public static final int TRASH_DIALOG = 1;
+        public static final int DELETE_DIALOG = 2;
 
         public CustomListSimpleCursorAdapter(final Context context, final int layout, final Cursor c, final String[] from, final int[] to, final int flags) {
             super(context, layout, c, from, to, flags);
+
+
+            Log.d(TAG, "CustomListSimpleCursorAdapter");
+
+        }
+
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            boolean convertViewIsNull = convertView == null;
+            View view = super.getView(position, convertView, parent);
+            final int pos = position;
+
+            if(convertViewIsNull) {
+
+                LinearLayout ll = (LinearLayout) view.findViewById(R.id.llTrashSwipe);
+
+                View.OnClickListener deleteListner = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Log.d(TAG, "delete");
+                        deleteDocumentDialog(TRASH_DIALOG);
+
+                    }
+                };
+
+
+
+
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                        view.setSelected(false);
+
+                        if (DEBUG) Log.d(TAG, "Click on position: " + pos);
+
+
+                        searchView.setQuery("", false);
+                        //cursor with My Library information
+                        Cursor c = mAdapter.getCursor();
+                        c.moveToPosition(position);
+                        String title = c.getString(c.getColumnIndex("_id"));
+
+                        //cursor with Folders information
+                        Cursor c1 = getDocId(title);
+                        c1.moveToPosition(0);
+                        String doc_id = c1.getString(c1.getColumnIndex(DatabaseOpenHelper._ID));
+
+                        if (DEBUG) {
+                            Log.d(TAG, "doc_id: " + doc_id);
+                            Log.d(TAG, "title_description: " + title);
+                        }
+
+                        Intent doc_details = new Intent(getActivity().getApplicationContext(), DocumentsDetailsActivity.class);
+                        doc_details.putExtra("DOC_ID", doc_id);
+                        startActivity(doc_details);
+                        getActivity().overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
+
+                    }
+
+
+
+                });
+
+
+
+                ll.setOnClickListener(deleteListner);
+
+                view.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(event.getAction() == MotionEvent.ACTION_UP){
+
+                            TextView delete = (TextView) v.findViewById(R.id.delete);
+                            if(isDocumentOnMyLibrary(pos))
+                                delete.setText("Trash");
+
+                            else
+                                delete.setText("Delete");
+                            Log.d(TAG, "OnTouchListener");
+                            // Do what you want
+
+                        }
+                        return false;
+                    }
+                });
+
+
+
+            }else{
+
+                view = convertView;
+            }
+
+
+
+            return view;
+        }
+
+
+        private boolean isDocumentOnMyLibrary(int position){
+
+
+            Cursor c = mAdapter.getCursor();
+            c.moveToPosition(position);
+            String title = c.getString(c.getColumnIndex("_id"));
+            Cursor c1 = getDocId(title);
+            c1.moveToPosition(0);
+            documentID = c1.getString(c1.getColumnIndex(DatabaseOpenHelper._ID));
+
+            Log.d(TAG, "ID: " + documentID + " - -  TITLE: " + title + " --- POSITION: " +  position) ;
+
+            return GetDataBaseInformation.isDocumentOnMyLibrary(documentID, getActivity().getApplicationContext());
+        }
+
+        private void deleteDocumentDialog(int id){
+
+                // Use the Builder class for convenient dialog construction
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+            switch (id) {
+
+                case TRASH_DIALOG:
+
+
+                builder.setTitle(getResources().getString(R.string.alert_document_to_trash_title));
+                builder.setMessage(getResources().getString(R.string.alert_document_to_trash))
+                        .setPositiveButton(getResources().getString(R.string.word_ok), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                GetDataBaseInformation.insertRequest(getActivity().getApplicationContext(), documentID, JSONParser.POST, Globalconstant.post_move_document_to_trash);
+                                //update this document
+                                String where = DatabaseOpenHelper._ID + " = '" + documentID + "'";
+                                ContentValues values = new ContentValues();
+                                values.put(DatabaseOpenHelper.TRASH, "true");
+                                getActivity().getApplicationContext().getContentResolver().update(Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id"), values, where, null);
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        });
+
+                // on pressing cancel button
+                builder.setNegativeButton(getResources().getString(R.string.cancel),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                dialog.cancel();
+                            }
+                        });
+
+                    break;
+                default:
+                    builder = null;
+
+            }
+
+                // show dialog
+                builder.show();
 
         }
 
@@ -606,10 +814,72 @@ public class FragmentDetails extends ListFragment implements LoaderCallbacks<Cur
             final TextView tvAuthors = (TextView) view.findViewById(R.id.authors);
             final TextView tvData = (TextView) view.findViewById(R.id.data);
 
+            final TextView delete = (TextView) view.findViewById(R.id.delete);
+
             RobotoBoldFontHelper.applyFont(context, tvDocTitle);
             RobotoRegularFontHelper.applyFont(context, tvAuthors);
             RobotoRegularFontHelper.applyFont(context, tvData);
+            RobotoRegularFontHelper.applyFont(context, delete);
 
+
+
+
+        }
+
+        @Override
+        public int getSwipeLayoutResourceId(int i) {
+            return 0;
+        }
+
+        @Override
+        public void openItem(int position) {
+            Log.d(TAG, "OPEN ITEM");
+            mItemManger.openItem(position);
+        }
+
+        @Override
+        public void closeItem(int position) {
+            mItemManger.closeItem(position);
+        }
+
+        @Override
+        public void closeAllExcept(SwipeLayout swipeLayout) {
+            mItemManger.closeAllExcept(swipeLayout);
+        }
+
+        @Override
+        public void closeAllItems() {
+
+        }
+
+        @Override
+        public List<Integer> getOpenItems() {
+            return mItemManger.getOpenItems();
+        }
+
+        @Override
+        public List<SwipeLayout> getOpenLayouts() {
+            return mItemManger.getOpenLayouts();
+        }
+
+        @Override
+        public void removeShownLayouts(SwipeLayout swipeLayout) {
+
+        }
+
+        @Override
+        public boolean isOpen(int position) {
+            return mItemManger.isOpen(position);
+        }
+
+        @Override
+        public Attributes.Mode getMode() {
+            return mItemManger.getMode();
+        }
+
+        @Override
+        public void setMode(Attributes.Mode mode) {
+            mItemManger.setMode(mode);
         }
     }
 

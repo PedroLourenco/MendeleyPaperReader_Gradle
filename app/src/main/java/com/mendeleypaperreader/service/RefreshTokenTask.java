@@ -118,7 +118,13 @@ public class RefreshTokenTask extends AsyncTask<String, Integer, JSONObject> {
             context.getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
 
             Intent serviceIntent = new Intent(context, ServiceIntent.class);
+            serviceIntent.setAction(ServiceIntent.ACTION_FIRST_LOAD);
             context.startService(serviceIntent);
+        }else{
+            Intent serviceIntent = new Intent(context, ServiceIntent.class);
+            serviceIntent.setAction(ServiceIntent.ACTION_SYNC_REQUEST);
+            context.startService(serviceIntent);
+
         }
 
     }

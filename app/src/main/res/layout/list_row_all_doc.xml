@@ -1,5 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<com.daimajia.swipe.SwipeLayout
+    xmlns:swipe="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    swipe:leftEdgeSwipeOffset="0dp"
+    swipe:rightEdgeSwipeOffset="0dp">
+
+    <LinearLayout
+        android:id="@+id/llTrashSwipe"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@color/red"
+        android:gravity="center"
+        android:tag="Bottom3"
+        android:clickable="true">
+
+
+        <TextView
+            android:id="@+id/delete"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/actionBarTextColor"
+            android:gravity="center" />
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+<RelativeLayout
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
@@ -69,3 +104,6 @@
         android:src="@drawable/arrow" />
 
 </RelativeLayout>
+
+</LinearLayout>
+</com.daimajia.swipe.SwipeLayout>

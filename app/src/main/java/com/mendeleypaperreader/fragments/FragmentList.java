@@ -50,8 +50,13 @@ import com.mendeleypaperreader.util.NetworkUtil;
 import com.mendeleypaperreader.util.RobotoRegularFontHelper;
 import com.mendeleypaperreader.util.TypefaceSpan;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Classname MainMenuFragmentList
@@ -113,18 +118,22 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
 
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(Globalconstant.mBroadcastUpdateProgressBar);
+
         getActivity().registerReceiver(mReceiver, mIntentFilter);
 
         //Start upload data from server
         String firstLoad = session.LoadPreference("IS_DB_CREATED");
 
-        if (DEBUG) Log.d(FragmentList.TAG, "firstLoad: " + firstLoad);
-        if (DEBUG) Log.d(FragmentList.TAG, "ServiceIntent.serviceState: " + ServiceIntent.serviceState);
+
 
         if (!firstLoad.equals("YES") && !ServiceIntent.serviceState) {
             session.savePreferences("IS_DB_CREATED", "YES");
+            TimeZone tz = TimeZone.getTimeZone("UTC");
+            DateFormat df_ISO8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
+            df_ISO8601.setTimeZone(tz);
+            session.savePreferences("LAST_SYNCHRONIZATION_DATE", df_ISO8601.format(new Date()));
             if (DEBUG) Log.d(FragmentList.TAG, "First Sync");
-
+              mIntentFilter.addAction(Globalconstant.mBroadcastUpdateProgressBar);
             new RefreshTokenTask(getActivity(), true).execute();
         }
 
@@ -219,14 +228,7 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
                 search.setVisible(false);
 
             }
-
-
-
         }
-
-
-
-
     }
 
 
@@ -272,8 +274,8 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
             case R.id.main_menu_refresh:
                 if(NetworkUtil.isConnectingToInternet(getActivity().getApplicationContext()))
                     if (!ServiceIntent.serviceState) {
-                        getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
-                        new RefreshTokenTask(getActivity(), true).execute();
+                        //getActivity().getContentResolver().delete(ContentProvider.CONTENT_URI_DELETE_DATA_BASE, null, null);
+                        new RefreshTokenTask(getActivity(), false).execute();
                     } else {
                         Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.sync_alert_in_progress), Toast.LENGTH_LONG).show();
                     }
@@ -295,8 +297,7 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
 
     public void showDialog() {
         // Use the Builder class for convenient dialog construction
-        AlertDialog.Builder builder = new AlertDialog.Builder(
-                getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getResources().getString(R.string.log_out));
         builder.setMessage(getResources().getString(R.string.warning))
                 .setPositiveButton(getResources().getString(R.string.word_ok), new DialogInterface.OnClickListener() {
@@ -392,7 +393,7 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
         l.setSelector(R.drawable.ripple);
 
         // position <= 5 - fixed folders
-        if (position > 0 && position < 5) {
+        if (position > 0 && position <= 5) {
             aux_position = position - 1;
             description = lAdapter.getItem(aux_position);
             showDetails(position, description, foldersCount);
