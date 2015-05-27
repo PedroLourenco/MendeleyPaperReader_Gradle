@@ -74,14 +74,12 @@ public class GetDataBaseInformation {
 
         String[] projection = new String[]{DatabaseOpenHelper._ID + " as _id"};
 
-        String selection = DatabaseOpenHelper.GROUP_ID + " = '' and " + DatabaseOpenHelper._ID + " = '" + documentId +"'";
+        String selection = DatabaseOpenHelper.GROUP_ID + " = '' and " + DatabaseOpenHelper._ID + " = '" + documentId +"' and " + DatabaseOpenHelper.TRASH + " = 'false'";
         Uri uri = ContentProvider.CONTENT_URI_DOC_DETAILS;
 
         Cursor cursorDocumentId = context.getContentResolver().query(uri, projection, selection, null, null);
 
         if( cursorDocumentId != null && cursorDocumentId.moveToFirst()) {
-
-            Log.d(TAG, "DOC: " + cursorDocumentId.getString(cursorDocumentId.getColumnIndex(DatabaseOpenHelper._ID)));
             return true;
         }else{
             return false;

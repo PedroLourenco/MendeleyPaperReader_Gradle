@@ -130,7 +130,6 @@ public class ContentProvider extends android.content.ContentProvider {
 
                     count = db.delete(DatabaseOpenHelper.TABLE_AUTHORS, selection, null);
 
-
                 }
 
                 break;
@@ -138,7 +137,6 @@ public class ContentProvider extends android.content.ContentProvider {
                 if (!TextUtils.isEmpty(selection)) {
 
                     count = db.delete(DatabaseOpenHelper.TABLE_DOC_TAGS, selection, null);
-
 
                 }
 
@@ -148,7 +146,6 @@ public class ContentProvider extends android.content.ContentProvider {
 
                 count = db.delete(DatabaseOpenHelper.TABLE_DOC_NOTES, selection, null);
 
-
             }
 
             break;
@@ -156,8 +153,11 @@ public class ContentProvider extends android.content.ContentProvider {
                 if (!TextUtils.isEmpty(selection)) {
 
                     count = db.delete(DatabaseOpenHelper.TABLE_FILES, selection, null);
-
                 }
+
+                break;
+            case ALL_SYNC_REQUEST:
+                    count = db.delete(DatabaseOpenHelper.TABLE_SYNC_REQUEST, selection, null);
 
                 break;
             default:
@@ -754,9 +754,6 @@ public class ContentProvider extends android.content.ContentProvider {
 
     private int deleteDatabase(SQLiteDatabase db, String selection, String[] selectionArgs) {
 
-        if (Globalconstant.LOG)
-            Log.e(Globalconstant.TAG, "DATABASE CREATE!!!!!!!");
-
         int count = 0;
 
         count = db.delete(DatabaseOpenHelper.TABLE_DOCUMENT_DETAILS, selection, selectionArgs);
@@ -769,6 +766,7 @@ public class ContentProvider extends android.content.ContentProvider {
         count = count + db.delete(DatabaseOpenHelper.TABLE_GROUPS, selection, selectionArgs);
         count = count + db.delete(DatabaseOpenHelper.TABLE_DOC_TAGS, selection, selectionArgs);
         count = count + db.delete(DatabaseOpenHelper.TABLE_DOC_NOTES, selection, selectionArgs);
+        count = count + db.delete(DatabaseOpenHelper.TABLE_SYNC_REQUEST, selection, selectionArgs);
         return count;
     }
 

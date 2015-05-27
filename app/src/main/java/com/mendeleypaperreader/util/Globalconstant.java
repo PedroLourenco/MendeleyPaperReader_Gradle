@@ -56,7 +56,10 @@ public class Globalconstant {
 
     //POST
 
-    public static String post_move_document_to_trash =  "https://mix.mendeley.com/documents/##/trash?access_token=";
+    public static String post_move_document_to_trash = "https://mix.mendeley.com/documents/##/trash?access_token=";
+    public static String post_delete_document_from_trash = "https://mix.mendeley.com//trash/##?access_token=";
+
+
 
 
     //URLs

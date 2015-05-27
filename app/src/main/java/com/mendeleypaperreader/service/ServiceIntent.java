@@ -113,24 +113,27 @@ public class ServiceIntent extends IntentService {
 
 
 
-        String url =   Globalconstant.get_user_library_url_changes_client.replace("#modified_date#", preferences.LoadPreference("LAST_SYNCHRONIZATION_DATE"));
+        String url = Globalconstant.get_user_library_url_changes_client.replace("#modified_date#", preferences.LoadPreference("LAST_SYNCHRONIZATION_DATE"));
         Intent broadcastIntent = new Intent();
-        SendProgressBroadCast(broadcastIntent, 1, 6);
+        SendProgressBroadCast(broadcastIntent, 1, 7);
         load.updateUserDocument(url + access_token, false);
 
-        SendProgressBroadCast(broadcastIntent, 2, 6);
+        SendProgressBroadCast(broadcastIntent, 2, 7);
         load.getModifiedNotes();
-        SendProgressBroadCast(broadcastIntent, 3, 6);
+        SendProgressBroadCast(broadcastIntent, 3, 7);
 
         load.getFilesModified(Globalconstant.get_files_added);
-        SendProgressBroadCast(broadcastIntent, 4, 6);
-        String trash_url =   Globalconstant.get_trash_documents_since.replace("#modified_date#", preferences.LoadPreference("LAST_SYNCHRONIZATION_DATE"));
+        SendProgressBroadCast(broadcastIntent, 4, 7);
+        String trash_url = Globalconstant.get_trash_documents_since.replace("#modified_date#", preferences.LoadPreference("LAST_SYNCHRONIZATION_DATE"));
         load.updateUserDocument(trash_url + access_token, true);
 
-        SendProgressBroadCast(broadcastIntent, 5, 6);
+        SendProgressBroadCast(broadcastIntent, 5, 7);
         load.processRequests();
 
-        SendProgressBroadCast(broadcastIntent, 6, 6);
+        SendProgressBroadCast(broadcastIntent, 6, 7);
+
+        //load.deleteSyncRequests();
+        //SendProgressBroadCast(broadcastIntent, 7, 7);
 
         preferences.savePreferences("LAST_SYNCHRONIZATION_DATE", df_ISO8601.format(new Date()));
         Log.d(TAG, "syncRequest: " );

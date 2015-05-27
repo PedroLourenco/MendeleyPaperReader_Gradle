@@ -1380,24 +1380,18 @@ public class LoadData {
 
     private void getDocsFolder(String folderId) {
 
-
         String auxurl = Globalconstant.get_docs_in_folders;
         String url = auxurl.replace("id", folderId) + access_token;
 
-
         List<ContentValues> valueList = new ArrayList<ContentValues>();
-
         ContentValues[] valuesArray;
-
 
         JSONParser jParser = new JSONParser();
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory factory = mapper.getFactory();
         List<InputStream> link = new ArrayList<InputStream>();
 
-
         link = jParser.getJACKSONFromUrl(url, JSONParser.GET, null, true);
-
 
         try {
 
@@ -1436,7 +1430,6 @@ public class LoadData {
 
     private Cursor getDocInfo() {
 
-
         String[] projection;
         String selection = null;
         String orderBy = null;
@@ -1455,9 +1448,7 @@ public class LoadData {
     public void getCatalogId() {
 
         ContentValues values = new ContentValues();
-
         List<ContentValues> valueList = new ArrayList<ContentValues>();
-
         ContentValues[] valuesArray;
 
         Cursor cursorDocs;
@@ -1614,8 +1605,6 @@ public class LoadData {
 
 
 
-
-
     public void processRequests(){
 
         Cursor cursorSyncRequests  = GetDataBaseInformation.getSynRequests(context);
@@ -1623,14 +1612,47 @@ public class LoadData {
         while (cursorSyncRequests.moveToNext()) {
 
             Log.d(TAG, "URL: " + cursorSyncRequests.getString(cursorSyncRequests.getColumnIndex(DatabaseOpenHelper.URL)));
-            String url = cursorSyncRequests.getString(cursorSyncRequests.getColumnIndex(DatabaseOpenHelper.URL));
 
-            jParser.getJACKSONFromUrl(url + access_token, JSONParser.POST, null, false);
+            String method = cursorSyncRequests.getString(cursorSyncRequests.getColumnIndex(DatabaseOpenHelper.METHOD));
+
+            if(method.equals(JSONParser.DELETE)) {
+                String url = cursorSyncRequests.getString(cursorSyncRequests.getColumnIndex(DatabaseOpenHelper.URL));
+                jParser.getJACKSONFromUrl(url + access_token, JSONParser.DELETE, null, false);
+            }else {
+                String url = cursorSyncRequests.getString(cursorSyncRequests.getColumnIndex(DatabaseOpenHelper.URL));
+                jParser.getJACKSONFromUrl(url + access_token, JSONParser.POST, null, false);
+            }
+
         }
-
 
     }
 
 
+    public void deleteSyncRequests(){
+
+        context.getContentResolver().delete(ContentProvider.CONTENT_URI_SYNC_REQUEST, null, null);
+
+    }
+
+
+    public void sendDocumentToTrash(String  documentID){
+        GetDataBaseInformation.insertRequest(context.getApplicationContext(), documentID, JSONParser.POST, Globalconstant.post_move_document_to_trash);
+        //update this document
+        String where = DatabaseOpenHelper._ID + " = '" + documentID + "'";
+        ContentValues values = new ContentValues();
+        values.put(DatabaseOpenHelper.TRASH, "true");
+        context.getApplicationContext().getContentResolver().update(Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id"), values, where, null);
+    }
+
+    public void deleteDocumentFromTrash(String documentID){
+        GetDataBaseInformation.insertRequest(context.getApplicationContext(), documentID, JSONParser.DELETE, Globalconstant.post_delete_document_from_trash);
+        //update this document
+        String where = DatabaseOpenHelper._ID + " = '" + documentID + "'";
+        ContentValues values = new ContentValues();
+        values.put(DatabaseOpenHelper.TRASH, "trues");
+        context.getApplicationContext().getContentResolver().update(Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id"), values, where, null);
+
+
+    }
 
 }

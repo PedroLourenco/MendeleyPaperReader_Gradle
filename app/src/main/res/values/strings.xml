@@ -84,7 +84,9 @@
     <string name="error_message_general">Error downloading file!</string>
     <string name="title_activity_doc_tags">DocTagsActivity</string>
     <string name="alert_document_to_trash_title">Trash Document</string>
-    <string name="alert_document_to_trash">You will send the document to trash.</string>
+    <string name="alert_document_to_trash">You will send this document to trash.</string>
+    <string name="alert_document_delete_title">Delete Document</string>
+    <string name="alert_document_delete">You will delete this document.</string>
 
 
 

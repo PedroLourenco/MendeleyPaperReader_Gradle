@@ -4,7 +4,6 @@ package com.mendeleypaperreader.fragments;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,7 +25,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -47,7 +45,7 @@ import com.mendeleypaperreader.activities.AboutActivity;
 import com.mendeleypaperreader.activities.DocumentsDetailsActivity;
 import com.mendeleypaperreader.activities.SettingsActivity;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
-import com.mendeleypaperreader.parser.JSONParser;
+import com.mendeleypaperreader.parser.LoadData;
 import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.service.RefreshTokenTask;
@@ -79,12 +77,14 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
     private int cposition;
 
     private Preferences session;
+    private LoadData load;
     private IntentFilter mIntentFilter;
     private NumberProgressBar progressBar;
 
     private SwipeLayout sample3;
 
     private ListView lv;
+    private  int selectedPosition;
 
 
     private static String code;
@@ -113,6 +113,7 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
         }
 
         session = new Preferences(getActivity().getApplicationContext());
+        load = new LoadData(getActivity().getApplicationContext());
 
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(Globalconstant.mBroadcastUpdateProgressBar);
@@ -391,44 +392,6 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
         return getArguments().getString("searchActivity", "null");
     }
 
-
-    /*
-    public void onListItemClick(ListView l, View v, int position, long id) {
-
-        v.setSelected(false);
-
-        if (DEBUG) Log.d(TAG, "Click on position: " + position);
-
-
-        searchView.setQuery("", false);
-        //cursor with My Library information
-        Cursor c = mAdapter.getCursor();
-        c.moveToPosition(position);
-        String title = c.getString(c.getColumnIndex("_id"));
-
-        //cursor with Folders information
-        Cursor c1 = getDocId(title);
-        c1.moveToPosition(0);
-        String doc_id = c1.getString(c1.getColumnIndex(DatabaseOpenHelper._ID));
-
-        if (DEBUG) {
-            Log.d(TAG, "doc_id: " + doc_id);
-            Log.d(TAG, "title_description: " + title);
-        }
-
-        Intent doc_details = new Intent(getActivity().getApplicationContext(), DocumentsDetailsActivity.class);
-        doc_details.putExtra("DOC_ID", doc_id);
-        startActivity(doc_details);
-        getActivity().overridePendingTransition(R.anim.activity_in, R.anim.activity_out);
-    }
-
-*/
-
-
-
-
-
-
     private Cursor getDocId(String doc_title) {
 
         String[] projection = new String[]{DatabaseOpenHelper._ID};
@@ -446,9 +409,6 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
 
     public void onPause() {
         super.onPause();
-        //if(ServiceIntent.serviceState && mDualPane) {
-        //        getActivity().unregisterReceiver(mReceiver);
-        //}
 
         if (mDualPane) {
             NumberProgressBar progressBarDual = (NumberProgressBar) getActivity().findViewById(R.id.progress_bar);
@@ -555,7 +515,7 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
 
             title.setText(Globalconstant.MYLIBRARY[1]);
             projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
-            selection = DatabaseOpenHelper.ADDED + " >= datetime('now', 'start of month')";
+            selection = DatabaseOpenHelper.ADDED + " >= datetime('now', '-30 day')";
             uri = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
         } else if (index == 3) { //Starred = true
 
@@ -632,6 +592,23 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
     }
 
 
+
+
+
+
+    private String getDocIdFromAdapter(int position){
+
+        Cursor c = mAdapter.getCursor();
+        c.moveToPosition(position);
+        String title = c.getString(c.getColumnIndex("_id"));
+        Cursor c1 = getDocId(title);
+        c1.moveToPosition(0);
+        return c1.getString(c1.getColumnIndex(DatabaseOpenHelper._ID));
+
+    }
+
+
+
     private class CustomListSimpleCursorAdapter extends SimpleCursorAdapter implements SwipeItemMangerInterface, SwipeAdapterInterface {
 
         private SwipeItemAdapterMangerImpl mItemManger = new SwipeItemAdapterMangerImpl(this);
@@ -642,9 +619,6 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
         public CustomListSimpleCursorAdapter(final Context context, final int layout, final Cursor c, final String[] from, final int[] to, final int flags) {
             super(context, layout, c, from, to, flags);
 
-
-            Log.d(TAG, "CustomListSimpleCursorAdapter");
-
         }
 
 
@@ -653,23 +627,9 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
 
             boolean convertViewIsNull = convertView == null;
             View view = super.getView(position, convertView, parent);
-            final int pos = position;
+            TextView delete = (TextView) view.findViewById(R.id.delete);
 
             if(convertViewIsNull) {
-
-                LinearLayout ll = (LinearLayout) view.findViewById(R.id.llTrashSwipe);
-
-                View.OnClickListener deleteListner = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        Log.d(TAG, "delete");
-                        deleteDocumentDialog(TRASH_DIALOG);
-
-                    }
-                };
-
-
 
 
                 lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -678,7 +638,7 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
 
                         view.setSelected(false);
 
-                        if (DEBUG) Log.d(TAG, "Click on position: " + pos);
+                        if (DEBUG) Log.d(TAG, "Click on position: " + selectedPosition);
 
 
                         searchView.setQuery("", false);
@@ -692,11 +652,6 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
                         c1.moveToPosition(0);
                         String doc_id = c1.getString(c1.getColumnIndex(DatabaseOpenHelper._ID));
 
-                        if (DEBUG) {
-                            Log.d(TAG, "doc_id: " + doc_id);
-                            Log.d(TAG, "title_description: " + title);
-                        }
-
                         Intent doc_details = new Intent(getActivity().getApplicationContext(), DocumentsDetailsActivity.class);
                         doc_details.putExtra("DOC_ID", doc_id);
                         startActivity(doc_details);
@@ -709,43 +664,43 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
                 });
 
 
-
-                ll.setOnClickListener(deleteListner);
-
-                view.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if(event.getAction() == MotionEvent.ACTION_UP){
-
-                            TextView delete = (TextView) v.findViewById(R.id.delete);
-                            if(isDocumentOnMyLibrary(pos))
-                                delete.setText("Trash");
-
-                            else
-                                delete.setText("Delete");
-                            Log.d(TAG, "OnTouchListener");
-                            // Do what you want
-
-                        }
-                        return false;
-                    }
-                });
-
-
-
             }else{
 
                 view = convertView;
             }
 
 
+            if(isDocumentOnMyLibrary(position))
+                delete.setText("Trash");
+
+
+            else
+                delete.setText("Delete");
+
+            LinearLayout ll = (LinearLayout) view.findViewById(R.id.llTrashSwipe);
+
+            View.OnClickListener deleteListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if(isDocumentOnMyLibrary(selectedPosition))
+                        deleteDocumentDialog(TRASH_DIALOG, selectedPosition);
+                    else
+                        deleteDocumentDialog(DELETE_DIALOG, selectedPosition);
+
+                }
+            };
+            ll.setOnClickListener(deleteListener);
+
 
             return view;
         }
 
 
-        private boolean isDocumentOnMyLibrary(int position){
 
+
+
+        private boolean isDocumentOnMyLibrary(int position){
 
             Cursor c = mAdapter.getCursor();
             c.moveToPosition(position);
@@ -754,12 +709,10 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
             c1.moveToPosition(0);
             documentID = c1.getString(c1.getColumnIndex(DatabaseOpenHelper._ID));
 
-            Log.d(TAG, "ID: " + documentID + " - -  TITLE: " + title + " --- POSITION: " +  position) ;
-
             return GetDataBaseInformation.isDocumentOnMyLibrary(documentID, getActivity().getApplicationContext());
         }
 
-        private void deleteDocumentDialog(int id){
+        private void deleteDocumentDialog(int id,  int position){
 
                 // Use the Builder class for convenient dialog construction
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -774,13 +727,11 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
                         .setPositiveButton(getResources().getString(R.string.word_ok), new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
 
-                                GetDataBaseInformation.insertRequest(getActivity().getApplicationContext(), documentID, JSONParser.POST, Globalconstant.post_move_document_to_trash);
-                                //update this document
-                                String where = DatabaseOpenHelper._ID + " = '" + documentID + "'";
-                                ContentValues values = new ContentValues();
-                                values.put(DatabaseOpenHelper.TRASH, "true");
-                                getActivity().getApplicationContext().getContentResolver().update(Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id"), values, where, null);
+                                String documentId =  getDocIdFromAdapter(selectedPosition);
+
+                                load.sendDocumentToTrash(documentId);
                                 mAdapter.notifyDataSetChanged();
+
                             }
                         });
 
@@ -789,12 +740,41 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
+                                mAdapter.notifyDataSetChanged();
                                 dialog.cancel();
                             }
                         });
 
                     break;
+
+                case DELETE_DIALOG:
+
+
+                    builder.setTitle(getResources().getString(R.string.alert_document_delete_title));
+                    builder.setMessage(getResources().getString(R.string.alert_document_delete))
+                            .setPositiveButton(getResources().getString(R.string.word_ok), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    String documentId =  getDocIdFromAdapter(selectedPosition);
+
+                                    load.deleteDocumentFromTrash(documentId);
+                                    mAdapter.notifyDataSetChanged();
+
+                                }
+                            });
+
+                    // on pressing cancel button
+                    builder.setNegativeButton(getResources().getString(R.string.cancel),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mAdapter.notifyDataSetChanged();
+                                    dialog.cancel();
+                                }
+                            });
+
+                    break;
+
                 default:
                     builder = null;
 
@@ -821,9 +801,6 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
             RobotoRegularFontHelper.applyFont(context, tvData);
             RobotoRegularFontHelper.applyFont(context, delete);
 
-
-
-
         }
 
         @Override
@@ -833,7 +810,7 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
 
         @Override
         public void openItem(int position) {
-            Log.d(TAG, "OPEN ITEM");
+
             mItemManger.openItem(position);
         }
 
