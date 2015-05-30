@@ -41,6 +41,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
+import com.mendeleypaperreader.db.Data;
 import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
@@ -48,7 +49,6 @@ import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.service.DownloaderThread;
 import com.mendeleypaperreader.service.RefreshTokenTask;
 import com.mendeleypaperreader.service.ServiceIntent;
-import com.mendeleypaperreader.util.GetDataBaseInformation;
 import com.mendeleypaperreader.util.Globalconstant;
 import com.mendeleypaperreader.util.NetworkUtil;
 import com.mendeleypaperreader.util.RobotoBoldFontHelper;
@@ -78,7 +78,7 @@ public class DocumentsDetailsActivity extends Activity {
     private ImageView download;
     private ProgressDialog progressDialog;
     private DocumentsDetailsActivity thisActivity;
-    private GetDataBaseInformation getDataBaseInformation;
+
     private IntentFilter mIntentFilter;
     private NumberProgressBar progressBar;
 
@@ -140,7 +140,7 @@ public class DocumentsDetailsActivity extends Activity {
         readerCounterValue = new TextView(this);
         doc_tags = new TextView(this);
         docNotes = new TextView(this);
-        getDataBaseInformation = new GetDataBaseInformation(getApplicationContext());
+
 
 
         RobotoRegularFontHelper.applyFont(DocumentsDetailsActivity.this, doc_abstract);
@@ -984,8 +984,8 @@ public class DocumentsDetailsActivity extends Activity {
         }
 
 
-        String email_text = resources.getString(R.string.email_text) + "<br/><br/><b>" + doc_title + "</b><br/><br/>" + resources.getString(R.string.email_authors) + doc_authors_text + "<br/><br/>" + resources.getString(R.string.email_publication) + doc_source_text + "<br/><br/>" + "<br/><br/>" + t_doc_url + "<br/><br/>" + resources.getString(R.string.email_mendeley_profile) + getDataBaseInformation.getProfileInformation(DatabaseOpenHelper.PROFILE_LINK) + "<br/><br/>" + resources.getString(R.string.email_play_store);
-        String email_subject_text = getDataBaseInformation.getProfileInformation(DatabaseOpenHelper.PROFILE_DISPLAY_NAME) + resources.getString(R.string.email_subject);
+        String email_text = resources.getString(R.string.email_text) + "<br/><br/><b>" + doc_title + "</b><br/><br/>" + resources.getString(R.string.email_authors) + doc_authors_text + "<br/><br/>" + resources.getString(R.string.email_publication) + doc_source_text + "<br/><br/>" + "<br/><br/>" + t_doc_url + "<br/><br/>" + resources.getString(R.string.email_mendeley_profile) + Data.getProfileInformation(getApplicationContext(), DatabaseOpenHelper.PROFILE_LINK) + "<br/><br/>" + resources.getString(R.string.email_play_store);
+        String email_subject_text = Data.getProfileInformation(getApplicationContext(), DatabaseOpenHelper.PROFILE_DISPLAY_NAME) + resources.getString(R.string.email_subject);
         String sms_text = doc_title;
 
 

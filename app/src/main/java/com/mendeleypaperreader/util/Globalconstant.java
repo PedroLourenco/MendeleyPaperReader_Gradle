@@ -53,7 +53,9 @@ public class Globalconstant {
     public static String get_profile = "https://mix.mendeley.com/profiles/me?access_token=";
     public static String get_trash_documents = "https://mix.mendeley.com/trash?limit=500&view=all&access_token=";
     public static String get_trash_documents_since = "https://mix.mendeley.com/trash?limit=500&modified_since=#modified_date#&view=all&access_token=";
+    public static String get_trash_document_id = "https://mix.mendeley.com/trash/#docId#?view=client&access_token=";
 
+    //https://api.mendeley.com:443/trash/111111
     //POST
 
     public static String post_move_document_to_trash = "https://mix.mendeley.com/documents/##/trash?access_token=";

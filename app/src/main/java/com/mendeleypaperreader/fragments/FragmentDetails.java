@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -44,13 +45,12 @@ import com.mendeleypaperreader.R;
 import com.mendeleypaperreader.activities.AboutActivity;
 import com.mendeleypaperreader.activities.DocumentsDetailsActivity;
 import com.mendeleypaperreader.activities.SettingsActivity;
+import com.mendeleypaperreader.db.Data;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
-import com.mendeleypaperreader.parser.LoadData;
 import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.service.RefreshTokenTask;
 import com.mendeleypaperreader.service.ServiceIntent;
-import com.mendeleypaperreader.util.GetDataBaseInformation;
 import com.mendeleypaperreader.util.Globalconstant;
 import com.mendeleypaperreader.util.NetworkUtil;
 import com.mendeleypaperreader.util.RobotoBoldFontHelper;
@@ -74,21 +74,16 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
     private SearchView searchView;
     private static final int DETAILS_LOADER = 2;
 
-    private int cposition;
+
 
     private Preferences session;
-    private LoadData load;
+
     private IntentFilter mIntentFilter;
     private NumberProgressBar progressBar;
-
-    private SwipeLayout sample3;
 
     private ListView lv;
     private  int selectedPosition;
 
-
-    private static String code;
-    private static String refresh_token;
     private String documentID;
 
 
@@ -113,7 +108,6 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
         }
 
         session = new Preferences(getActivity().getApplicationContext());
-        load = new LoadData(getActivity().getApplicationContext());
 
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(Globalconstant.mBroadcastUpdateProgressBar);
@@ -631,16 +625,11 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
 
             if(convertViewIsNull) {
 
-
                 lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                         view.setSelected(false);
-
-                        if (DEBUG) Log.d(TAG, "Click on position: " + selectedPosition);
-
-
                         searchView.setQuery("", false);
                         //cursor with My Library information
                         Cursor c = mAdapter.getCursor();
@@ -659,8 +648,6 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
 
                     }
 
-
-
                 });
 
 
@@ -668,21 +655,33 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
 
                 view = convertView;
             }
-
+            view.setTag(position);
 
             if(isDocumentOnMyLibrary(position))
                 delete.setText("Trash");
-
-
             else
                 delete.setText("Delete");
+
+
+            view.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if(event.getAction() == MotionEvent.ACTION_UP){
+                        selectedPosition = Integer.parseInt(v.getTag().toString());
+                    }
+                    return false;
+                }
+            });
+
+
+
+
 
             LinearLayout ll = (LinearLayout) view.findViewById(R.id.llTrashSwipe);
 
             View.OnClickListener deleteListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     if(isDocumentOnMyLibrary(selectedPosition))
                         deleteDocumentDialog(TRASH_DIALOG, selectedPosition);
                     else
@@ -707,9 +706,13 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
             String title = c.getString(c.getColumnIndex("_id"));
             Cursor c1 = getDocId(title);
             c1.moveToPosition(0);
+
+            if(c1.getCount() <= 0)
+                return false;
+
             documentID = c1.getString(c1.getColumnIndex(DatabaseOpenHelper._ID));
 
-            return GetDataBaseInformation.isDocumentOnMyLibrary(documentID, getActivity().getApplicationContext());
+            return Data.isDocumentOnMyLibrary(documentID, getActivity().getApplicationContext());
         }
 
         private void deleteDocumentDialog(int id,  int position){
@@ -729,7 +732,7 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
 
                                 String documentId =  getDocIdFromAdapter(selectedPosition);
 
-                                load.sendDocumentToTrash(documentId);
+                                Data.sendDocumentToTrash(getActivity().getApplicationContext(), documentId);
                                 mAdapter.notifyDataSetChanged();
 
                             }
@@ -757,7 +760,7 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
 
                                     String documentId =  getDocIdFromAdapter(selectedPosition);
 
-                                    load.deleteDocumentFromTrash(documentId);
+                                    Data.deleteTrashDocumentById(getActivity().getApplicationContext(), documentId);
                                     mAdapter.notifyDataSetChanged();
 
                                 }

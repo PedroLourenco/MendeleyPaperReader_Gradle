@@ -18,16 +18,16 @@ import android.widget.TextView;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.mendeleypaperreader.R;
+import com.mendeleypaperreader.db.Data;
 import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.service.ServiceIntent;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
-import com.mendeleypaperreader.util.GetDataBaseInformation;
 import com.mendeleypaperreader.util.Globalconstant;
 import com.mendeleypaperreader.util.TypefaceSpan;
 
 public class SettingsActivity extends Activity {
 
-    private GetDataBaseInformation getDataBaseInformation;
+
     private Preferences preferences;
     private NumberProgressBar progressBar;
 
@@ -75,9 +75,8 @@ public class SettingsActivity extends Activity {
         tvSync.setTypeface(roboto);
         cbSync.setTypeface(roboto);
 
-        getDataBaseInformation = new GetDataBaseInformation(getApplicationContext());
 
-        tvProfileName.setText(getDataBaseInformation.getProfileInformation(DatabaseOpenHelper.PROFILE_DISPLAY_NAME));
+        tvProfileName.setText(Data.getProfileInformation(getApplicationContext(), DatabaseOpenHelper.PROFILE_DISPLAY_NAME));
 
 
         if (preferences.LoadPreference("syncOnLoad").equals("true")){

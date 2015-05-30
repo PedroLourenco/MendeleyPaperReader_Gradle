@@ -11,11 +11,11 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mendeleypaperreader.db.Data;
 import com.mendeleypaperreader.db.DatabaseOpenHelper;
 import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.providers.ContentProvider;
 import com.mendeleypaperreader.service.DownloaderThread;
-import com.mendeleypaperreader.util.GetDataBaseInformation;
 import com.mendeleypaperreader.util.Globalconstant;
 
 import java.io.InputStream;
@@ -41,7 +41,7 @@ public class LoadData {
 
     private Context context;
     private static String access_token;
-    private GetDataBaseInformation getDataBaseInformation;
+
     Preferences session;
 
     public LoadData(Context context) {
@@ -50,8 +50,6 @@ public class LoadData {
         session = new Preferences(this.context);
         access_token = session.LoadPreference("access_token");
 
-        getDataBaseInformation = new GetDataBaseInformation(this.context);
-
     }
 
 
@@ -59,7 +57,7 @@ public class LoadData {
 
         Thread downloaderThread;
 
-        Cursor cursorFiles = getDataBaseInformation.getFile();
+        Cursor cursorFiles = Data.getFile(context);
 
         while (cursorFiles.moveToNext()) {
 
@@ -104,9 +102,6 @@ public class LoadData {
     }
 
 
-    
-
-
     public void getNotes() {
 
         ContentValues[] valuesArray;
@@ -117,12 +112,12 @@ public class LoadData {
         String url;
 
 
-            cursorDocId = getDocId();
+        cursorDocId = getDocId();
 
 
         while (cursorDocId.moveToNext()) {
 
-                url = Globalconstant.get_docs_notes2 + cursorDocId.getString(cursorDocId.getColumnIndex(DatabaseOpenHelper._ID)) + "&limit=200&access_token=" + access_token;
+            url = Globalconstant.get_docs_notes2 + cursorDocId.getString(cursorDocId.getColumnIndex(DatabaseOpenHelper._ID)) + "&limit=200&access_token=" + access_token;
 
             JSONParser jParser = new JSONParser();
             ObjectMapper mapper = new ObjectMapper();
@@ -281,7 +276,6 @@ public class LoadData {
     }
 
 
-
     public void getUserGroups(String url) {
 
 
@@ -430,7 +424,7 @@ public class LoadData {
         ContentValues[] valuesArray;
         String delete_files_where = null;
 
-        String url = serviceUrl.replace("#dateAdded#", session.LoadPreference("LAST_SYNCHRONIZATION_DATE")) + access_token ;
+        String url = serviceUrl.replace("#dateAdded#", session.LoadPreference("LAST_SYNCHRONIZATION_DATE")) + access_token;
 
         JSONParser jParser = new JSONParser();
         ObjectMapper mapper = new ObjectMapper();
@@ -501,7 +495,6 @@ public class LoadData {
         }
 
     }
-
 
 
     public void getUserFolders(String url) {
@@ -576,7 +569,6 @@ public class LoadData {
     }
 
 
-
     public void getUserLibrary(String url, boolean isTrash) {
 
         JSONParser jParser = new JSONParser();
@@ -609,7 +601,7 @@ public class LoadData {
                     ContentValues values = new ContentValues();
 
 
-                    if(isTrash){
+                    if (isTrash) {
                         values.put(DatabaseOpenHelper.TRASH, "true");
 
                     }
@@ -765,7 +757,7 @@ public class LoadData {
                             authors += author_name + ",";
                             values.put(DatabaseOpenHelper.AUTHORS, authors.substring(0, authors.length() - 1));
 
-                            
+
                             authors_values.put(DatabaseOpenHelper.DOC_DETAILS_ID, temp.get("id").asText());
                             authors_values.put(DatabaseOpenHelper.AUTHOR_NAME, author_name);
 
@@ -842,7 +834,7 @@ public class LoadData {
     }
 
 
-    public void insertNewDocument(JsonNode temp, boolean isTrash){
+    public void insertNewDocument(JsonNode temp, boolean isTrash) {
 
 
         ContentValues values = new ContentValues();
@@ -855,7 +847,7 @@ public class LoadData {
         ContentValues[] mValueArray, authorsValuesArray, tagsValuesArray;
 
 
-        if(isTrash){
+        if (isTrash) {
             values.put(DatabaseOpenHelper.TRASH, "true");
 
         }
@@ -1074,9 +1066,6 @@ public class LoadData {
     }
 
 
-
-
-
     public void updateUserDocument(String url, boolean isTrash) {
 
         JSONParser jParser = new JSONParser();
@@ -1088,11 +1077,11 @@ public class LoadData {
         List<ContentValues> tagValueList = new ArrayList<ContentValues>();
 
         Uri uri_ = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
-        Uri uri_authors = Uri.parse(ContentProvider.CONTENT_URI_AUTHORS + "/"+ DatabaseOpenHelper.DOC_DETAILS_ID);
+        Uri uri_authors = Uri.parse(ContentProvider.CONTENT_URI_AUTHORS + "/" + DatabaseOpenHelper.DOC_DETAILS_ID);
         Uri uri_tags = Uri.parse(ContentProvider.CONTENT_URI_DOC_TAGS + "/id");
 
-        HashMap<String, String> docsOnLibrary = GetDataBaseInformation.getAllDocumentDetailsId(context);
-        HashMap<String, String> trashDocsOnLibrary = GetDataBaseInformation.getAllTrashDocumentDetailsId(context);
+        HashMap<String, String> docsOnLibrary = Data.getAllDocumentDetailsId(context);
+        // HashMap<String, String> trashDocsOnLibrary = Data.getAllTrashDocumentDetailsId(context);
 
 
         ContentValues[] mValueArray, authorsValuesArray, tagsValuesArray;
@@ -1123,20 +1112,18 @@ public class LoadData {
                         where = DatabaseOpenHelper._ID + " = '" + docId + "'";
                     }
 
-                    if(!docsOnLibrary.containsKey(docId)) {
+                    if (!docsOnLibrary.containsKey(docId)) {
                         insertNewDocument(temp, isTrash);
                         continue;
                     }
 
 
-
-                    if(isTrash){
+                    if (isTrash) {
                         values.put(DatabaseOpenHelper.TRASH, "true");
 
-                    }else{
+                    } else {
                         values.put(DatabaseOpenHelper.TRASH, "false");
                     }
-
 
 
                     if (temp.has(DatabaseOpenHelper.TITLE)) {
@@ -1190,7 +1177,6 @@ public class LoadData {
                     } else {
                         values.put(DatabaseOpenHelper.TAGS, "");
                     }
-
 
 
                     if (temp.has(DatabaseOpenHelper.GROUP_ID)) {
@@ -1301,9 +1287,6 @@ public class LoadData {
                     }
 
 
-
-
-
                     //Insert data on table Document_details
 
                     mValueArray = new ContentValues[valueList.size()];
@@ -1316,7 +1299,6 @@ public class LoadData {
 
                 jp.close();
             }
-
 
 
             //Insert data on table Authors
@@ -1339,13 +1321,6 @@ public class LoadData {
     }
 
 
-
-
-
-
-
-
-
     private Cursor getFoldersId() {
 
         if (DEBUG)
@@ -1360,16 +1335,14 @@ public class LoadData {
 
 
     }
-    
 
-    
 
     public void getUserDocsInFolders() {
 
         Cursor cursorFolderId = getFoldersId();
 
         while (cursorFolderId.moveToNext()) {
-            
+
             getDocsFolder(cursorFolderId.getString(cursorFolderId.getColumnIndex(DatabaseOpenHelper.FOLDER_ID)));
         }
 
@@ -1604,10 +1577,15 @@ public class LoadData {
     }
 
 
+    public void findDocumentInTrash(String url) {
 
-    public void processRequests(){
 
-        Cursor cursorSyncRequests  = GetDataBaseInformation.getSynRequests(context);
+    }
+
+
+    public void processRequests() {
+
+        Cursor cursorSyncRequests = Data.getSynRequests(context);
         JSONParser jParser = new JSONParser();
         while (cursorSyncRequests.moveToNext()) {
 
@@ -1615,10 +1593,10 @@ public class LoadData {
 
             String method = cursorSyncRequests.getString(cursorSyncRequests.getColumnIndex(DatabaseOpenHelper.METHOD));
 
-            if(method.equals(JSONParser.DELETE)) {
+            if (method.equals(JSONParser.DELETE)) {
                 String url = cursorSyncRequests.getString(cursorSyncRequests.getColumnIndex(DatabaseOpenHelper.URL));
                 jParser.getJACKSONFromUrl(url + access_token, JSONParser.DELETE, null, false);
-            }else {
+            } else {
                 String url = cursorSyncRequests.getString(cursorSyncRequests.getColumnIndex(DatabaseOpenHelper.URL));
                 jParser.getJACKSONFromUrl(url + access_token, JSONParser.POST, null, false);
             }
@@ -1628,31 +1606,29 @@ public class LoadData {
     }
 
 
-    public void deleteSyncRequests(){
+    public void deleteTrashDocumentsRemovedOnServer() {
 
-        context.getContentResolver().delete(ContentProvider.CONTENT_URI_SYNC_REQUEST, null, null);
+        int result;
 
-    }
+        Cursor cursorTrashDocIds = Data.getDocIdInTrash(context);
+        JSONParser jParser = new JSONParser();
+        while (cursorTrashDocIds.moveToNext()) {
+
+            String docId = cursorTrashDocIds.getString(cursorTrashDocIds.getColumnIndex(DatabaseOpenHelper._ID));
+            String url = Globalconstant.get_trash_document_id.replace("#docId#", docId);
+
+            result = jParser.getHTTPRequestError(url + access_token, JSONParser.GET, null, false);
+            if (result == 404) {
+
+                Data.deleteTrashDocumentById(context, docId);
+
+            }
 
 
-    public void sendDocumentToTrash(String  documentID){
-        GetDataBaseInformation.insertRequest(context.getApplicationContext(), documentID, JSONParser.POST, Globalconstant.post_move_document_to_trash);
-        //update this document
-        String where = DatabaseOpenHelper._ID + " = '" + documentID + "'";
-        ContentValues values = new ContentValues();
-        values.put(DatabaseOpenHelper.TRASH, "true");
-        context.getApplicationContext().getContentResolver().update(Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id"), values, where, null);
-    }
-
-    public void deleteDocumentFromTrash(String documentID){
-        GetDataBaseInformation.insertRequest(context.getApplicationContext(), documentID, JSONParser.DELETE, Globalconstant.post_delete_document_from_trash);
-        //update this document
-        String where = DatabaseOpenHelper._ID + " = '" + documentID + "'";
-        ContentValues values = new ContentValues();
-        values.put(DatabaseOpenHelper.TRASH, "trues");
-        context.getApplicationContext().getContentResolver().update(Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id"), values, where, null);
+        }
 
 
     }
+
 
 }

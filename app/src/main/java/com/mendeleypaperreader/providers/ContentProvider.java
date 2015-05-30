@@ -124,6 +124,12 @@ public class ContentProvider extends android.content.ContentProvider {
 
                 break;
 
+            case ALL_DOCS_ID:
+                if (!TextUtils.isEmpty(selection)) {
+
+                    count = db.delete(DatabaseOpenHelper.TABLE_DOCUMENT_DETAILS, selection, null);
+                }
+                    break;
 
             case DOC_AUTHORS_ID:
                 if (!TextUtils.isEmpty(selection)) {

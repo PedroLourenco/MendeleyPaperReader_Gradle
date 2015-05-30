@@ -2,6 +2,7 @@ package com.mendeleypaperreader.parser;
 
 import android.util.Log;
 
+import com.mendeleypaperreader.db.Data;
 import com.mendeleypaperreader.util.Globalconstant;
 
 import org.apache.http.HttpEntity;
@@ -32,6 +33,8 @@ public class JSONParser {
     public static String POST = "POST";
     public static String GET = "GET";
     public static String DELETE = "DELETE";
+
+
 
     List<InputStream> jacksonArray = new ArrayList<InputStream>();
 
@@ -153,6 +156,77 @@ public class JSONParser {
 
         return jacksonArray;
     }
+
+
+
+    public int getHTTPRequestError(String url, String method, List<NameValuePair> params, boolean with_header) {
+
+        //InputStream content = null;
+        int statusCode = 0;
+        HttpClient client = new DefaultHttpClient();
+
+
+        HttpGet httpGet = new HttpGet(url);
+        try {
+
+
+            // check for request method
+            if (method.equals(POST)) {
+                // request method is POST
+                // defaultHttpClient
+                DefaultHttpClient httpClient = new DefaultHttpClient();
+                HttpPost httpPost = new HttpPost(url);
+                //httpPost.setEntity(new UrlEncodedFormEntity(params));
+                httpGet.setHeader("Content-Type", "application/json");
+                httpGet.setHeader("X-Mendeley-Trace-Id", "FdKj-Sb_ud4");
+                httpGet.setHeader("Access-Control-Expose-Headers ", "Date,Content-Type,Transfer-Encoding,X-Mendeley-Trace-Id");
+                HttpResponse httpResponse = httpClient.execute(httpPost);
+                StatusLine statusLine = httpResponse.getStatusLine();
+
+                statusCode = statusLine.getStatusCode();
+
+
+            }else if(method.equals(DELETE)){
+                Log.d("TAG", "DELETE");
+                // request method is POST
+                // defaultHttpClient
+                DefaultHttpClient httpClient = new DefaultHttpClient();
+                HttpDelete httpDelete = new HttpDelete(url);
+                //httpPost.setEntity(new UrlEncodedFormEntity(params));
+                httpGet.setHeader("Content-Type", "application/json");
+                httpGet.setHeader("X-Mendeley-Trace-Id", "SjC87-R8vac");
+                httpGet.setHeader("Access-Control-Expose-Headers ", "Date,Content-Type,Transfer-Encoding,X-Mendeley-Trace-Id");
+                HttpResponse httpResponse = httpClient.execute(httpDelete);
+                StatusLine statusLine = httpResponse.getStatusLine();
+
+                statusCode = statusLine.getStatusCode();
+
+
+
+            } else {
+
+
+                HttpResponse response = client.execute(httpGet);
+                StatusLine statusLine = response.getStatusLine();
+                statusCode = statusLine.getStatusCode();
+
+
+            }
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+        return statusCode;
+    }
+
+
 
 
 }

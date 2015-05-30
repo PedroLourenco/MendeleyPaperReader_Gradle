@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
+import com.mendeleypaperreader.db.Data;
 import com.mendeleypaperreader.parser.LoadData;
 import com.mendeleypaperreader.preferences.Preferences;
 import com.mendeleypaperreader.util.Globalconstant;
@@ -23,7 +24,7 @@ public class ServiceIntent extends IntentService {
     private static final String TAG = "ServiceIntent";
     private static final boolean DEBUG = Globalconstant.DEBUG;
 
-   public  static final String ACTION_FIRST_LOAD = "com.mendeleypaperreader.action.FIRST_LOAD";
+    public static final String ACTION_FIRST_LOAD = "com.mendeleypaperreader.action.FIRST_LOAD";
     public static final String ACTION_SYNC_REQUEST = "com.mendeleypaperreader.action.SYNC_RESQUEST";
 
     private LoadData load;
@@ -33,7 +34,7 @@ public class ServiceIntent extends IntentService {
     public ServiceIntent() {
 
         super("ServiceIntent");
-        if(DEBUG)Log.d(TAG, "In ServiceIntent");
+        if (DEBUG) Log.d(TAG, "In ServiceIntent");
         serviceState = true;
     }
 
@@ -48,28 +49,25 @@ public class ServiceIntent extends IntentService {
         String access_token = preferences.LoadPreference("access_token");
 
 
-
-
-        if(intent.getAction().equals(ACTION_FIRST_LOAD))
+        if (intent.getAction().equals(ACTION_FIRST_LOAD))
             firstLoad(access_token);
-        else if(intent.getAction().equals(ACTION_SYNC_REQUEST))
+        else if (intent.getAction().equals(ACTION_SYNC_REQUEST))
             syncRequest(access_token);
 
 
     }
 
-    private void SendProgressBroadCast(Intent broadcastIntent, int load, int max ){
+    private void SendProgressBroadCast(Intent broadcastIntent, int load, int max) {
         broadcastIntent.setAction(Globalconstant.mBroadcastUpdateProgressBar);
         broadcastIntent.putExtra("Progress", load / ((float) max) * 100);
-        if(DEBUG)Log.d(TAG, "SendProgressBroadCast: " + load / ((float) max) * 100);
+        if (DEBUG) Log.d(TAG, "SendProgressBroadCast: " + load / ((float) max) * 100);
 
         sendBroadcast(broadcastIntent);
 
     }
 
 
-
-    private void firstLoad(String access_token){
+    private void firstLoad(String access_token) {
 
         Intent broadcastIntent = new Intent();
 
@@ -105,53 +103,53 @@ public class ServiceIntent extends IntentService {
 
     }
 
-    private void syncRequest(String access_token){
+    private void syncRequest(String access_token) {
 
         TimeZone tz = TimeZone.getTimeZone("UTC");
         DateFormat df_ISO8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
         df_ISO8601.setTimeZone(tz);
 
-
-
         String url = Globalconstant.get_user_library_url_changes_client.replace("#modified_date#", preferences.LoadPreference("LAST_SYNCHRONIZATION_DATE"));
         Intent broadcastIntent = new Intent();
-        SendProgressBroadCast(broadcastIntent, 1, 7);
+        SendProgressBroadCast(broadcastIntent, 1, 8);
         load.updateUserDocument(url + access_token, false);
 
-        SendProgressBroadCast(broadcastIntent, 2, 7);
+        SendProgressBroadCast(broadcastIntent, 2, 8);
         load.getModifiedNotes();
-        SendProgressBroadCast(broadcastIntent, 3, 7);
+        SendProgressBroadCast(broadcastIntent, 3, 8);
 
         load.getFilesModified(Globalconstant.get_files_added);
-        SendProgressBroadCast(broadcastIntent, 4, 7);
+        SendProgressBroadCast(broadcastIntent, 4, 8);
+
         String trash_url = Globalconstant.get_trash_documents_since.replace("#modified_date#", preferences.LoadPreference("LAST_SYNCHRONIZATION_DATE"));
         load.updateUserDocument(trash_url + access_token, true);
 
-        SendProgressBroadCast(broadcastIntent, 5, 7);
+        SendProgressBroadCast(broadcastIntent, 5, 8);
         load.processRequests();
 
-        SendProgressBroadCast(broadcastIntent, 6, 7);
+        SendProgressBroadCast(broadcastIntent, 6, 8);
 
-        //load.deleteSyncRequests();
-        //SendProgressBroadCast(broadcastIntent, 7, 7);
+        Data.deleteSyncRequests(getApplicationContext());
+        SendProgressBroadCast(broadcastIntent, 7, 8);
+
+        load.deleteTrashDocumentsRemovedOnServer();
+        SendProgressBroadCast(broadcastIntent, 8, 8);
 
         preferences.savePreferences("LAST_SYNCHRONIZATION_DATE", df_ISO8601.format(new Date()));
-        Log.d(TAG, "syncRequest: " );
     }
-
 
 
     @Override
     public void onDestroy() {
-       if(DEBUG)Log.d(TAG, "In onDestroy" + serviceState);
+        if (DEBUG) Log.d(TAG, "In onDestroy" + serviceState);
 
-       if( NetworkUtil.getConnectivityStatus(getApplicationContext()) == 0)
-           serviceState = true;
+        if (NetworkUtil.getConnectivityStatus(getApplicationContext()) == 0)
+            serviceState = true;
 
         else {
-           serviceState = false;
+            serviceState = false;
 
-       }
+        }
 
         super.onDestroy();
     }
