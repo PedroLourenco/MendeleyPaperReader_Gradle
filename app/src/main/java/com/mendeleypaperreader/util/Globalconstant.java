@@ -9,7 +9,7 @@ public class Globalconstant {
 
     public static String TAG = "PaperReader";
     public static final boolean LOG = false;
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     public static boolean syncAbort = false;
 
@@ -55,12 +55,15 @@ public class Globalconstant {
     public static String get_trash_documents_since = "https://mix.mendeley.com/trash?limit=500&modified_since=#modified_date#&view=all&access_token=";
     public static String get_trash_document_id = "https://mix.mendeley.com/trash/#docId#?view=client&access_token=";
 
-    //https://api.mendeley.com:443/trash/111111
+
     //POST
 
     public static String post_move_document_to_trash = "https://mix.mendeley.com/documents/##/trash?access_token=";
-    public static String post_delete_document_from_trash = "https://mix.mendeley.com//trash/##?access_token=";
 
+
+    //DELETE
+    public static String delete_document_from_trash = "https://mix.mendeley.com//trash/##?access_token=";
+    public static String delete_document = "https://mix.mendeley.com/documents/##?access_token=";
 
 
 

@@ -69,8 +69,6 @@ public class DocumentsDetailsActivity extends Activity {
     private TextView doc_abstract, doc_url, doc_pmid, doc_issn, doc_catalog, readerCounterValue, doc_tags, docNotes;
     private String docId, mAbstract, t_doc_url, issn, doi, pmid, doc_title, doc_authors_text, doc_source_text, readerValue, isDownloaded, tags, notes;
     private static Preferences session;
-    private static String code;
-    private static String refresh_token;
     private Boolean isInternetPresent = false;
     private Cursor cursorDetails;
     private Cursor cursorFile;
@@ -1121,6 +1119,10 @@ public class DocumentsDetailsActivity extends Activity {
             ServiceIntent.serviceState = false;
 
         }
+
+        getFile();
+        getdocDetails();
+
     }
 
 

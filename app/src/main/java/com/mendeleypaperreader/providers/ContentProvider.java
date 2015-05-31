@@ -166,9 +166,19 @@ public class ContentProvider extends android.content.ContentProvider {
                     count = db.delete(DatabaseOpenHelper.TABLE_SYNC_REQUEST, selection, null);
 
                 break;
+            case ALL_ACADEMIC_DOCS_ID:
+                if (!TextUtils.isEmpty(selection)) {
+
+                    count = db.delete(DatabaseOpenHelper.TABLE_ACADEMIC_STATUS_DOCS, selection, null);
+                }
+
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
+
+
+
 
         getContext().getContentResolver().notifyChange(uri, null, false);
         return count;

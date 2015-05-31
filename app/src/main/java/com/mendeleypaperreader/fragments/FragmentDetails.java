@@ -386,7 +386,7 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
         return getArguments().getString("searchActivity", "null");
     }
 
-    private Cursor getDocId(String doc_title) {
+    private String getDocId(String doc_title) {
 
         String[] projection = new String[]{DatabaseOpenHelper._ID};
 
@@ -397,7 +397,14 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
         String selection = DatabaseOpenHelper.TITLE + " = '" + doc_title + "'";
         Uri uri = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
 
-        return getActivity().getApplicationContext().getContentResolver().query(uri, projection, selection, null, null);
+        Cursor cDocId = getActivity().getApplicationContext().getContentResolver().query(uri, projection, selection, null, null);
+
+        cDocId.moveToPosition(0);
+
+        String docId = cDocId.getString(cDocId.getColumnIndex(DatabaseOpenHelper._ID));
+
+        cDocId.close();
+        return docId;
     }
 
 
@@ -409,7 +416,6 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
             progressBarDual.setVisibility(View.GONE);
 
         }
-
 
     }
 
@@ -466,17 +472,14 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
                 progressBar.setProgress(progress.intValue());
                 session.savePreferencesInt("progress", progress.intValue());
 
-                getActivity().invalidateOptionsMenu();
+               // getActivity().invalidateOptionsMenu();
             }
 
             if (progressBar.getProgress() == 100) {
                 progressBar.setVisibility(View.GONE);
                 ServiceIntent.serviceState = false;
 
-
             }
-
-
         }
     };
 
@@ -529,8 +532,6 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
             projection = new String[]{DatabaseOpenHelper.TITLE + " as _id", DatabaseOpenHelper.AUTHORS, DatabaseOpenHelper.SOURCE + "||" + "' '" + "||" + DatabaseOpenHelper.YEAR + " as data"};
             selection = DatabaseOpenHelper.TRASH + " = 'true'";
             uri = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
-
-
 
 
         } else if (index > 5 && index <= getFoldersCount() + 7) {
@@ -587,17 +588,13 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
 
 
 
-
-
-
     private String getDocIdFromAdapter(int position){
 
         Cursor c = mAdapter.getCursor();
         c.moveToPosition(position);
         String title = c.getString(c.getColumnIndex("_id"));
-        Cursor c1 = getDocId(title);
-        c1.moveToPosition(0);
-        return c1.getString(c1.getColumnIndex(DatabaseOpenHelper._ID));
+
+        return getDocId(title);
 
     }
 
@@ -635,11 +632,9 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
                         Cursor c = mAdapter.getCursor();
                         c.moveToPosition(position);
                         String title = c.getString(c.getColumnIndex("_id"));
+                        c.close();
 
-                        //cursor with Folders information
-                        Cursor c1 = getDocId(title);
-                        c1.moveToPosition(0);
-                        String doc_id = c1.getString(c1.getColumnIndex(DatabaseOpenHelper._ID));
+                        String doc_id = getDocId(title);
 
                         Intent doc_details = new Intent(getActivity().getApplicationContext(), DocumentsDetailsActivity.class);
                         doc_details.putExtra("DOC_ID", doc_id);
@@ -704,15 +699,15 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
             Cursor c = mAdapter.getCursor();
             c.moveToPosition(position);
             String title = c.getString(c.getColumnIndex("_id"));
-            Cursor c1 = getDocId(title);
-            c1.moveToPosition(0);
+            String docID = getDocId(title);
 
-            if(c1.getCount() <= 0)
+
+            if(docID.isEmpty()) {
                 return false;
+            }
 
-            documentID = c1.getString(c1.getColumnIndex(DatabaseOpenHelper._ID));
 
-            return Data.isDocumentOnMyLibrary(documentID, getActivity().getApplicationContext());
+            return Data.isDocumentOnMyLibrary(docID, getActivity().getApplicationContext());
         }
 
         private void deleteDocumentDialog(int id,  int position){
@@ -759,8 +754,7 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
                                 public void onClick(DialogInterface dialog, int which) {
 
                                     String documentId =  getDocIdFromAdapter(selectedPosition);
-
-                                    Data.deleteTrashDocumentById(getActivity().getApplicationContext(), documentId);
+                                    Data.deleteDocumentById(getActivity().getApplicationContext(), documentId);
                                     mAdapter.notifyDataSetChanged();
 
                                 }

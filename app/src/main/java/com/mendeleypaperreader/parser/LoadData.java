@@ -1577,19 +1577,12 @@ public class LoadData {
     }
 
 
-    public void findDocumentInTrash(String url) {
-
-
-    }
-
 
     public void processRequests() {
 
         Cursor cursorSyncRequests = Data.getSynRequests(context);
         JSONParser jParser = new JSONParser();
         while (cursorSyncRequests.moveToNext()) {
-
-            Log.d(TAG, "URL: " + cursorSyncRequests.getString(cursorSyncRequests.getColumnIndex(DatabaseOpenHelper.URL)));
 
             String method = cursorSyncRequests.getString(cursorSyncRequests.getColumnIndex(DatabaseOpenHelper.METHOD));
 

@@ -71,8 +71,8 @@ public class Data {
         Uri uri = ContentProvider.CONTENT_URI_DOC_DETAILS;
 
         Cursor cursorDocumentId = context.getContentResolver().query(uri, projection, selection, null, null);
-
         if (cursorDocumentId != null && cursorDocumentId.moveToFirst()) {
+            cursorDocumentId.close();
             return true;
         } else {
             return false;
@@ -80,6 +80,27 @@ public class Data {
         }
 
     }
+
+    public static boolean isDocumentOnGroup(String documentId, Context context) {
+
+        String[] projection = new String[]{DatabaseOpenHelper._ID + " as _id"};
+
+        String selection = DatabaseOpenHelper.GROUP_ID + " != '' and " + DatabaseOpenHelper._ID + " = '" + documentId + "'";
+        Uri uri = ContentProvider.CONTENT_URI_DOC_DETAILS;
+
+        Cursor cursorDocumentId = context.getContentResolver().query(uri, projection, selection, null, null);
+
+        if (cursorDocumentId != null && cursorDocumentId.moveToFirst()) {
+            cursorDocumentId.close();
+            return true;
+        } else {
+            return false;
+
+        }
+
+    }
+
+
 
     public static void insertRequest(Context context, String documentId, String method, String service) {
 
@@ -119,7 +140,7 @@ public class Data {
         String[] projection = new String[]{DatabaseOpenHelper._ID};
 
         String selection = DatabaseOpenHelper.TRASH + " = 'true'";
-        ;
+
         Uri uri = ContentProvider.CONTENT_URI_DOC_DETAILS;
 
         Cursor cTrashDocId = context.getContentResolver().query(uri, projection, selection, null, null);
@@ -164,7 +185,7 @@ public class Data {
 
         String[] projection = new String[]{DatabaseOpenHelper._ID + " as _id", DatabaseOpenHelper.LAST_MODIFIED};
 
-        String selection = null; //DatabaseOpenHelper.TRASH + " = 'true'";
+        String selection = null;
         Uri uri = ContentProvider.CONTENT_URI_DOC_DETAILS;
 
         Cursor c_docId = context.getContentResolver().query(uri, projection, selection, null, null);
@@ -192,28 +213,6 @@ public class Data {
     }
 
 
-    public static void deleteDocumentByDoId(Context context, String documentId) {
-
-        Uri uri_ = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
-        String selection = DatabaseOpenHelper._ID + " = '' and " + DatabaseOpenHelper._ID + " = '" + documentId + "'";
-
-
-        context.getContentResolver().delete(uri_, selection, null);
-
-    }
-
-
-    public static Cursor getDocumentsIdmodifiedFromdate(Context context) {
-
-        String[] projection = new String[]{DatabaseOpenHelper._ID + " as _id"};
-
-        String selection = DatabaseOpenHelper.LAST_MODIFIED + " >= datetime('now', '-1 hours')";
-        Uri uri = ContentProvider.CONTENT_URI_DOC_DETAILS;
-
-        return context.getContentResolver().query(uri, projection, selection, null, null);
-
-
-    }
 
     public static void deleteSyncRequests(Context context) {
 
@@ -227,8 +226,63 @@ public class Data {
         Uri uri_ = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
 
         context.getContentResolver().delete(uri_, where, null);
-        Data.insertRequest(context.getApplicationContext(), docId, JSONParser.DELETE, Globalconstant.post_delete_document_from_trash);
+        Data.insertRequest(context.getApplicationContext(), docId, JSONParser.DELETE, Globalconstant.delete_document_from_trash);
     }
+
+    public static void deleteDocumentById(Context context, String docId) {
+        String where =  DatabaseOpenHelper._ID + " = '" + docId + "'";
+        Uri uri_ = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
+
+        if(isDocumentOnGroup(docId, context)){
+            Data.insertRequest(context.getApplicationContext(), docId, JSONParser.DELETE, Globalconstant.delete_document);
+        }else{
+            Data.insertRequest(context.getApplicationContext(), docId, JSONParser.DELETE, Globalconstant.delete_document_from_trash);
+        }
+
+        context.getContentResolver().delete(uri_, where, null);
+        deleteAuthorsByDocumentId(context, docId);
+        deleteFilesByDocumentId(context, docId);
+        deleteTagsByDocumentId(context, docId);
+        deleteAcademicsByDocumentId(context, docId);
+        deleteNotesByDocumentId(context, docId);
+
+    }
+
+
+    public static void deleteAuthorsByDocumentId(Context context, String docId) {
+        String where = DatabaseOpenHelper.DOC_DETAILS_ID + " = '" + docId + "'";
+        Uri uri_ = Uri.parse(ContentProvider.CONTENT_URI_AUTHORS + "/" + DatabaseOpenHelper.DOC_DETAILS_ID);
+
+        context.getContentResolver().delete(uri_, where, null);
+    }
+
+    public static void deleteFilesByDocumentId(Context context, String docId) {
+        String where = DatabaseOpenHelper.DOCUMENT_ID + " = '" + docId + "'";
+        Uri uri_ = Uri.parse(ContentProvider.CONTENT_URI_FILES + "/" + DatabaseOpenHelper.DOCUMENT_ID);
+
+        context.getContentResolver().delete(uri_, where, null);
+    }
+
+    public static void deleteTagsByDocumentId(Context context, String docId) {
+        String where = DatabaseOpenHelper._ID + " = '" + docId + "'";
+        Uri uri_ = Uri.parse(ContentProvider.CONTENT_URI_DOC_TAGS + "/id");
+
+        context.getContentResolver().delete(uri_, where, null);
+    }
+
+    public static void deleteAcademicsByDocumentId(Context context, String docId) {
+        String where = DatabaseOpenHelper.DOC_DETAILS_ID+ " = '" + docId + "'";
+        Uri uri_ = Uri.parse(ContentProvider.CONTENT_URI_ACADEMIC_DOCS + "/id");
+
+        context.getContentResolver().delete(uri_, where, null);
+    }
+    public static void deleteNotesByDocumentId(Context context, String docId) {
+        String where = DatabaseOpenHelper.DOCUMENT_ID+ " = '" + docId + "'";
+        Uri uri_ = Uri.parse(ContentProvider.CONTENT_URI_DOC_NOTES + "/" + DatabaseOpenHelper.DOCUMENT_ID );
+
+        context.getContentResolver().delete(uri_, where, null);
+    }
+
 
 
     public static void sendDocumentToTrash(Context context, String documentID) {
@@ -240,16 +294,7 @@ public class Data {
         context.getApplicationContext().getContentResolver().update(Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id"), values, where, null);
     }
 
-    public static void deleteDocumentFromTrash(Context context, String documentID) {
-        Data.insertRequest(context.getApplicationContext(), documentID, JSONParser.DELETE, Globalconstant.post_delete_document_from_trash);
-        //update this document
-        String where = DatabaseOpenHelper._ID + " = '" + documentID + "'";
-        ContentValues values = new ContentValues();
-        values.put(DatabaseOpenHelper.TRASH, "trues");
-        context.getApplicationContext().getContentResolver().update(Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id"), values, where, null);
 
-
-    }
 
 
 }

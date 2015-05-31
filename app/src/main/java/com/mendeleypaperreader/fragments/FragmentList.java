@@ -565,8 +565,6 @@ public class FragmentList extends ListFragment implements LoaderCallbacks<Cursor
     public void onDestroy() {
         if(DEBUG)Log.d(TAG, "In onDestroy" );
 
-
-
         super.onDestroy();
     }
 
