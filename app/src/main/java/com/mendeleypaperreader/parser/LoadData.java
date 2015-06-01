@@ -1613,7 +1613,7 @@ public class LoadData {
             result = jParser.getHTTPRequestError(url + access_token, JSONParser.GET, null, false);
             if (result == 404) {
 
-                Data.deleteTrashDocumentById(context, docId);
+                Data.requestDeleteTrashDocumentById(context, docId);
 
             }
 

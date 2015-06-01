@@ -754,7 +754,7 @@ public class FragmentDetails extends Fragment implements LoaderCallbacks<Cursor>
                                 public void onClick(DialogInterface dialog, int which) {
 
                                     String documentId =  getDocIdFromAdapter(selectedPosition);
-                                    Data.deleteDocumentById(getActivity().getApplicationContext(), documentId);
+                                    Data.requestDeleteDocumentById(getActivity().getApplicationContext(), documentId);
                                     mAdapter.notifyDataSetChanged();
 
                                 }

@@ -221,15 +221,18 @@ public class Data {
     }
 
 
-    public static void deleteTrashDocumentById(Context context, String docId) {
+    public static void requestDeleteTrashDocumentById(Context context, String docId) {
         String where = DatabaseOpenHelper.TRASH + " = 'true' and " + DatabaseOpenHelper._ID + " = '" + docId + "'";
         Uri uri_ = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
 
-        context.getContentResolver().delete(uri_, where, null);
         Data.insertRequest(context.getApplicationContext(), docId, JSONParser.DELETE, Globalconstant.delete_document_from_trash);
+
+        deleteAllDocReferencesByDocumentId(context, docId, uri_, where);
+
     }
 
-    public static void deleteDocumentById(Context context, String docId) {
+    public static void requestDeleteDocumentById(Context context, String docId) {
+
         String where =  DatabaseOpenHelper._ID + " = '" + docId + "'";
         Uri uri_ = Uri.parse(ContentProvider.CONTENT_URI_DOC_DETAILS + "/id");
 
@@ -238,6 +241,14 @@ public class Data {
         }else{
             Data.insertRequest(context.getApplicationContext(), docId, JSONParser.DELETE, Globalconstant.delete_document_from_trash);
         }
+
+        deleteAllDocReferencesByDocumentId(context, docId, uri_, where);
+    }
+
+
+    public static void deleteAllDocReferencesByDocumentId(Context context, String docId, Uri uri_, String where){
+
+
 
         context.getContentResolver().delete(uri_, where, null);
         deleteAuthorsByDocumentId(context, docId);
